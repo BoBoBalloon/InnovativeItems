@@ -4,22 +4,29 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.Ability;
 import me.boboballoon.innovativeitems.items.Item;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
  * A class used to cache and parse config files
  */
 public class ConfigManager {
-    public static final HashMap<String, Ability> ABILITIES = new HashMap();
-    public static final HashMap<String, Item> ITEMS = new HashMap();
+    public static final HashMap<String, Ability> ABILITIES = new HashMap<>();
+    public static final HashMap<String, Item> ITEMS = new HashMap<>();
 
     /**
      * A method used to clear the cache and reload all elements
@@ -32,6 +39,8 @@ public class ConfigManager {
             ConfigManager.ABILITIES.clear();
             LogUtil.log(Level.INFO, "Cache invalidation complete!");
             ConfigManager.init();
+            //start player inventory item checker
+            //end player inventory item checker
             LogUtil.log(Level.INFO, "Plugin reload complete!");
         }, 100L);
     }
@@ -46,6 +55,10 @@ public class ConfigManager {
         File items = new File(home, "items");
         File abilities = new File(home, "abilities");
 
+        if (!home.exists()) {
+            home.mkdir();
+        }
+
         if (!items.exists()) {
             items.mkdir();
         }
@@ -56,7 +69,7 @@ public class ConfigManager {
 
         LogUtil.log(Level.INFO, "Directory initialization complete!");
 
-        ConfigManager.loadAbilities(abilities);
+        //ConfigManager.loadAbilities(abilities); (add in later)
 
         ConfigManager.loadItems(items);
 
@@ -118,9 +131,111 @@ public class ConfigManager {
 
             for (String key : configuration.getKeys(false)) {
                 ConfigurationSection section = configuration.getConfigurationSection(key);
-                //parse object
-                //build object
-                //cache object
+
+                String name = section.getName();
+
+                if (ConfigManager.ITEMS.containsKey(name)) {
+                    LogUtil.log(Level.SEVERE, "Item by the name of " + name + ", already is registered! Skipping item...");
+                    continue;
+                }
+
+                if (!section.contains("material")) {
+                    LogUtil.log(Level.SEVERE, "Could not find material field while parsing the item by the name of " + name + "!");
+                    continue;
+                }
+
+                Material material;
+                try {
+                    material = Material.valueOf(section.getString("material").toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    LogUtil.log(Level.SEVERE, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+                    continue;
+                }
+
+
+                Ability ability;
+                if (section.contains("ability")) {
+                    String rawAbility = section.getString("ability");
+                    ability = ConfigManager.ABILITIES.get(rawAbility);
+
+                    if (ability == null) {
+                        LogUtil.log(Level.SEVERE, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+                    }
+                } else {
+                    ability = null;
+                }
+
+                String displayName;
+                if (section.contains("display-name")) {
+                    displayName = TextUtil.format(section.getString("display-name"));
+                } else {
+                    displayName = null;
+                }
+
+                List<String> lore;
+                if (section.contains("lore")) {
+                    lore = section.getStringList("lore");
+
+                    for (int i = 0; i < lore.size(); i++) {
+                        String element = TextUtil.format(lore.get(i));
+                        lore.set(i, element);
+                    }
+                } else {
+                    lore = null;
+                }
+
+                Map<Enchantment, Integer> enchantments;
+                if (section.contains("enchantments")) {
+                    ConfigurationSection enchantmentSection = section.getConfigurationSection("enchantments");
+                    enchantments = new HashMap<>();
+
+                    for (String enchantmentName : enchantmentSection.getKeys(false)) {
+                        int level = enchantmentSection.getInt(enchantmentName);
+                        Enchantment enchantment = Enchantment.getByName(enchantmentName);
+
+                        if (enchantment == null) {
+                            LogUtil.log(Level.SEVERE, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+                            continue;
+                        }
+
+                        enchantments.put(enchantment, level);
+                    }
+                } else {
+                    enchantments = null;
+                }
+
+                List<ItemFlag> flags;
+                if (section.contains("flags")) {
+                    flags = new ArrayList<>();
+                    for (String flag : section.getStringList("flags")) {
+                        ItemFlag itemFlag;
+                        try {
+                            itemFlag = ItemFlag.valueOf(flag.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            LogUtil.log(Level.SEVERE, "Unknown itemflag provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+                            continue;
+                        }
+                        flags.add(itemFlag);
+                    }
+                } else {
+                    flags = null;
+                }
+
+                Integer customModelData;
+                if (section.contains("custom-model-data")) {
+                    customModelData = section.getInt("custom-model-data");
+                } else {
+                    customModelData = null;
+                }
+
+                boolean unbreakable;
+                if (section.contains("unbreakable")) {
+                    unbreakable = section.getBoolean("unbreakable");
+                } else {
+                    unbreakable = false;
+                }
+
+                ConfigManager.ITEMS.put(name, new Item(name, ability, material, displayName, lore, enchantments, flags, customModelData, unbreakable));
             }
         }
 

@@ -14,11 +14,10 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add attributes to items
-    2. Add item updater (check items when player opens container or joins and check if any custom items do not match the cached items)
-    3. Build auto-updater
-    4. Build abilities
-    5. Finish ability parser (in ConfigManager.java)
+    1. Add item updater (check items when player opens container or joins and check if any custom items do not match the cached items)
+    2. Build auto-updater
+    3. Build abilities
+    4. Finish ability parser (in ConfigManager.java)
      */
 
     @Override

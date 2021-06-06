@@ -1,7 +1,10 @@
 package me.boboballoon.innovativeitems.items;
 
+import com.google.common.collect.Multimap;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,10 +22,10 @@ public class Item {
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public Item(String name, @Nullable Ability ability, Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Integer customModelData, boolean unbreakable) {
+    public Item(String name, @Nullable Ability ability, Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
         this.name = name;
         this.ability = ability;
-        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, customModelData, unbreakable);
+        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);
     }
 
     /**
@@ -61,11 +64,12 @@ public class Item {
      * @param lore the lore of the itemstack
      * @param enchantments the enchantments on the itemstack
      * @param flags the item flags on the itemstack
+     * @param attributes all attributes for this item
      * @param customModelData the custom model data on the itemstack
      * @param unbreakable if the custom item is unbreakable
      * @return the itemstack
      */
-    private ItemStack generateItem(Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Integer customModelData, boolean unbreakable) {
+    private ItemStack generateItem(Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -97,6 +101,10 @@ public class Item {
             for (ItemFlag flag : flags) {
                 meta.addItemFlags(flag);
             }
+        }
+
+        if (attributes != null) {
+            meta.setAttributeModifiers(attributes);
         }
 
         if (customModelData != null) {

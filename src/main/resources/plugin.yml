@@ -1,0 +1,7 @@
+name: InnovativeItems
+version: ${project.version}
+main: me.boboballoon.innovativeitems.InnovativeItems
+api-version: 1.16
+prefix: [InnovativeItems] >
+authors: [BoBoBalloon]
+description: A customizable item plugin that allows server owners to build custom items without any Java experience!

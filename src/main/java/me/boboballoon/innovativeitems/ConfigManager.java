@@ -1,10 +1,9 @@
-package me.boboballoon.innovativeitems.config;
+package me.boboballoon.innovativeitems;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.Ability;
-import me.boboballoon.innovativeitems.items.Item;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -13,10 +12,12 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,34 +27,88 @@ import java.util.logging.Level;
 /**
  * A class used to cache and parse config files
  */
-public class ConfigManager {
-    public static final HashMap<String, Ability> ABILITIES = new HashMap<>();
-    public static final HashMap<String, Item> ITEMS = new HashMap<>();
+public final class ConfigManager {
+    private int debugLevel;
+
+    public ConfigManager() {
+        Plugin plugin = InnovativeItems.getInstance();
+        plugin.saveDefaultConfig();
+
+        this.setDebugLevel(plugin.getConfig().getInt("debug-level"));
+    }
+
+    /**
+     * A method that returns the current debug level
+     *
+     * @return the current debug level
+     */
+    public int getDebugLevel() {
+        return this.debugLevel;
+    }
+
+    /**
+     * A method used to set the current debug level
+     *
+     * @param debugLevel the debug level you wish to set to
+     */
+    public void setDebugLevel(int debugLevel) {
+        Plugin plugin = InnovativeItems.getInstance();
+        FileConfiguration config = plugin.getConfig();
+
+        if (debugLevel > 3) {
+            this.debugLevel = 3;
+        } else if (debugLevel < 1) {
+            this.debugLevel = 1;
+        } else {
+            this.debugLevel = debugLevel;
+        }
+
+        config.set("debug-level", this.debugLevel);
+        plugin.saveConfig();
+    }
 
     /**
      * A method used to clear the cache and reload all elements
      */
-    public static void reload() {
-        LogUtil.log(Level.WARNING, "Starting plugin restart in five seconds, some bugs may occur during this time...");
+    public void reload() {
+        LogUtil.logUnblocked(Level.INFO, "Starting plugin restart in five seconds, some bugs may occur during this time...");
         Bukkit.getScheduler().runTaskLaterAsynchronously(InnovativeItems.getInstance(), () -> {
+            LogUtil.log(Level.INFO, "Starting basic config reload...");
+
+            InnovativeItems plugin = InnovativeItems.getInstance();
+            plugin.reloadConfig();
+
+            this.setDebugLevel(plugin.getConfig().getInt("debug-level"));
+
+            LogUtil.log(Level.INFO, "Basic config reload complete!");
+
             LogUtil.log(Level.INFO, "Starting cache invalidation...");
-            ConfigManager.ITEMS.clear();
-            ConfigManager.ABILITIES.clear();
+
+            InnovativeCache cache = plugin.getCache();
+            cache.clearCache();
+
             LogUtil.log(Level.INFO, "Cache invalidation complete!");
-            ConfigManager.init();
+
+            this.init();
+
             //start player inventory item checker
             //end player inventory item checker
-            LogUtil.log(Level.INFO, "Plugin reload complete!");
+
+            LogUtil.logUnblocked(Level.INFO, "Plugin reload complete!");
         }, 100L);
     }
 
     /**
      * A startup method to start parsing all config files
      */
-    public static void init() {
-        LogUtil.log(Level.INFO, "Starting basic plugin initialization...");
+    public void init() {
+        LogUtil.logUnblocked(Level.INFO, "Starting basic plugin initialization...");
+
+        InnovativeItems plugin = InnovativeItems.getInstance();
+
         LogUtil.log(Level.INFO, "Starting directory initialization...");
-        File home = InnovativeItems.getInstance().getDataFolder();
+
+        File home = plugin.getDataFolder();
         File items = new File(home, "items");
         File abilities = new File(home, "abilities");
 
@@ -71,19 +126,22 @@ public class ConfigManager {
 
         LogUtil.log(Level.INFO, "Directory initialization complete!");
 
+        InnovativeCache cache = plugin.getCache();
+
         //ConfigManager.loadAbilities(abilities); (add in later)
 
-        ConfigManager.loadItems(items);
+        this.loadItems(items, cache);
 
-        LogUtil.log(Level.INFO, "Basic plugin initialization complete!");
+        LogUtil.logUnblocked(Level.INFO, "Basic plugin initialization complete!");
     }
 
     /**
      * A method used to parse and cache abilities from yml files
      *
      * @param home the home directory of all ability yml files
+     * @param cache the cache where loaded items will be registered to
      */
-    private static void loadAbilities(File home) {
+    private void loadAbilities(File home, InnovativeCache cache) {
         LogUtil.log(Level.INFO, "Starting item ability initialization and parsing...");
 
         YamlConfiguration configuration = new YamlConfiguration();
@@ -92,7 +150,7 @@ public class ConfigManager {
             try {
                 configuration.load(file);
             } catch (IOException e) {
-                LogUtil.log(Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during item ability initialization and parsing stage!");
+                LogUtil.log(Level.WARNING, "An IO exception occurred while loading " + file.getName() + " during item ability initialization and parsing stage!");
                 e.printStackTrace();
                 continue;
             } catch (InvalidConfigurationException ignore) {
@@ -114,8 +172,9 @@ public class ConfigManager {
      * A method used to parse and cache items from yml files
      *
      * @param home the home directory of all item yml files
+     * @param cache the cache where loaded items will be registered to
      */
-    private static void loadItems(File home) {
+    private void loadItems(File home, InnovativeCache cache) {
         LogUtil.log(Level.INFO, "Starting item initialization and parsing...");
 
         YamlConfiguration configuration = new YamlConfiguration();
@@ -136,13 +195,13 @@ public class ConfigManager {
 
                 String name = section.getName();
 
-                if (ConfigManager.ITEMS.containsKey(name)) {
-                    LogUtil.log(Level.SEVERE, "Item by the name of " + name + ", already is registered! Skipping item...");
+                if (cache.contains(name)) {
+                    LogUtil.log(Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
                     continue;
                 }
 
                 if (!section.contains("material")) {
-                    LogUtil.log(Level.SEVERE, "Could not find material field while parsing the item by the name of " + name + "!");
+                    LogUtil.log(Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
                     continue;
                 }
 
@@ -150,14 +209,14 @@ public class ConfigManager {
                 try {
                     material = Material.valueOf(section.getString("material").toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    LogUtil.log(Level.SEVERE, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+                    LogUtil.log(Level.WARNING, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
                     continue;
                 }
 
 
                 Ability ability;
                 if (section.contains("ability")) {
-                    ability = ConfigManager.getAbility(section, name);
+                    ability = this.getAbility(section, name, cache);
                 } else {
                     ability = null;
                 }
@@ -171,28 +230,28 @@ public class ConfigManager {
 
                 List<String> lore;
                 if (section.contains("lore")) {
-                    lore = ConfigManager.getLore(section);
+                    lore = this.getLore(section);
                 } else {
                     lore = null;
                 }
 
                 Map<Enchantment, Integer> enchantments;
                 if (section.contains("enchantments")) {
-                    enchantments = ConfigManager.getEnchantments(section, name);
+                    enchantments = this.getEnchantments(section, name);
                 } else {
                     enchantments = null;
                 }
 
                 List<ItemFlag> flags;
                 if (section.contains("flags")) {
-                    flags = ConfigManager.getItemFlags(section, name);
+                    flags = this.getItemFlags(section, name);
                 } else {
                     flags = null;
                 }
 
                 Multimap<Attribute, AttributeModifier> attributes;
                 if (section.contains("attributes")) {
-                    attributes = ConfigManager.getAttributes(section, name);
+                    attributes = this.getAttributes(section, name);
                 } else {
                     attributes = null;
                 }
@@ -211,25 +270,31 @@ public class ConfigManager {
                     unbreakable = false;
                 }
 
-                ConfigManager.ITEMS.put(name, new Item(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
+                cache.registerItem(name, new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
             }
         }
 
         LogUtil.log(Level.INFO, "Item initialization and parsing complete!");
     }
 
-    private static Ability getAbility(ConfigurationSection section, String itemName) {
+    /**
+     * Get the ability field from an item config section
+     */
+    private Ability getAbility(ConfigurationSection section, String itemName, InnovativeCache cache) {
         String rawAbility = section.getString("ability");
-        Ability ability = ConfigManager.ABILITIES.get(rawAbility);
+        Ability ability = cache.getAbility(rawAbility);
 
         if (ability == null) {
-            LogUtil.log(Level.SEVERE, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+            LogUtil.log(Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
         }
 
         return ability;
     }
 
-    private static List<String> getLore(ConfigurationSection section) {
+    /**
+     * Get the lore field from an item config section
+     */
+    private List<String> getLore(ConfigurationSection section) {
         List<String> lore = section.getStringList("lore");
 
         for (int i = 0; i < lore.size(); i++) {
@@ -240,7 +305,10 @@ public class ConfigManager {
         return lore;
     }
 
-    private static Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
+    /**
+     * Get the enchantment field from an item config section
+     */
+    private Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
         ConfigurationSection enchantmentSection = section.getConfigurationSection("enchantments");
         Map<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -249,7 +317,7 @@ public class ConfigManager {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
 
             if (enchantment == null) {
-                LogUtil.log(Level.SEVERE, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(Level.WARNING, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
 
@@ -259,14 +327,17 @@ public class ConfigManager {
         return enchantments;
     }
 
-    private static List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
+    /**
+     * Get the item flags field from an item config section
+     */
+    private List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
         List<ItemFlag> flags = new ArrayList<>();
         for (String flag : section.getStringList("flags")) {
             ItemFlag itemFlag;
             try {
                 itemFlag = ItemFlag.valueOf(flag.toUpperCase());
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.SEVERE, "Unknown itemflag provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(Level.WARNING, "Unknown itemflag provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
             flags.add(itemFlag);
@@ -275,7 +346,10 @@ public class ConfigManager {
         return flags;
     }
 
-    private static Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
+    /**
+     * Get the attributes field from an item config section
+     */
+    private Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
         ConfigurationSection attributeSection = section.getConfigurationSection("attributes");
 
@@ -288,7 +362,7 @@ public class ConfigManager {
                     slot = EquipmentSlot.valueOf(slotName.toUpperCase());
                 }
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.SEVERE, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
 
@@ -298,7 +372,7 @@ public class ConfigManager {
                 try {
                     attribute = Attribute.valueOf(attributeName.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    LogUtil.log(Level.SEVERE, "Unknown attribute provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                    LogUtil.log(Level.WARNING, "Unknown attribute provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                     continue;
                 }
 

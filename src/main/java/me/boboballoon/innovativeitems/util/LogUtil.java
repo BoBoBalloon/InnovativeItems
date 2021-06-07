@@ -9,12 +9,36 @@ import java.util.logging.Level;
  */
 public class LogUtil {
     /**
-     * Method wrapper so I have access to a shortcut to a log method
+     * Method wrapper of log method with debug checks
      *
      * @param level the level of the log
      * @param text  text you wish to log
      */
     public static void log(Level level, String text) {
+        int debugLevel = InnovativeItems.getInstance().getConfigManager().getDebugLevel();
+
+        if (level == Level.INFO && debugLevel < 3) {
+            return;
+        }
+
+        if (level == Level.WARNING && debugLevel < 2) {
+            return;
+        }
+
+        if (level == Level.SEVERE && debugLevel < 1) {
+            return;
+        }
+
+        InnovativeItems.getInstance().getLogger().log(level, text);
+    }
+
+    /**
+     * Method wrapper of log method without restrictions
+     *
+     * @param level the level of the log
+     * @param text  text you wish to log
+     */
+    public static void logUnblocked(Level level, String text) {
         InnovativeItems.getInstance().getLogger().log(level, text);
     }
 }

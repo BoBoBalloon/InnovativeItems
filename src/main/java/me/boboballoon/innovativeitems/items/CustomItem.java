@@ -17,12 +17,12 @@ import java.util.Map;
 /**
  * A class that represents a custom item
  */
-public class Item {
+public class CustomItem {
     private final String name;
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public Item(String name, @Nullable Ability ability, Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
+    public CustomItem(String name, @Nullable Ability ability, Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
         this.name = name;
         this.ability = ability;
         this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);

@@ -2,9 +2,9 @@ package me.boboballoon.innovativeitems.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import me.boboballoon.innovativeitems.ConfigManager;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public class InnovativeItemsCommand extends BaseCommand {
     public void onHelp(CommandSender sender) {
         sender.sendMessage(TextUtil.format("&r&e&lAvailable Commands:"));
         sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems get <item>"));
-        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems give <player> <item>"));
+        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <silent>"));
         sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems debug <level>"));
         sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems reload"));
     }

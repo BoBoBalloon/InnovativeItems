@@ -1,2 +1,9 @@
 #Innovative Items Config#
+
+#The higher the debug level, the more information displayed in console, good for bug fixing#
 debug-level: 1
+
+#The garbage collector will update items in inventories so they match updates in the configs#
+garbage-collector:
+  should-update: true #if true, when a custom item does not match the values in the config, will update the item to match config
+  should-delete: true #if true, when a custom item is not present in the cache, the garbage collector will delete the item

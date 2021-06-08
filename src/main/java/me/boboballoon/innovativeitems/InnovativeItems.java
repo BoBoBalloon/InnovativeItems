@@ -3,8 +3,16 @@ package me.boboballoon.innovativeitems;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
+import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.items.GarbageCollector;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class InnovativeItems extends JavaPlugin {
     private static InnovativeItems instance;
@@ -12,32 +20,39 @@ public final class InnovativeItems extends JavaPlugin {
     private BukkitCommandManager commandManager;
     private ConfigManager configManager;
     private InnovativeCache cache;
+    private GarbageCollector garbageCollector;
 
     /*
     TODO LIST:
-    1. Add garbage collector (item updater) (check items when player opens container or joins and check if any custom items do not match the cached items)
-    2. Build auto-updater (check spigot and see if update has come out)
-    3. Add extra item options (leather armor dye and player head skins)
-    4. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
+    1. Build auto-updater (check spigot and see if update has come out)
+    2. Add extra item options (leather armor dye and player head skins)
+    3. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
+    4. Learn regular expressions (regex) so I can parse abilities better
     5. Finish ability parser (in ConfigManager.java)
-    6. Add obfuscation to maven
+    6. Add support for mythicmobs and denizens and script
+    7. Add obfuscation to maven
      */
 
     @Override
     public void onEnable() {
+        //instance init
         InnovativeItems.instance = this;
 
-        //config manager
+        //config manager init
         this.configManager = new ConfigManager();
 
-        //add auto updater here
+        //auto updater run (if value is true)
 
         //load up and parse configs
         this.cache = new InnovativeCache();
 
         this.configManager.init();
 
+        //init garbage collector
+        this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
+
         //register commands and conditions
+        LogUtil.log(Level.INFO, "Registering commands...");
         this.commandManager = new BukkitCommandManager(this);
 
         this.commandManager.getCommandConditions().addCondition("is-player", context -> {
@@ -49,6 +64,15 @@ public final class InnovativeItems extends JavaPlugin {
         this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-items", context -> this.cache.getItemIdentifiers());
 
         this.commandManager.registerCommand(new InnovativeItemsCommand());
+
+        LogUtil.log(Level.INFO, "Command registration complete!");
+
+        //register listeners
+        LogUtil.log(Level.INFO, "Registering event listeners...");
+
+        this.registerListeners(this.garbageCollector);
+
+        LogUtil.log(Level.INFO, "Event listener registration complete!");
     }
 
     /**
@@ -80,5 +104,23 @@ public final class InnovativeItems extends JavaPlugin {
      */
     public ConfigManager getConfigManager() {
         return this.configManager;
+    }
+
+    /**
+     * A method used to return the active instance of the garbage collector
+     *
+     * @return the active instance of the garbage collector
+     */
+    public GarbageCollector getGarbageCollector() {
+        return this.garbageCollector;
+    }
+
+    /**
+     * Dumb util method to avoid repetitive code
+     */
+    private void registerListeners(Listener... listeners) {
+        for (Listener listener : listeners) {
+            Bukkit.getPluginManager().registerEvents(listener, this);
+        }
     }
 }

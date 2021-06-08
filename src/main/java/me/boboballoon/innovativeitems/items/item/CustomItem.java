@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.items;
+package me.boboballoon.innovativeitems.items.item;
 
 import com.google.common.collect.Multimap;
 import de.tr7zw.nbtapi.NBTItem;
@@ -73,14 +73,6 @@ public class CustomItem {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
-        NBTItem nbtItem = new NBTItem(item);
-        nbtItem.setBoolean("IsInnovativeItem", true);
-        nbtItem.setString("InnovativeItemName", this.name);
-
-        if (meta == null) {
-            return item;
-        }
-
         if (itemName != null) {
             meta.setDisplayName(itemName);
         } else {
@@ -116,6 +108,11 @@ public class CustomItem {
         }
 
         item.setItemMeta(meta);
+
+        NBTItem nbtItem = new NBTItem(item, true);
+        nbtItem.setBoolean("innovativeplugin-customitem", true);
+        nbtItem.setString("innovativeplugin-customitem-id", this.name);
+
         return item;
     }
 }

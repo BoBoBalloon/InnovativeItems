@@ -1,9 +1,12 @@
-package me.boboballoon.innovativeitems;
+package me.boboballoon.innovativeitems.config;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.boboballoon.innovativeitems.items.Ability;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.GarbageCollector;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.item.Ability;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -28,13 +31,21 @@ import java.util.logging.Level;
  * A class used to cache and parse config files
  */
 public final class ConfigManager {
+    //debug level
     private int debugLevel;
+
+    //garbage collector (copy of values)
+    private boolean shouldUpdateLocal;
+    private boolean shouldDeleteLocal;
 
     public ConfigManager() {
         Plugin plugin = InnovativeItems.getInstance();
         plugin.saveDefaultConfig();
+        FileConfiguration config = plugin.getConfig();
 
-        this.setDebugLevel(plugin.getConfig().getInt("debug-level"));
+        this.setDebugLevel(config.getInt("debug-level"));
+        this.setShouldUpdate(config.getBoolean("garbage-collector.should-update"));
+        this.setShouldDelete(config.getBoolean("garbage-collector.should-delete"));
     }
 
     /**
@@ -68,17 +79,70 @@ public final class ConfigManager {
     }
 
     /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method that returns a boolean that is true when the garbage collector is set to update item mismatches
+     *
+     * @return a boolean that is true when the garbage collector is set to update item mismatches
+     */
+    public boolean shouldUpdateItems() {
+        return this.shouldUpdateLocal;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method that will set a boolean that when true the garbage collector will update item mismatches
+     *
+     * @param shouldUpdate a boolean that when true the garbage collector will update item mismatches
+     */
+    public void setShouldUpdate(boolean shouldUpdate) {
+        this.shouldUpdateLocal = shouldUpdate;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method that returns a boolean that is true when the garbage collector is set to delete items not found in cache
+     *
+     * @return a boolean that is true when the garbage collector is set to delete items not found in cache
+     */
+    public boolean shouldDeleteItems() {
+        return this.shouldDeleteLocal;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method that will set a boolean that when true the garbage collector will delete items not found in cache
+     *
+     * @param shouldDelete a boolean that when true the garbage collector will delete items not found in cache
+     */
+    public void setShouldDelete(boolean shouldDelete) {
+        this.shouldDeleteLocal = shouldDelete;
+    }
+
+    /**
      * A method used to clear the cache and reload all elements
      */
     public void reload() {
-        LogUtil.logUnblocked(Level.INFO, "Starting plugin restart in five seconds, some bugs may occur during this time...");
+        LogUtil.logUnblocked(Level.INFO, "Starting plugin reload in five seconds, some bugs may occur during this time...");
         Bukkit.getScheduler().runTaskLaterAsynchronously(InnovativeItems.getInstance(), () -> {
+            InnovativeItems plugin = InnovativeItems.getInstance();
+
+            LogUtil.log(Level.INFO, "Temporarily disabling garbage collector...");
+
+            GarbageCollector garbageCollector = plugin.getGarbageCollector();
+            garbageCollector.setEnabled(false);
+
             LogUtil.log(Level.INFO, "Starting basic config reload...");
 
-            InnovativeItems plugin = InnovativeItems.getInstance();
             plugin.reloadConfig();
 
-            this.setDebugLevel(plugin.getConfig().getInt("debug-level"));
+            FileConfiguration config = plugin.getConfig();
+
+            //debug level
+            this.setDebugLevel(config.getInt("debug-level"));
+
+            //garbage collector
+            this.setShouldUpdate(config.getBoolean("garbage-collector.should-update"));
+            this.setShouldDelete(config.getBoolean("garbage-collector.should-delete"));
 
             LogUtil.log(Level.INFO, "Basic config reload complete!");
 
@@ -91,8 +155,18 @@ public final class ConfigManager {
 
             this.init();
 
-            //start player inventory item checker
-            //end player inventory item checker
+            LogUtil.log(Level.INFO, "Setting garbage collector settings to match config...");
+
+            garbageCollector.setShouldUpdate(this.shouldUpdateLocal);
+            garbageCollector.setShouldDelete(this.shouldDeleteLocal);
+
+            LogUtil.log(Level.INFO, "Garbage collector settings now match config!");
+
+            LogUtil.log(Level.INFO, "Re-enabling garbage collector!");
+
+            garbageCollector.setEnabled(true);
+
+            garbageCollector.cleanAllPlayerInventories();
 
             LogUtil.logUnblocked(Level.INFO, "Plugin reload complete!");
         }, 100L);

@@ -1,7 +1,7 @@
-package me.boboballoon.innovativeitems;
+package me.boboballoon.innovativeitems.items;
 
-import me.boboballoon.innovativeitems.items.Ability;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.items.item.Ability;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

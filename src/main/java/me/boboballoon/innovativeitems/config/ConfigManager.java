@@ -7,10 +7,13 @@ import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.item.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItemGeneric;
+import me.boboballoon.innovativeitems.items.item.CustomItemLeatherArmor;
 import me.boboballoon.innovativeitems.items.item.CustomItemSkull;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -352,6 +355,13 @@ public final class ConfigManager {
                     continue;
                 }
 
+                //register leather armor item
+                if (section.contains("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
+                    ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
+                    cache.registerItem(name, new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, this.getRGB(leatherArmorSection, name), this.getColor(leatherArmorSection, name)));
+                    continue;
+                }
+
                 //register generic item
                 cache.registerItem(name, new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
             }
@@ -481,5 +491,53 @@ public final class ConfigManager {
         }
 
         return section.getString("player-name");
+    }
+
+    /**
+     * Get the color from rgb value field from an item config section
+     */
+    private Color getRGB(ConfigurationSection section, String itemName) {
+        if (!section.contains("rgb")) {
+            return null;
+        }
+
+        String[] rgbRaw = section.getString("rgb").split(",");
+
+        if (rgbRaw.length != 3) {
+            return null;
+        }
+
+        int[] rgb = new int[3];
+        try {
+            rgb[0] = Integer.parseInt(rgbRaw[0]);
+            rgb[1] = Integer.parseInt(rgbRaw[1]);
+            rgb[2] = Integer.parseInt(rgbRaw[2]);
+        } catch (NumberFormatException e) {
+            LogUtil.log(Level.WARNING, "There was an error parsing the rgb values of " + itemName + "!");
+            return null;
+        }
+
+        return Color.fromRGB(rgb[0], rgb[1], rgb[2]);
+    }
+
+    /**
+     * Get the color from color name value field from an item config section
+     */
+    private Color getColor(ConfigurationSection section, String itemName) {
+        if (!section.contains("color")) {
+            return null;
+        }
+
+        String rawColor = section.getString("color").toUpperCase();
+
+        Color color;
+        try {
+            color = DyeColor.valueOf(rawColor).getColor();
+        } catch (IllegalArgumentException ignore) {
+            LogUtil.log(Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
+            return null;
+        }
+
+        return color;
     }
 }

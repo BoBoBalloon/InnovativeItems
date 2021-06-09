@@ -6,7 +6,8 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.item.Ability;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.items.item.CustomItemGeneric;
+import me.boboballoon.innovativeitems.items.item.CustomItemSkull;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -344,7 +345,15 @@ public final class ConfigManager {
                     unbreakable = false;
                 }
 
-                cache.registerItem(name, new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
+                //register skull item
+                if (section.contains("skull") && material == Material.PLAYER_HEAD) {
+                    ConfigurationSection skullSection = section.getConfigurationSection("skull");
+                    cache.registerItem(name, new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, this.getSkullName(skullSection)));
+                    continue;
+                }
+
+                //register generic item
+                cache.registerItem(name, new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
             }
         }
 
@@ -461,5 +470,16 @@ public final class ConfigManager {
         }
 
         return attributes;
+    }
+
+    /**
+     * Get the skull name field from an item config section
+     */
+    private String getSkullName(ConfigurationSection section) {
+        if (!section.contains("player-name")) {
+            return null;
+        }
+
+        return section.getString("player-name");
     }
 }

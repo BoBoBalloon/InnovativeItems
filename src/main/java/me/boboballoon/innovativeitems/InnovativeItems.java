@@ -24,13 +24,13 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Build auto-updater (check spigot and see if update has come out)
-    2. Add extra item options (leather armor dye and player head skins)
-    3. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
-    4. Learn regular expressions (regex) so I can parse abilities better
-    5. Finish ability parser (in ConfigManager.java)
-    6. Add support for mythicmobs and denizens and script
-    7. Add obfuscation to maven
+    1. Add extra item options (leather armor dye and player head skins and potion support)
+    2. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
+    3. Learn regular expressions (regex) so I can parse abilities better
+    4. Finish ability parser (in ConfigManager.java)
+    5. Add support for mythicmobs and denizens and script
+    6. Add obfuscation to maven
+    7. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override

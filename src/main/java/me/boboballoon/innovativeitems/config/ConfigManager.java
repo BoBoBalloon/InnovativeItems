@@ -1,34 +1,19 @@
 package me.boboballoon.innovativeitems.config;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.items.item.Ability;
-import me.boboballoon.innovativeitems.items.item.CustomItemGeneric;
-import me.boboballoon.innovativeitems.items.item.CustomItemLeatherArmor;
-import me.boboballoon.innovativeitems.items.item.CustomItemSkull;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -278,266 +263,12 @@ public final class ConfigManager {
                     continue;
                 }
 
-                if (!section.contains("material")) {
-                    LogUtil.log(Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
-                    continue;
-                }
+                CustomItem item = ItemParser.parseItem(section);
 
-                Material material;
-                try {
-                    material = Material.valueOf(section.getString("material").toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    LogUtil.log(Level.WARNING, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
-                    continue;
-                }
-
-
-                Ability ability;
-                if (section.contains("ability")) {
-                    ability = this.getAbility(section, name, cache);
-                } else {
-                    ability = null;
-                }
-
-                String displayName;
-                if (section.contains("display-name")) {
-                    displayName = TextUtil.format(section.getString("display-name"));
-                } else {
-                    displayName = null;
-                }
-
-                List<String> lore;
-                if (section.contains("lore")) {
-                    lore = this.getLore(section);
-                } else {
-                    lore = null;
-                }
-
-                Map<Enchantment, Integer> enchantments;
-                if (section.contains("enchantments")) {
-                    enchantments = this.getEnchantments(section, name);
-                } else {
-                    enchantments = null;
-                }
-
-                List<ItemFlag> flags;
-                if (section.contains("flags")) {
-                    flags = this.getItemFlags(section, name);
-                } else {
-                    flags = null;
-                }
-
-                Multimap<Attribute, AttributeModifier> attributes;
-                if (section.contains("attributes")) {
-                    attributes = this.getAttributes(section, name);
-                } else {
-                    attributes = null;
-                }
-
-                Integer customModelData;
-                if (section.contains("custom-model-data")) {
-                    customModelData = section.getInt("custom-model-data");
-                } else {
-                    customModelData = null;
-                }
-
-                boolean unbreakable;
-                if (section.contains("unbreakable")) {
-                    unbreakable = section.getBoolean("unbreakable");
-                } else {
-                    unbreakable = false;
-                }
-
-                //register skull item
-                if (section.contains("skull") && material == Material.PLAYER_HEAD) {
-                    ConfigurationSection skullSection = section.getConfigurationSection("skull");
-                    cache.registerItem(name, new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, this.getSkullName(skullSection)));
-                    continue;
-                }
-
-                //register leather armor item
-                if (section.contains("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
-                    ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-                    cache.registerItem(name, new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, this.getRGB(leatherArmorSection, name), this.getColor(leatherArmorSection, name)));
-                    continue;
-                }
-
-                //register generic item
-                cache.registerItem(name, new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable));
+                cache.registerItem(name, item);
             }
         }
 
         LogUtil.log(Level.INFO, "Item initialization and parsing complete!");
-    }
-
-    /**
-     * Get the ability field from an item config section
-     */
-    private Ability getAbility(ConfigurationSection section, String itemName, InnovativeCache cache) {
-        String rawAbility = section.getString("ability");
-        Ability ability = cache.getAbility(rawAbility);
-
-        if (ability == null) {
-            LogUtil.log(Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
-        }
-
-        return ability;
-    }
-
-    /**
-     * Get the lore field from an item config section
-     */
-    private List<String> getLore(ConfigurationSection section) {
-        List<String> lore = section.getStringList("lore");
-
-        for (int i = 0; i < lore.size(); i++) {
-            String element = TextUtil.format(lore.get(i));
-            lore.set(i, element);
-        }
-
-        return lore;
-    }
-
-    /**
-     * Get the enchantment field from an item config section
-     */
-    private Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
-        ConfigurationSection enchantmentSection = section.getConfigurationSection("enchantments");
-        Map<Enchantment, Integer> enchantments = new HashMap<>();
-
-        for (String enchantmentName : enchantmentSection.getKeys(false)) {
-            int level = enchantmentSection.getInt(enchantmentName);
-            Enchantment enchantment = Enchantment.getByName(enchantmentName);
-
-            if (enchantment == null) {
-                LogUtil.log(Level.WARNING, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
-                continue;
-            }
-
-            enchantments.put(enchantment, level);
-        }
-
-        return enchantments;
-    }
-
-    /**
-     * Get the item flags field from an item config section
-     */
-    private List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
-        List<ItemFlag> flags = new ArrayList<>();
-        for (String flag : section.getStringList("flags")) {
-            ItemFlag itemFlag;
-            try {
-                itemFlag = ItemFlag.valueOf(flag.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "Unknown itemflag provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
-                continue;
-            }
-            flags.add(itemFlag);
-        }
-
-        return flags;
-    }
-
-    /**
-     * Get the attributes field from an item config section
-     */
-    private Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
-        Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
-        ConfigurationSection attributeSection = section.getConfigurationSection("attributes");
-
-        for (String slotName : attributeSection.getKeys(false)) {
-            EquipmentSlot slot;
-            try {
-                if (slotName.equalsIgnoreCase("ALL")) {
-                    slot = null;
-                } else {
-                    slot = EquipmentSlot.valueOf(slotName.toUpperCase());
-                }
-            } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
-                continue;
-            }
-
-            ConfigurationSection modifierSection = attributeSection.getConfigurationSection(slotName);
-            for (String attributeName : modifierSection.getKeys(false)) {
-                Attribute attribute;
-                try {
-                    attribute = Attribute.valueOf(attributeName.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    LogUtil.log(Level.WARNING, "Unknown attribute provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
-                    continue;
-                }
-
-                if (slot != null) {
-                    attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot));
-                } else {
-                    for (EquipmentSlot everySlot : EquipmentSlot.values()) {
-                        attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, everySlot));
-                    }
-                }
-            }
-        }
-
-        return attributes;
-    }
-
-    /**
-     * Get the skull name field from an item config section
-     */
-    private String getSkullName(ConfigurationSection section) {
-        if (!section.contains("player-name")) {
-            return null;
-        }
-
-        return section.getString("player-name");
-    }
-
-    /**
-     * Get the color from rgb value field from an item config section
-     */
-    private Color getRGB(ConfigurationSection section, String itemName) {
-        if (!section.contains("rgb")) {
-            return null;
-        }
-
-        String[] rgbRaw = section.getString("rgb").split(",");
-
-        if (rgbRaw.length != 3) {
-            return null;
-        }
-
-        int[] rgb = new int[3];
-        try {
-            rgb[0] = Integer.parseInt(rgbRaw[0]);
-            rgb[1] = Integer.parseInt(rgbRaw[1]);
-            rgb[2] = Integer.parseInt(rgbRaw[2]);
-        } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the rgb values of " + itemName + "!");
-            return null;
-        }
-
-        return Color.fromRGB(rgb[0], rgb[1], rgb[2]);
-    }
-
-    /**
-     * Get the color from color name value field from an item config section
-     */
-    private Color getColor(ConfigurationSection section, String itemName) {
-        if (!section.contains("color")) {
-            return null;
-        }
-
-        String rawColor = section.getString("color").toUpperCase();
-
-        Color color;
-        try {
-            color = DyeColor.valueOf(rawColor).getColor();
-        } catch (IllegalArgumentException ignore) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
-            return null;
-        }
-
-        return color;
     }
 }

@@ -240,9 +240,9 @@ public final class ConfigManager {
     private void loadItems(File home, InnovativeCache cache) {
         LogUtil.log(Level.INFO, "Starting item initialization and parsing...");
 
-        YamlConfiguration configuration = new YamlConfiguration();
-
         for (File file : home.listFiles()) {
+            YamlConfiguration configuration = new YamlConfiguration();
+
             try {
                 configuration.load(file);
             } catch (IOException e) {

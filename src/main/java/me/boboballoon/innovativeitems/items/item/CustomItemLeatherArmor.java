@@ -73,16 +73,16 @@ public class CustomItemLeatherArmor implements CustomItem {
     /**
      * A method used to generate an itemstack based on this items internal values
      *
-     * @param material the material of the itemstack
-     * @param itemName the display name of the itemstack
-     * @param lore the lore of the itemstack
-     * @param enchantments the enchantments on the itemstack
-     * @param flags the item flags on the itemstack
-     * @param attributes all attributes for this item
+     * @param material        the material of the itemstack
+     * @param itemName        the display name of the itemstack
+     * @param lore            the lore of the itemstack
+     * @param enchantments    the enchantments on the itemstack
+     * @param flags           the item flags on the itemstack
+     * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable if the custom item is unbreakable
-     * @param rgb color of the leather armor via rgb
-     * @param color color of the leather armor via color name
+     * @param unbreakable     if the custom item is unbreakable
+     * @param rgb             color of the leather armor via rgb
+     * @param color           color of the leather armor via color name
      * @return the itemstack
      */
     private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
@@ -108,6 +108,9 @@ public class CustomItemLeatherArmor implements CustomItem {
      * @return a boolean that is true if the material provided is leather armor
      */
     public static boolean isLeatherArmor(Material material) {
-        return (material == Material.LEATHER_HELMET || material == Material.LEATHER_CHESTPLATE || material == Material.LEATHER_LEGGINGS || material == Material.LEATHER_BOOTS);
+        return (material == Material.LEATHER_HELMET || material == Material.LEGACY_LEATHER_HELMET ||
+                material == Material.LEATHER_CHESTPLATE || material == Material.LEGACY_LEATHER_CHESTPLATE ||
+                material == Material.LEATHER_LEGGINGS || material == Material.LEGACY_LEATHER_LEGGINGS ||
+                material == Material.LEATHER_BOOTS || material == Material.LEGACY_LEATHER_BOOTS);
     }
 }

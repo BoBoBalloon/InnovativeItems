@@ -24,8 +24,8 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add extra item options (leather armor dye and player head skins and potion support)
-    2. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
+    1. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
+    2. Build keyword wrapper to feed keyword context into the execute method
     3. Learn regular expressions (regex) so I can parse abilities better
     4. Finish ability parser (in ConfigManager.java)
     5. Add support for mythicmobs and denizens and script

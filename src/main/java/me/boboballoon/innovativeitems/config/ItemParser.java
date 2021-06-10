@@ -15,6 +15,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -114,6 +116,12 @@ public class ItemParser {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
             return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name));
         }
+
+        //potion item
+        if (section.contains("potion") && CustomItemPotion.isPotion(material)) {
+            ConfigurationSection potionSection = section.getConfigurationSection("potion");
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
+        }
         
         //generic item
         return new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable);
@@ -136,7 +144,7 @@ public class ItemParser {
     /**
      * Get the lore field from an item config section
      */
-    private static  List<String> getLore(ConfigurationSection section) {
+    private static List<String> getLore(ConfigurationSection section) {
         List<String> lore = section.getStringList("lore");
 
         for (int i = 0; i < lore.size(); i++) {
@@ -150,7 +158,7 @@ public class ItemParser {
     /**
      * Get the enchantment field from an item config section
      */
-    private static  Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
+    private static Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
         ConfigurationSection enchantmentSection = section.getConfigurationSection("enchantments");
         Map<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -172,7 +180,7 @@ public class ItemParser {
     /**
      * Get the item flags field from an item config section
      */
-    private static  List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
+    private static List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
         List<ItemFlag> flags = new ArrayList<>();
         for (String flag : section.getStringList("flags")) {
             ItemFlag itemFlag;
@@ -191,7 +199,7 @@ public class ItemParser {
     /**
      * Get the attributes field from an item config section
      */
-    private static  Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
+    private static Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
         ConfigurationSection attributeSection = section.getConfigurationSection("attributes");
 
@@ -232,9 +240,9 @@ public class ItemParser {
     }
 
     /**
-     * Get the skull name field from an item config section
+     * Get the skull name field from an skull config section
      */
-    private static  String getSkullName(ConfigurationSection section) {
+    private static String getSkullName(ConfigurationSection section) {
         if (!section.contains("player-name")) {
             return null;
         }
@@ -245,7 +253,7 @@ public class ItemParser {
     /**
      * Get the color from rgb value field from an item config section
      */
-    private static  Color getRGB(ConfigurationSection section, String itemName) {
+    private static Color getRGB(ConfigurationSection section, String itemName) {
         if (!section.contains("rgb")) {
             return null;
         }
@@ -288,5 +296,49 @@ public class ItemParser {
         }
 
         return color;
+    }
+
+    /**
+     * Get the potion effects from the effects field from a potion config section
+     */
+    private static List<PotionEffect> getPotionEffects(ConfigurationSection section, String itemName) {
+        List<String> rawEffects = section.getStringList("effects");
+        List<PotionEffect> effects = new ArrayList<>();
+
+        for (String rawEffect : rawEffects) {
+            String[] components = rawEffect.split(" ");
+
+            if (components.length != 3) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the value you entered followed the potion effect syntax!");
+                continue;
+            }
+
+            PotionEffectType type = PotionEffectType.getByName(components[0]);
+
+            if (type == null) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the potion name you entered was correct!");
+                continue;
+            }
+
+            int duration;
+            try {
+                duration = Integer.parseInt(components[1]);
+            } catch (NumberFormatException e) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the duration you entered was an integer!");
+                continue;
+            }
+
+            int level;
+            try {
+                level = Integer.parseInt(components[2]);
+            } catch (NumberFormatException e) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the level you entered was an integer!");
+                continue;
+            }
+
+            effects.add(new PotionEffect(type, duration, level));
+        }
+
+        return effects;
     }
 }

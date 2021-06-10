@@ -6,6 +6,8 @@ import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.keywords.KeywordManager;
+import me.boboballoon.innovativeitems.keywords.builtin.DamageKeyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,25 +21,32 @@ public final class InnovativeItems extends JavaPlugin {
 
     private BukkitCommandManager commandManager;
     private ConfigManager configManager;
+    private KeywordManager keywordManager;
     private InnovativeCache cache;
     private GarbageCollector garbageCollector;
 
     /*
     TODO LIST:
-    1. Build keywords + keyword api (do something along the lines of the EnchantmentManager class in the enchantment plugin)
-    2. Build keyword wrapper to feed keyword context into the execute method
-    3. Learn regular expressions (regex) so I can parse abilities better
-    4. Finish ability parser (in ConfigManager.java)
-    5. Add support for mythicmobs and denizens and script
-    6. Add obfuscation to maven
-    7. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    1. Learn regular expressions (regex) so I can parse abilities better
+    2. Finish ability parser (in ConfigManager.java)
+    3. Add support for mythicmobs and denizens and script
+    4. Add obfuscation to maven
+    5. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         //instance init
         InnovativeItems.instance = this;
 
+        //load up and register all keywords
+        this.keywordManager = new KeywordManager();
+
+        this.keywordManager.registerKeywords(new DamageKeyword());
+    }
+
+    @Override
+    public void onEnable() {
         //config manager init
         this.configManager = new ConfigManager();
 
@@ -113,6 +122,15 @@ public final class InnovativeItems extends JavaPlugin {
      */
     public GarbageCollector getGarbageCollector() {
         return this.garbageCollector;
+    }
+
+    /**
+     * A method used to return the active instance of the keyword manager
+     *
+     * @return the active instance of the keyword manager
+     */
+    public KeywordManager getKeywordManager() {
+        return this.keywordManager;
     }
 
     /**

@@ -3,7 +3,6 @@ package me.boboballoon.innovativeitems.config;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -263,9 +262,7 @@ public final class ConfigManager {
                     continue;
                 }
 
-                CustomItem item = ItemParser.parseItem(section);
-
-                cache.registerItem(name, item);
+                cache.registerItem(ItemParser.parseItem(section));
             }
         }
 

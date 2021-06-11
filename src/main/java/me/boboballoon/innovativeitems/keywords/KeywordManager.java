@@ -55,13 +55,6 @@ public final class KeywordManager {
     }
 
     /**
-     * A method used to wipe all data currently in the cache
-     */
-    public void clearKeywords() {
-        this.keywords.clear();
-    }
-
-    /**
      * A method used to check whether the cache contains a keyword with the provided identifier
      *
      * @param identifier the identifier of the keyword

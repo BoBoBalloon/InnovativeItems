@@ -2,8 +2,6 @@ package me.boboballoon.innovativeitems.keywords.keyword;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,25 +9,16 @@ import java.util.List;
  */
 public abstract class Keyword {
     private final String identifier;
-    private final List<KeywordArgument> expectedArguments;
+    private final int argumentsLength;
 
     /**
      * A constructor that builds a keyword
      * @param identifier the reference used to get a keyword and used in config files
-     * @param expectedArguments the expected arguments provided in a config file
+     * @param argumentsLength the amount of provided arguments
      */
-    public Keyword(@NotNull String identifier, @NotNull KeywordArgument... expectedArguments) {
+    public Keyword(@NotNull String identifier, int argumentsLength) {
         this.identifier = identifier;
-        this.expectedArguments = Arrays.asList(expectedArguments);
-    }
-
-    /**
-     * A constructor that builds a keyword without any arguments
-     * @param identifier the reference used to get a keyword and used in config files
-     */
-    public Keyword(@NotNull String identifier) {
-        this.identifier = identifier;
-        this.expectedArguments = Collections.emptyList();
+        this.argumentsLength = argumentsLength;
     }
 
     /**
@@ -42,18 +31,25 @@ public abstract class Keyword {
     }
 
     /**
-     * A method that returns the expected arguments provided in a config file
+     * A method that returns the amount of arguments required to execute this keyword
      *
-     * @return the expected arguments provided in a config file (will return an empty list if no arguments are expected)
+     * @return the amount of arguments required to execute this keyword
      */
-    public List<KeywordArgument> getExpectedArguments() {
-        return this.expectedArguments;
+    public int getArgumentsLength() {
+        return this.argumentsLength;
     }
 
     /**
      * A method that executes code that will be fired by the keyword
      *
-     * @param context the context in which arguments are used
+     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      */
-    public abstract void execute(KeywordContext context);
+    public abstract void execute(List<Object> arguments);
+
+    /**
+     * A method that should be used to parse and initialize arguments
+     *
+     * @param context the context in which the keyword was used in
+     */
+    public abstract List<Object> load(KeywordContext context);
 }

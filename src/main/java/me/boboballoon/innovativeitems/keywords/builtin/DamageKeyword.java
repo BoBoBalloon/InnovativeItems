@@ -1,39 +1,65 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordArgument;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import org.bukkit.Bukkit;
+import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 public class DamageKeyword extends Keyword {
     public DamageKeyword() {
-        super("damage", KeywordArgument.BLANK, new KeywordArgument("0"));
+        super("damage", 2);
     }
 
     @Override
-    public void execute(KeywordContext context) {
-        String[] args = context.getContext();
+    public void execute(List<Object> arguments) {
+        Player target = (Player) arguments.get(0);
+        double amount = (Double) arguments.get(1);
 
-        String targetRaw = args[0];
-        Player target;
-        if (targetRaw.equalsIgnoreCase("@player")) {
+        target.damage(amount);
+    }
+
+    @Override
+    public List<Object> load(KeywordContext context) {
+        String[] raw = context.getContext();
+
+        if (raw.length != this.getArgumentsLength()) {
+            LogUtil.log(Level.WARNING, "There are not enough arguments to execute the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        List<Object> args = new ArrayList<>();
+
+        LivingEntity target;
+        if (raw[0].equalsIgnoreCase("@player")) {
             target = context.getPlayer();
+        } else if (raw[0].equalsIgnoreCase("@target") && context.getTargetDamaged() != null) {
+            target = context.getTargetDamaged();
         } else {
-            target = Bukkit.getPlayerExact(targetRaw);
+            target = null;
         }
 
         if (target == null) {
-            return;
+            LogUtil.log(Level.WARNING, "There is not a valid player entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
         }
 
-        int damage;
+        args.add(target);
+
+        int amount;
         try {
-            damage = Integer.parseInt(args[1]);
+            amount = Integer.parseInt(raw[1]);
         } catch (NumberFormatException e) {
-            return;
+            LogUtil.log(Level.WARNING, "There is not a valid damage entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
         }
 
-        target.damage(damage);
+        args.add(amount);
+
+        return args;
     }
 }

@@ -226,12 +226,10 @@ public final class ConfigManager {
                     continue;
                 }
 
-                ConfigurationSection section = configuration.getConfigurationSection(key);
-
-                Ability ability = AbilityParser.parseAbility(section.getStringList("keywords"), section.getString("trigger"), key);
+                Ability ability = AbilityParser.parseAbility(configuration.getConfigurationSection(key), key);
 
                 if (ability == null) {
-                    LogUtil.log(Level.WARNING, "Element with the name of " + key + ", was unable to be parsed! Skipping ability...");
+                    //error message was already sent from parseAbility method, no need to put in here
                     continue;
                 }
 

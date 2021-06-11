@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +20,31 @@ public class AbilityParser {
     /**
      * A util method used to parse a custom item from a config section
      *
-     * @param raw the raw string array of keywords
-     * @param triggerName the provided raw ability trigger
+     * @param section the config section
      * @param name the name of the ability
      * @return the ability (null if an error occurred)
      */
-    public static Ability parseAbility(List<String> raw, String triggerName, String name) {
+    public static Ability parseAbility(ConfigurationSection section, String name) {
+        String triggerName;
+        if (section.contains("trigger")) {
+            triggerName = section.getString("trigger");
+        } else {
+            LogUtil.log(Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure the trigger field is present?");
+            return null;
+        }
+
         AbilityTrigger trigger = AbilityTrigger.getFromIdentifier(triggerName);
 
         if (trigger == null) {
             LogUtil.log(Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure " + triggerName + " is a correct trigger?");
+            return null;
+        }
+
+        List<String> raw;
+        if (section.contains("keywords")) {
+            raw = section.getStringList("keywords");
+        } else {
+            LogUtil.log(Level.WARNING, "There was an error parsing the ability keywords for " + name + ", are you sure the keyword field is present?");
             return null;
         }
 

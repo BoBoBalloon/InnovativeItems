@@ -22,8 +22,10 @@ public class ActiveKeyword {
 
     /**
      * A method that executes the base keyword given the provided context
+     *
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    public void execute() {
-        this.base.execute(this.arguments);
+    public void execute(RuntimeContext context) {
+        this.base.execute(this.arguments, context);
     }
 }

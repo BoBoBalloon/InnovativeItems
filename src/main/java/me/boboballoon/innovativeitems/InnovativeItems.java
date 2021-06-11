@@ -27,8 +27,8 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Learn regular expressions (regex) so I can parse abilities better
-    2. Finish ability parser (in ConfigManager.java)
+    1. Finish ability triggers and their corresponding listeners
+    2. Test ability parser and fix bugs that show up
     3. Try and make abilities run on their own thread outside of bukkit scheduler
     4. Add support for mythicmobs and denizens and script
     5. Add obfuscation to maven

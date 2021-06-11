@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.keywords;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -50,6 +51,7 @@ public final class KeywordManager {
      * @param identifier the identifier of the keyword
      * @return the keyword
      */
+    @Nullable
     public Keyword getKeyword(@NotNull String identifier) {
         return this.keywords.get(identifier);
     }

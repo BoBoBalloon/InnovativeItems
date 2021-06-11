@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.items.item;
 
 import com.google.common.collect.Multimap;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;

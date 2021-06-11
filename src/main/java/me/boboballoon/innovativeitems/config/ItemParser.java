@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
@@ -25,16 +26,14 @@ import java.util.logging.Level;
  * A class built for parsing configuration sections and convert into CustomItem objects
  */
 public class ItemParser {
-
     /**
      * A util method used to parse a custom item from a config section
      * 
      * @param section the config section
-     * @return the custom item (null if an error occured)
+     * @param name the name of the item
+     * @return the custom item (null if an error occurred)
      */
-    public static CustomItem parseItem(ConfigurationSection section) {
-        String name = section.getName();
-        
+    public static CustomItem parseItem(ConfigurationSection section, String name) {
         if (!section.contains("material")) {
             LogUtil.log(Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
             return null;

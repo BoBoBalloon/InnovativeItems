@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.items.item;
+package me.boboballoon.innovativeitems.items.ability;
 
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
 
@@ -10,10 +10,12 @@ import java.util.List;
 public class Ability {
     private final String name;
     private final List<ActiveKeyword> keywords;
+    private final AbilityTrigger trigger;
 
-    public Ability(String name, List<ActiveKeyword> keywords) {
+    public Ability(String name, List<ActiveKeyword> keywords, AbilityTrigger trigger) {
         this.name = name;
         this.keywords = keywords;
+        this.trigger = trigger;
     }
 
     /**
@@ -32,5 +34,14 @@ public class Ability {
      */
     public List<ActiveKeyword> getKeywords() {
         return this.keywords;
+    }
+
+    /**
+     * A method that returns the trigger that fires this ability
+     *
+     * @return the trigger that fires this ability
+     */
+    public AbilityTrigger getTrigger() {
+        return this.trigger;
     }
 }

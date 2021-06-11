@@ -1,6 +1,6 @@
 package me.boboballoon.innovativeitems.items;
 
-import me.boboballoon.innovativeitems.items.item.Ability;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;

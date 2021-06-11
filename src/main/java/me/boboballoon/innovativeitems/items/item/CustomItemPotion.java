@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.items.item;
 
 import com.google.common.collect.Multimap;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Color;
 import org.bukkit.Material;

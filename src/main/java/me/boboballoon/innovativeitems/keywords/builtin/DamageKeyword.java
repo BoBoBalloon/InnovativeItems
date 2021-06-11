@@ -2,9 +2,9 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,22 @@ public class DamageKeyword extends Keyword {
     }
 
     @Override
-    public void execute(List<Object> arguments) {
-        Player target = (Player) arguments.get(0);
+    public void execute(List<Object> arguments, RuntimeContext context) {
+        LivingEntity target;
+        String rawTarget = (String) arguments.get(0);
+        if (rawTarget.equalsIgnoreCase("@player")) {
+            target = context.getPlayer();
+        } else if (rawTarget.equalsIgnoreCase("@target") && context.getDamaged() != null) {
+            target = context.getDamaged();
+        } else {
+            target = null;
+        }
+
+        if (target == null) {
+            LogUtil.log(Level.WARNING, "There is not a valid player entered on the " + this.getIdentifier() + " keyword!");
+            return;
+        }
+
         double amount = (Double) arguments.get(1);
 
         target.damage(amount);
@@ -28,21 +42,7 @@ public class DamageKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        LivingEntity target;
-        if (raw[0].equalsIgnoreCase("@player")) {
-            target = context.getPlayer();
-        } else if (raw[0].equalsIgnoreCase("@target") && context.getTargetDamaged() != null) {
-            target = context.getTargetDamaged();
-        } else {
-            target = null;
-        }
-
-        if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid player entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
-            return null;
-        }
-
-        args.add(target);
+        args.add(raw[0]);
 
         int amount;
         try {

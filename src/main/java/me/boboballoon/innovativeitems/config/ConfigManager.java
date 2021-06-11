@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -190,7 +191,7 @@ public final class ConfigManager {
 
         InnovativeCache cache = plugin.getCache();
 
-        //ConfigManager.loadAbilities(abilities); (add in later)
+        this.loadAbilities(abilities, cache);
 
         this.loadItems(items, cache);
 
@@ -201,18 +202,18 @@ public final class ConfigManager {
      * A method used to parse and cache abilities from yml files
      *
      * @param home the home directory of all ability yml files
-     * @param cache the cache where loaded items will be registered to
+     * @param cache the cache where loaded abilities will be registered to
      */
     private void loadAbilities(File home, InnovativeCache cache) {
-        LogUtil.log(Level.INFO, "Starting item ability initialization and parsing...");
-
-        YamlConfiguration configuration = new YamlConfiguration();
+        LogUtil.log(Level.INFO, "Starting ability initialization and parsing...");
 
         for (File file : home.listFiles()) {
+            YamlConfiguration configuration = new YamlConfiguration();
+
             try {
                 configuration.load(file);
             } catch (IOException e) {
-                LogUtil.log(Level.WARNING, "An IO exception occurred while loading " + file.getName() + " during item ability initialization and parsing stage!");
+                LogUtil.log(Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
                 e.printStackTrace();
                 continue;
             } catch (InvalidConfigurationException ignore) {
@@ -220,14 +221,25 @@ public final class ConfigManager {
             }
 
             for (String key : configuration.getKeys(false)) {
+                if (cache.contains(key)) {
+                    LogUtil.log(Level.WARNING, "Element with the name of " + key + ", is already registered! Skipping ability...");
+                    continue;
+                }
+
                 ConfigurationSection section = configuration.getConfigurationSection(key);
-                //parse keywords
-                //build interface
-                //cache interface
+
+                Ability ability = AbilityParser.parseAbility(section.getStringList("keywords"), section.getString("trigger"), key);
+
+                if (ability == null) {
+                    LogUtil.log(Level.WARNING, "Element with the name of " + key + ", was unable to be parsed! Skipping ability...");
+                    continue;
+                }
+
+                cache.registerAbility(ability);
             }
         }
 
-        LogUtil.log(Level.INFO, "Item ability initialization and parsing complete!");
+        LogUtil.log(Level.INFO, "Ability initialization and parsing complete!");
     }
 
     /**
@@ -262,7 +274,7 @@ public final class ConfigManager {
                     continue;
                 }
 
-                cache.registerItem(ItemParser.parseItem(section));
+                cache.registerItem(ItemParser.parseItem(section, name));
             }
         }
 

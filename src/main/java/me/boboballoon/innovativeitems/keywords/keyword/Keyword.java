@@ -66,6 +66,7 @@ public abstract class Keyword {
      * A method that executes code that will be fired by the keyword
      *
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    public abstract void execute(List<Object> arguments);
+    public abstract void execute(List<Object> arguments, RuntimeContext context);
 }

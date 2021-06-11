@@ -17,7 +17,7 @@ public class ActiveKeyword {
      */
     public ActiveKeyword(Keyword base, KeywordContext context) {
         this.base = base;
-        this.arguments = base.load(context);
+        this.arguments = base.validate(context);
     }
 
     /**

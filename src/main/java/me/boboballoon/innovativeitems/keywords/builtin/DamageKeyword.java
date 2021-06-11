@@ -26,12 +26,6 @@ public class DamageKeyword extends Keyword {
     @Override
     public List<Object> load(KeywordContext context) {
         String[] raw = context.getContext();
-
-        if (raw.length != this.getArgumentsLength()) {
-            LogUtil.log(Level.WARNING, "There are not enough arguments to execute the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
-            return null;
-        }
-
         List<Object> args = new ArrayList<>();
 
         LivingEntity target;

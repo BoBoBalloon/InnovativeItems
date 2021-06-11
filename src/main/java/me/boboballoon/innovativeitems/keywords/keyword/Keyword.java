@@ -1,8 +1,10 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Class that represents a usable keyword in an ability config file
@@ -40,16 +42,30 @@ public abstract class Keyword {
     }
 
     /**
+     * A method that will validate the provided context before loading the keyword arguments
+     *
+     * @param context the provided context
+     */
+    public List<Object> validate(KeywordContext context) {
+        if (context.getContext().length != this.argumentsLength) {
+            LogUtil.log(Level.WARNING, "There are not enough arguments to execute the " + this.identifier + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        return this.load(context);
+    }
+
+    /**
+     * A method that should be used to parse and initialize arguments (unsafe to use before Keyword::validate)
+     *
+     * @param context the context in which the keyword was used in
+     */
+    protected abstract List<Object> load(KeywordContext context);
+
+    /**
      * A method that executes code that will be fired by the keyword
      *
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      */
     public abstract void execute(List<Object> arguments);
-
-    /**
-     * A method that should be used to parse and initialize arguments
-     *
-     * @param context the context in which the keyword was used in
-     */
-    public abstract List<Object> load(KeywordContext context);
 }

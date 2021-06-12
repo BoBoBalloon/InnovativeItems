@@ -20,7 +20,7 @@ public class ActiveKeyword {
      */
     public ActiveKeyword(Keyword base, KeywordContext context) {
         this.base = base;
-        this.arguments = base.validate(context);
+        this.arguments = base.load(context);
     }
 
     /**

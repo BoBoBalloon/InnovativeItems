@@ -69,6 +69,11 @@ public class AbilityParser {
 
             String[] rawArguments = split[1].substring(0, split[1].length() - 1).replaceAll("\\s", "").split(",");
 
+            if (rawArguments.length != keyword.getArgumentsLength()) {
+                LogUtil.log(Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");
+                continue;
+            }
+
             KeywordContext context = new KeywordContext(rawArguments, name);
 
             keywords.add(new ActiveKeyword(keyword, context));

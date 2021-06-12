@@ -1,8 +1,9 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
 
@@ -17,18 +18,20 @@ public class DamageKeyword extends Keyword {
 
     @Override
     public void execute(List<Object> arguments, RuntimeContext context) {
-        LivingEntity target;
+        LivingEntity target = null;
         String rawTarget = (String) arguments.get(0);
-        if (rawTarget.equalsIgnoreCase("@player")) {
+
+        if (rawTarget.equalsIgnoreCase("player")) {
             target = context.getPlayer();
-        } else if (rawTarget.equalsIgnoreCase("@target") && context.getDamaged() != null) {
-            target = context.getDamaged();
-        } else {
-            target = null;
+        }
+
+        if (context instanceof DamageContext && rawTarget.equalsIgnoreCase("entity")) {
+            DamageContext damageContext = (DamageContext) context;
+            target = damageContext.getEntity();
         }
 
         if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid player entered on the " + this.getIdentifier() + " keyword!");
+            LogUtil.log(Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return;
         }
 
@@ -44,9 +47,9 @@ public class DamageKeyword extends Keyword {
 
         args.add(raw[0]);
 
-        int amount;
+        double amount;
         try {
-            amount = Integer.parseInt(raw[1]);
+            amount = Double.parseDouble(raw[1]);
         } catch (NumberFormatException e) {
             LogUtil.log(Level.WARNING, "There is not a valid damage entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;

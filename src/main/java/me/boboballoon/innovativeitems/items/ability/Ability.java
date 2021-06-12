@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability;
 
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
 
 import java.util.List;
 
@@ -43,5 +44,16 @@ public class Ability {
      */
     public AbilityTrigger getTrigger() {
         return this.trigger;
+    }
+
+    /**
+     * A method used to execute an ability
+     *
+     * @param context the context in which the ability was triggered
+     */
+    public void execute(RuntimeContext context) {
+        for (ActiveKeyword keyword : this.keywords) {
+            keyword.execute(context);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 

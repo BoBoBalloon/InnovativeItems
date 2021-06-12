@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 import me.boboballoon.innovativeitems.keywords.builtin.DamageKeyword;
+import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,12 +28,11 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Finish ability triggers and their corresponding listeners
-    2. Test ability parser and fix bugs that show up
-    3. Try and make abilities run on their own thread outside of bukkit scheduler
-    4. Add support for mythicmobs and denizens and script
-    5. Add obfuscation to maven
-    6. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    1. Add more basic keywords
+    2. Try and make abilities run on their own thread outside of bukkit scheduler
+    3. Add support for mythicmobs and denizens and script
+    4. Add obfuscation to maven
+    5. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override
@@ -80,7 +80,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(Level.INFO, "Registering event listeners...");
 
-        this.registerListeners(this.garbageCollector);
+        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners());
 
         LogUtil.log(Level.INFO, "Event listener registration complete!");
     }

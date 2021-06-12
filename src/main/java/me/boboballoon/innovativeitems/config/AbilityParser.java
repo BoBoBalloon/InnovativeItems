@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -54,7 +54,7 @@ public class AbilityParser {
             String line = raw.get(i);
 
             if (!line.matches("\\w+\\([\\w|,|\\s]*\\)")) { //regex = ^\w+\([\w|,|\s]*\)$ (^ and $ are already put in inside of the match method)
-                LogUtil.log(Level.WARNING, "There was an error parsing line " + i + " on ability " + name + "! Did you format it correctly?");
+                LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
                 continue;
             }
 
@@ -63,7 +63,7 @@ public class AbilityParser {
             Keyword keyword = InnovativeItems.getInstance().getKeywordManager().getKeyword(split[0]);
 
             if (keyword == null) {
-                LogUtil.log(Level.WARNING, "There was an error parsing line " + i + " on ability " + name + "! Did you use a valid keyword?");
+                LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you use a valid keyword?");
                 continue;
             }
 

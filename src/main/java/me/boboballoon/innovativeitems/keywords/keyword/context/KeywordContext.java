@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.keywords.keyword;
+package me.boboballoon.innovativeitems.keywords.keyword.context;
 
 /**
  * Represents the context in which a keyword was used in

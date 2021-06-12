@@ -1,5 +1,8 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
+
 import java.util.List;
 
 /**

@@ -2,11 +2,10 @@ package me.boboballoon.innovativeitems.keywords.keyword;
 
 import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Class that represents a usable keyword in an ability config file
@@ -47,7 +46,9 @@ public abstract class Keyword {
      * A method that should be used to parse and initialize arguments (unsafe to use before Keyword::validate)
      *
      * @param context the context in which the keyword was used in
+     * @return the parsed arguments (null if an error occurred)
      */
+    @Nullable
     public abstract List<Object> load(KeywordContext context);
 
     /**

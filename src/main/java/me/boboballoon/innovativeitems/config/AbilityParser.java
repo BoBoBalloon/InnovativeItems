@@ -53,7 +53,7 @@ public class AbilityParser {
         for (int i = 0; i < raw.size(); i++) {
             String line = raw.get(i);
 
-            if (!line.matches("\\w+\\([\\w|,|\\s]*\\)")) { //regex = ^\w+\([\w|,|\s]*\)$ (^ and $ are already put in inside of the match method)
+            if (!line.matches("\\w+\\([\\w|,|\\s|-]*\\)")) { //regex = ^\w+\([\w|,|\s|-]*\)$ (^ and $ are already put in inside of the match method)
                 LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
                 continue;
             }

@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class DamageKeyword extends Keyword {
         }
 
         if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
             return;
         }
 
@@ -41,11 +42,19 @@ public class DamageKeyword extends Keyword {
     }
 
     @Override
+    @Nullable
     public List<Object> load(KeywordContext context) {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        args.add(raw[0]);
+        String rawTarget = raw[0];
+
+        if (!rawTarget.equalsIgnoreCase("player") && !rawTarget.equalsIgnoreCase("entity")) {
+            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        args.add(rawTarget);
 
         double amount;
         try {

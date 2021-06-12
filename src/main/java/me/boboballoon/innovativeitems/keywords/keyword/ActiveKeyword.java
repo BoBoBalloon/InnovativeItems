@@ -29,6 +29,10 @@ public class ActiveKeyword {
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
     public void execute(RuntimeContext context) {
+        if (this.arguments == null) {
+            return;
+        }
+
         this.base.execute(this.arguments, context);
     }
 }

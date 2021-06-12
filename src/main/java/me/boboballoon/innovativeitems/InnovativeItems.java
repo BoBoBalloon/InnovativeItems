@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 import me.boboballoon.innovativeitems.keywords.builtin.DamageKeyword;
+import me.boboballoon.innovativeitems.keywords.builtin.HealKeyword;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
@@ -28,7 +29,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Test what happens when you enter the wrong data type in configs (put string in int arg and int in string arg)
+    1. Test all ability triggers and targeters
     2. Add more basic keywords (use | for multi arg arguments)
     3. Try and make abilities run on their own thread outside of bukkit scheduler
     4. Add support for mythicmobs and denizens and script
@@ -44,7 +45,7 @@ public final class InnovativeItems extends JavaPlugin {
         //load up and register all keywords
         this.keywordManager = new KeywordManager();
 
-        this.keywordManager.registerKeywords(new DamageKeyword());
+        this.keywordManager.registerKeywords(new DamageKeyword(), new HealKeyword());
     }
 
     @Override

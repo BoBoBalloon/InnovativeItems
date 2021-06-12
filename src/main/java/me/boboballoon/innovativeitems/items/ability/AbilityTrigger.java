@@ -1,8 +1,5 @@
 package me.boboballoon.innovativeitems.items.ability;
 
-import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -12,29 +9,32 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    RIGHT_CLICK("right-click", InteractContext.class),
+    RIGHT_CLICK("right-click"),
 
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    LEFT_CLICK("left-click", InteractContext.class),
+    LEFT_CLICK("left-click"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_DEALT("damage-dealt", DamageContext.class),
+    DAMAGE_DEALT("damage-dealt"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_TAKEN("damage-taken", DamageContext.class);
+    DAMAGE_TAKEN("damage-taken"),
+
+    /**
+     * An ability trigger that will always fire the ConsumeContext.java
+     */
+    CONSUME_ITEM("item-consume");
 
     private final String identifier;
-    private final Class<? extends RuntimeContext> expectedContext;
 
-    AbilityTrigger(String identifier, Class<? extends RuntimeContext> expectedContext) {
+    AbilityTrigger(String identifier) {
         this.identifier = identifier;
-        this.expectedContext = expectedContext;
     }
 
     /**
@@ -44,15 +44,6 @@ public enum AbilityTrigger {
      */
     public String getIdentifier() {
         return this.identifier;
-    }
-
-    /**
-     * A method that returns the class of the expected context from this trigger
-     *
-     * @return the class of the expected context from this trigger
-     */
-    public Class<? extends RuntimeContext> getExpectedContext() {
-        return this.expectedContext;
     }
 
     /**

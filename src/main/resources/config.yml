@@ -1,7 +1,7 @@
 #Innovative Items Config#
 
 #The higher the debug level, the more information displayed in console, good for bug fixing#
-debug-level: 1
+debug-level: 2
 
 #The garbage collector will update items in inventories so they match updates in the configs#
 garbage-collector:

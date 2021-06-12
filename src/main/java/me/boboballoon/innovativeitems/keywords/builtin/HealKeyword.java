@@ -15,9 +15,9 @@ import java.util.logging.Level;
 /**
  * Class that represents a keyword in an ability config file that damages a selected target
  */
-public class DamageKeyword extends Keyword {
-    public DamageKeyword() {
-        super("damage", 2);
+public class HealKeyword extends Keyword {
+    public HealKeyword() {
+        super("heal", 2);
     }
 
     @Override
@@ -41,7 +41,13 @@ public class DamageKeyword extends Keyword {
 
         double amount = (Double) arguments.get(1);
 
-        target.damage(amount);
+        if (amount > target.getMaxHealth()) {
+            amount = target.getMaxHealth();
+        } else if (amount < 0) {
+            amount = 0;
+        }
+
+        target.setHealth(amount);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -10,16 +12,16 @@ import java.util.List;
  */
 public abstract class Keyword {
     private final String identifier;
-    private final int argumentsLength;
+    private final List<Boolean> isTargeter;
 
     /**
      * A constructor that builds a keyword
      * @param identifier the reference used to get a keyword and used in config files
-     * @param argumentsLength the amount of provided arguments
+     * @param isTargeters whether the index of the boolean should have a targeter present
      */
-    public Keyword(@NotNull String identifier, int argumentsLength) {
+    public Keyword(@NotNull String identifier, Boolean... isTargeters) {
         this.identifier = identifier;
-        this.argumentsLength = argumentsLength;
+        this.isTargeter = Arrays.asList(isTargeters);
     }
 
     /**
@@ -32,12 +34,12 @@ public abstract class Keyword {
     }
 
     /**
-     * A method that returns the amount of arguments required to execute this keyword
+     * A method that returns whether each argument is expected to be a targeter
      *
-     * @return the amount of arguments required to execute this keyword
+     * @return whether each argument is expected to be a targeter
      */
-    public int getArgumentsLength() {
-        return this.argumentsLength;
+    public ImmutableList<Boolean> getArguments() {
+        return ImmutableList.copyOf(this.isTargeter);
     }
 
     /**

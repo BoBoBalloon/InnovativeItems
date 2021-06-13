@@ -1,11 +1,13 @@
 package me.boboballoon.innovativeitems.config;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -69,17 +71,21 @@ public class AbilityParser {
 
             String[] rawArguments = split[1].substring(0, split[1].length() - 1).split(",");
 
-            for (int i1 = 0; i1 < rawArguments.length; i1++) {
-                rawArguments[i1] = rawArguments[i1].trim();
-            }
+            AbilityParser.trimArray(rawArguments);
 
             //in the case of no arguments provided
             if (rawArguments.length == 1 && rawArguments[0].equals("")) {
                 rawArguments = new String[]{};
             }
 
-            if (rawArguments.length != keyword.getArgumentsLength()) {
+            ImmutableList<Boolean> arguments = keyword.getArguments();
+
+            if (rawArguments.length != arguments.size()) {
                 LogUtil.log(Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");
+                continue;
+            }
+
+            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, trigger, i + 1, name)) {
                 continue;
             }
 
@@ -89,5 +95,46 @@ public class AbilityParser {
         }
 
         return new Ability(name, keywords, trigger);
+    }
+
+    /**
+     * A util method used to trim all elements in an array
+     */
+    private static void trimArray(String[] array) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = array[i].trim();
+        }
+    }
+
+    /**
+     * A util method that checks the positions of targeters inside a keyword
+     */
+    private static boolean hasValidTargeters(String[] args, ImmutableList<Boolean> arguments, AbilityTrigger trigger, int line, String abilityName) {
+        for (int i = 0; i < args.length; i++) {
+            boolean check = arguments.get(i);
+
+            if (!check) {
+                continue;
+            }
+
+            String argument = args[i];
+
+            if (!argument.startsWith("?")) {
+                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " was expected a targeter but did not receive one!");
+                return false;
+            }
+
+            if (KeywordTargeter.getFromIdentifier(argument) == null) {
+                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter because it does not exist!");
+                return false;
+            }
+
+            if (!trigger.getAllowedTargeters().contains(argument)) {
+                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the trigger of " + trigger.getIdentifier() + "!");
+                return false;
+            }
+        }
+
+        return true;
     }
 }

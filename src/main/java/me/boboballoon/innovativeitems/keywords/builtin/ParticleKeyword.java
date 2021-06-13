@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContextBlock;
@@ -19,24 +20,24 @@ import java.util.logging.Level;
  */
 public class ParticleKeyword extends Keyword {
     public ParticleKeyword() {
-        super("particle", 6);
+        super("particle", true, false, false, false, false, false);
     }
 
     @Override
     public void execute(List<Object> arguments, RuntimeContext context) {
         Location location = null;
-        String rawLocation = (String) arguments.get(0);
+        KeywordTargeter rawLocation = (KeywordTargeter) arguments.get(0);
 
-        if (rawLocation.equalsIgnoreCase("player")) {
+        if (rawLocation == KeywordTargeter.PLAYER) {
             location = context.getPlayer().getLocation();
         }
 
-        if (context instanceof DamageContext && rawLocation.equalsIgnoreCase("entity")) {
+        if (context instanceof DamageContext && rawLocation == KeywordTargeter.ENTITY) {
             DamageContext damageContext = (DamageContext) context;
             location = damageContext.getEntity().getLocation();
         }
 
-        if (context instanceof InteractContextBlock && rawLocation.equalsIgnoreCase("block")) {
+        if (context instanceof InteractContextBlock && rawLocation == KeywordTargeter.BLOCK) {
             InteractContextBlock interactContext = (InteractContextBlock) context;
             location = interactContext.getBlock().getLocation();
         }
@@ -61,14 +62,19 @@ public class ParticleKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        String rawLocation = raw[0];
+        KeywordTargeter location = KeywordTargeter.getFromIdentifier(raw[0]);
 
-        if (!rawLocation.equalsIgnoreCase("player") && !rawLocation.equalsIgnoreCase("entity") && !rawLocation.equalsIgnoreCase("block")) {
+        if (location == null) {
             LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
-        args.add(rawLocation);
+        if (location != KeywordTargeter.PLAYER && location != KeywordTargeter.ENTITY && location != KeywordTargeter.BLOCK) {
+            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        args.add(location);
 
         Particle particle;
         try {

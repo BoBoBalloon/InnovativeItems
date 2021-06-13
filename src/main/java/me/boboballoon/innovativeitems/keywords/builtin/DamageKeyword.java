@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -17,19 +18,19 @@ import java.util.logging.Level;
  */
 public class DamageKeyword extends Keyword {
     public DamageKeyword() {
-        super("damage", 2);
+        super("damage", true, false);
     }
 
     @Override
     public void execute(List<Object> arguments, RuntimeContext context) {
         LivingEntity target = null;
-        String rawTarget = (String) arguments.get(0);
+        KeywordTargeter rawTarget = (KeywordTargeter) arguments.get(0);
 
-        if (rawTarget.equalsIgnoreCase("player")) {
+        if (rawTarget == KeywordTargeter.PLAYER) {
             target = context.getPlayer();
         }
 
-        if (context instanceof DamageContext && rawTarget.equalsIgnoreCase("entity")) {
+        if (context instanceof DamageContext && rawTarget == KeywordTargeter.ENTITY) {
             DamageContext damageContext = (DamageContext) context;
             target = damageContext.getEntity();
         }
@@ -50,9 +51,14 @@ public class DamageKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        String rawTarget = raw[0];
+        KeywordTargeter rawTarget = KeywordTargeter.getFromIdentifier(raw[0]);
 
-        if (!rawTarget.equalsIgnoreCase("player") && !rawTarget.equalsIgnoreCase("entity")) {
+        if (rawTarget == null) {
+            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        if (rawTarget != KeywordTargeter.PLAYER && rawTarget != KeywordTargeter.ENTITY) {
             LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }

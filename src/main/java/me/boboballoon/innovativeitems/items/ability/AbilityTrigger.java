@@ -2,6 +2,10 @@ package me.boboballoon.innovativeitems.items.ability;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A class that contains all possible causes to trigger an ability
  */
@@ -19,22 +23,22 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    RIGHT_CLICK_BLOCK("right-click-block"),
+    RIGHT_CLICK_BLOCK("right-click-block", "?block"),
 
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    LEFT_CLICK_BLOCK("left-click-block"),
+    LEFT_CLICK_BLOCK("left-click-block", "?block"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_DEALT("damage-dealt"),
+    DAMAGE_DEALT("damage-dealt", "?entity"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_TAKEN("damage-taken"),
+    DAMAGE_TAKEN("damage-taken", "?entity"),
 
     /**
      * An ability trigger that will always fire the ConsumeContext.java
@@ -42,9 +46,12 @@ public enum AbilityTrigger {
     CONSUME_ITEM("item-consume");
 
     private final String identifier;
+    private final List<String> allowedTargeters;
 
-    AbilityTrigger(String identifier) {
+    AbilityTrigger(String identifier, String... allowedTargeters) {
         this.identifier = identifier;
+        this.allowedTargeters = this.toList(allowedTargeters);
+        this.allowedTargeters.add("?player"); //player is valid on all triggers
     }
 
     /**
@@ -54,6 +61,15 @@ public enum AbilityTrigger {
      */
     public String getIdentifier() {
         return this.identifier;
+    }
+
+    /**
+     * A method that returns all allowed targeters used for this trigger
+     *
+     * @return all allowed targeters used for this trigger
+     */
+    public List<String> getAllowedTargeters() {
+        return this.allowedTargeters;
     }
 
     /**
@@ -71,5 +87,19 @@ public enum AbilityTrigger {
         }
 
         return null;
+    }
+
+    /**
+     * A private method to convert var args to a list because Arrays.asList() is immutable
+     *
+     * @param strings the var arg
+     * @return the list
+     */
+    private List<String> toList(String... strings) {
+        List<String> list = new ArrayList<>();
+
+        Collections.addAll(list, strings);
+
+        return list;
     }
 }

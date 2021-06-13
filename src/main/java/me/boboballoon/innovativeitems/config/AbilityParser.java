@@ -53,7 +53,7 @@ public class AbilityParser {
         for (int i = 0; i < raw.size(); i++) {
             String line = raw.get(i);
 
-            if (!line.matches("\\w+\\([\\w|,|\\s|-]*\\)")) { //regex = ^\w+\([\w|,|\s|-]*\)$ (^ and $ are already put in inside of the match method)
+            if (!line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$ (^ and $ are already put in inside of the match method)
                 LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
                 continue;
             }
@@ -67,7 +67,16 @@ public class AbilityParser {
                 continue;
             }
 
-            String[] rawArguments = split[1].substring(0, split[1].length() - 1).replaceAll("\\s", "").split(",");
+            String[] rawArguments = split[1].substring(0, split[1].length() - 1).split(",");
+
+            for (int i1 = 0; i1 < rawArguments.length; i1++) {
+                rawArguments[i1] = rawArguments[i1].trim();
+            }
+
+            //in the case of no arguments provided
+            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
+                rawArguments = new String[]{};
+            }
 
             if (rawArguments.length != keyword.getArgumentsLength()) {
                 LogUtil.log(Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");

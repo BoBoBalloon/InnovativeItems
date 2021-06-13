@@ -9,6 +9,7 @@ import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 import me.boboballoon.innovativeitems.keywords.builtin.DamageKeyword;
 import me.boboballoon.innovativeitems.keywords.builtin.HealKeyword;
+import me.boboballoon.innovativeitems.keywords.builtin.MessageKeyword;
 import me.boboballoon.innovativeitems.keywords.builtin.ParticleKeyword;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -45,7 +46,8 @@ public final class InnovativeItems extends JavaPlugin {
         //load up and register all keywords
         this.keywordManager = new KeywordManager();
 
-        this.keywordManager.registerKeywords(new DamageKeyword(), new HealKeyword(), new ParticleKeyword());
+        this.keywordManager.registerKeywords(new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
+                new MessageKeyword());
     }
 
     @Override

@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.keywords.keyword.context.ConsumeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -36,6 +38,12 @@ public class AbilityTriggerListeners implements Listener {
         }
 
         if (itemStack.getType() == Material.AIR) {
+            return;
+        }
+
+        Action action = event.getAction();
+
+        if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
 
@@ -66,7 +74,60 @@ public class AbilityTriggerListeners implements Listener {
             return;
         }
 
-        InteractContext context = new InteractContext(event.getPlayer(), ability.getName(), event.getClickedBlock(), event.getAction(), event.getHand());
+        InteractContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
+
+        ability.execute(context);
+    }
+
+    /**
+     * Listener used for left click and right click block ability triggers
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInteractBlock(PlayerInteractEvent event) {
+        ItemStack itemStack = event.getItem();
+
+        if (itemStack == null) {
+            return;
+        }
+
+        if (itemStack.getType() == Material.AIR) {
+            return;
+        }
+
+        Action action = event.getAction();
+
+        if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        NBTItem nbtItem = new NBTItem(itemStack);
+
+        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+            return;
+        }
+
+        String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+        CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+
+        if (item == null) {
+            LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+            return;
+        }
+
+        Ability ability = item.getAbility();
+
+        if (ability == null) {
+            return;
+        }
+
+        AbilityTrigger trigger = ability.getTrigger();
+
+        if (trigger != AbilityTrigger.LEFT_CLICK_BLOCK && trigger != AbilityTrigger.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        InteractContextBlock context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
 
         ability.execute(context);
     }
@@ -142,7 +203,7 @@ public class AbilityTriggerListeners implements Listener {
         if (!(event.getEntity() instanceof Player) || !(event.getDamager() instanceof LivingEntity)) {
             return;
         }
-        
+
         Player player = (Player) event.getEntity();
         LivingEntity entity = (LivingEntity) event.getDamager();
 

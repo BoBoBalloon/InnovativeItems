@@ -17,6 +17,16 @@ public enum AbilityTrigger {
     LEFT_CLICK("left-click"),
 
     /**
+     * An ability trigger that will always fire the InteractContext.java
+     */
+    RIGHT_CLICK_BLOCK("right-click-block"),
+
+    /**
+     * An ability trigger that will always fire the InteractContext.java
+     */
+    LEFT_CLICK_BLOCK("left-click-block"),
+
+    /**
      * An ability trigger that will always fire the DamageContext.java
      */
     DAMAGE_DEALT("damage-dealt"),

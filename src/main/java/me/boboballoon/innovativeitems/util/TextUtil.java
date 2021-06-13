@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
  * A class used to store util methods regarding strings
  */
 public class TextUtil {
-    public static String PREFIX = TextUtil.format("&r&e&l[InnovativeItems] > &r");
+    private static final String PREFIX = TextUtil.format("&r&e&l[InnovativeItems] > &r");
 
     /**
      * Method wrapper so I have access to a shortcut to this translate method

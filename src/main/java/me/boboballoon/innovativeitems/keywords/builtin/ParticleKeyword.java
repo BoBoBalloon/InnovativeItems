@@ -1,10 +1,10 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -36,8 +36,8 @@ public class ParticleKeyword extends Keyword {
             location = damageContext.getEntity().getLocation();
         }
 
-        if (context instanceof InteractContext && rawLocation.equalsIgnoreCase("block")) {
-            InteractContext interactContext = (InteractContext) context;
+        if (context instanceof InteractContextBlock && rawLocation.equalsIgnoreCase("block")) {
+            InteractContextBlock interactContext = (InteractContextBlock) context;
             location = interactContext.getBlock().getLocation();
         }
 
@@ -61,14 +61,14 @@ public class ParticleKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        String rawTarget = raw[0];
+        String rawLocation = raw[0];
 
-        if (!rawTarget.equalsIgnoreCase("player") && !rawTarget.equalsIgnoreCase("entity")) {
+        if (!rawLocation.equalsIgnoreCase("player") && !rawLocation.equalsIgnoreCase("entity") && !rawLocation.equalsIgnoreCase("block")) {
             LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
-        args.add(rawTarget);
+        args.add(rawLocation);
 
         Particle particle;
         try {

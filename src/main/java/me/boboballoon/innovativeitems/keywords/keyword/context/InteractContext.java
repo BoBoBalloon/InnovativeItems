@@ -1,35 +1,21 @@
 package me.boboballoon.innovativeitems.keywords.keyword.context;
 
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A class that represents context where the item was clicked that can assist execution that cannot be cached and must be parsed during runtime separately
  */
 public class InteractContext extends RuntimeContext {
-    private final Block block;
     private final Action action;
     private final EquipmentSlot hand;
 
-    public InteractContext(Player player, String abilityName, Block block, Action action, EquipmentSlot hand) {
+    public InteractContext(Player player, String abilityName, Action action, EquipmentSlot hand) {
         super(player, abilityName);
-        this.block = block;
         this.action = action;
         this.hand = hand;
-    }
-
-    /**
-     * A method that returns the block involved with this context (may be null if not present)
-     *
-     * @return the block involved with this context (may be null if not present)
-     */
-    @Nullable
-    public Block getBlock() {
-        return this.block;
     }
 
     /**

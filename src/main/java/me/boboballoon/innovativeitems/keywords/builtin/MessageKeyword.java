@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,11 +14,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that damages a selected target
+ * Class that represents a keyword in an ability config file that sends a message to a selected target
  */
-public class DamageKeyword extends Keyword {
-    public DamageKeyword() {
-        super("damage", 2);
+public class MessageKeyword extends Keyword {
+    public MessageKeyword() {
+        super("message", 2);
     }
 
     @Override
@@ -39,9 +40,9 @@ public class DamageKeyword extends Keyword {
             return;
         }
 
-        double amount = (Double) arguments.get(1);
+        String message = (String) arguments.get(1);
 
-        target.damage(amount);
+        target.sendMessage(message);
     }
 
     @Override
@@ -59,15 +60,9 @@ public class DamageKeyword extends Keyword {
 
         args.add(rawTarget);
 
-        double amount;
-        try {
-            amount = Double.parseDouble(raw[1]);
-        } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid damage entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
-            return null;
-        }
+        String message = TextUtil.format(raw[1]);
 
-        args.add(amount);
+        args.add(message);
 
         return args;
     }

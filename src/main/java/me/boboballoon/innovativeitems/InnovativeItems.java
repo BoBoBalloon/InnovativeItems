@@ -29,7 +29,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Test all ability triggers and targeters
+    1. Add amount arg to get and give item commands
     2. Add more basic keywords (use | for multi arg arguments)
     3. Try and make abilities run on their own thread outside of bukkit scheduler
     4. Add support for mythicmobs and denizens and script

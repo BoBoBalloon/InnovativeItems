@@ -39,7 +39,9 @@ public class HealKeyword extends Keyword {
             return;
         }
 
-        double amount = (Double) arguments.get(1);
+        double rawAmount = (Double) arguments.get(1);
+
+        double amount = rawAmount + target.getHealth();
 
         if (amount > target.getMaxHealth()) {
             amount = target.getMaxHealth();

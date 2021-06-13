@@ -2,8 +2,8 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;

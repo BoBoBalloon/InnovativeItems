@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability;
 
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
-import me.boboballoon.innovativeitems.keywords.keyword.context.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 
 import java.util.List;
 

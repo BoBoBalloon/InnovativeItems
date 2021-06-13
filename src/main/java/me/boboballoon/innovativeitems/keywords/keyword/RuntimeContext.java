@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.keywords.keyword.context;
+package me.boboballoon.innovativeitems.keywords.keyword;
 
 import org.bukkit.entity.Player;
 

@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.context.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.configuration.ConfigurationSection;
 

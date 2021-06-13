@@ -29,12 +29,11 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add amount arg to get and give item commands
-    2. Add more basic keywords (use | for multi arg arguments)
-    3. Try and make abilities run on their own thread outside of bukkit scheduler
-    4. Add support for mythicmobs and denizens and script
-    5. Add obfuscation to maven
-    6. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    1. Add more basic keywords (use | for multi arg arguments)
+    2. Try and make abilities run on their own thread outside of bukkit scheduler
+    3. Add support for mythicmobs and denizens and script
+    4. Add obfuscation to maven
+    5. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override

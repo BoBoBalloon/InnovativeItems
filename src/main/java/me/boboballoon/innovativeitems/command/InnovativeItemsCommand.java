@@ -9,7 +9,6 @@ import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 
 /**
  * Base command for all subcommands in innovative items
@@ -27,8 +26,8 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Default
     public void onHelp(CommandSender sender) {
         sender.sendMessage(TextUtil.format("&r&e&lAvailable Commands:"));
-        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems get <item>"));
-        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <silent>"));
+        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems get <item> <amount>"));
+        sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <amount> <silent>"));
         sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems debug <level>"));
         sender.sendMessage(TextUtil.format("&r&e&l- /innovativeitems reload"));
     }
@@ -41,9 +40,9 @@ public class InnovativeItemsCommand extends BaseCommand {
      */
     @Subcommand("get")
     @Conditions("is-player")
-    @CommandCompletion("@valid-items @nothing")
+    @CommandCompletion("@valid-items @range:1-64 @nothing")
     public void onGetItem(Player player, String[] args) {
-        if (args.length != 1) {
+        if (args.length < 1 || args.length > 2) {
             TextUtil.sendMessage(player, "&r&cYou have entered improper arguments to execute this command!");
             this.onHelp(player);
             return;
@@ -56,14 +55,21 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        PlayerInventory inventory = player.getInventory();
-        if (inventory.firstEmpty() != -1) {
-            inventory.addItem(customItem.getItemStack());
-            TextUtil.sendMessage(player, "&r&aAdded " + customItem.getName() + " to your inventory!");
-        } else {
-            player.getWorld().dropItemNaturally(player.getLocation(), customItem.getItemStack());
-            TextUtil.sendMessage(player, "&r&aYour inventory was full so " + customItem.getName() + " was dropped on the ground!");
+        int amount = 1;
+        if (args.length == 2) {
+            try {
+                amount = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                TextUtil.sendMessage(player, "&r&cYou have entered an invalid amount!");
+                return;
+            }
         }
+
+        for (int i = 0; i < amount; i++) {
+            player.getInventory().addItem(customItem.getItemStack());
+        }
+
+        TextUtil.sendMessage(player, "&r&aAdded " + amount + " " + customItem.getName() + " to your inventory!");
     }
 
     /**
@@ -73,9 +79,9 @@ public class InnovativeItemsCommand extends BaseCommand {
      * @param args the args that the player entered
      */
     @Subcommand("give")
-    @CommandCompletion("@players @valid-items -s @nothing")
+    @CommandCompletion("@players @valid-items @range:1-64 -s @nothing")
     public void onGiveItem(CommandSender sender, String[] args) {
-        if (args.length < 2 || args.length > 3) {
+        if (args.length < 3 || args.length > 4) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");
             this.onHelp(sender);
             return;
@@ -95,18 +101,23 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        boolean silent = (args.length == 3 && args[2].equalsIgnoreCase("-s"));
-
-        PlayerInventory inventory = target.getInventory();
-        if (inventory.firstEmpty() != -1) {
-            inventory.addItem(customItem.getItemStack());
-            if (!silent) TextUtil.sendMessage(target, "&r&aAdded " + customItem.getName() + " to your inventory!");
-        } else {
-            target.getWorld().dropItemNaturally(target.getLocation(), customItem.getItemStack());
-            if (!silent) TextUtil.sendMessage(target, "&r&aYour inventory was full so " + customItem.getName() + " was dropped on the ground!");
+        int amount;
+        try {
+            amount = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            TextUtil.sendMessage(sender, "&r&cYou have entered an invalid amount!");
+            return;
         }
 
-        TextUtil.sendMessage(sender, "&r&aGave " + customItem.getName() + " to " + target.getName() + "!");
+        boolean silent = (args.length > 3 && args[3].equalsIgnoreCase("-s"));
+
+        for (int i = 0; i < amount; i++) {
+            target.getInventory().addItem(customItem.getItemStack());
+        }
+
+        if (!silent) TextUtil.sendMessage(target, "&r&aAdded " + amount + " " + customItem.getName() + " to your inventory!");
+
+        TextUtil.sendMessage(sender, "&r&aGave " + amount + " " + customItem.getName() + " to " + target.getName() + "!");
     }
 
     /**
@@ -115,7 +126,7 @@ public class InnovativeItemsCommand extends BaseCommand {
      * @param sender the command sender that executed the command
      */
     @Subcommand("debug")
-    @CommandCompletion("1|2|3 @nothing")
+    @CommandCompletion("@range:1-3 @nothing")
     public void onDebug(CommandSender sender, String[] args) {
         if (args.length < 1) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");

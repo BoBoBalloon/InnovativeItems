@@ -85,7 +85,7 @@ public class AbilityParser {
                 continue;
             }
 
-            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, trigger, i + 1, name)) {
+            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, keyword.getValidTargeters(), keyword.getIdentifier(), trigger, i + 1, name)) {
                 continue;
             }
 
@@ -109,7 +109,7 @@ public class AbilityParser {
     /**
      * A util method that checks the positions of targeters inside a keyword
      */
-    private static boolean hasValidTargeters(String[] args, ImmutableList<Boolean> arguments, AbilityTrigger trigger, int line, String abilityName) {
+    private static boolean hasValidTargeters(String[] args, ImmutableList<Boolean> arguments, ImmutableList<String> allowedTargeters, String keywordName, AbilityTrigger trigger, int line, String abilityName) {
         for (int i = 0; i < args.length; i++) {
             boolean check = arguments.get(i);
 
@@ -131,6 +131,11 @@ public class AbilityParser {
 
             if (!trigger.getAllowedTargeters().contains(argument)) {
                 LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the trigger of " + trigger.getIdentifier() + "!");
+                return false;
+            }
+
+            if (!allowedTargeters.contains(argument)) {
+                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the keyword of " + keywordName + "!");
                 return false;
             }
         }

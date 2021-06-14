@@ -43,6 +43,13 @@ public abstract class Keyword {
     }
 
     /**
+     * A method that returns the identifier of each keyword targeter allowed
+     *
+     * @return the identifier of each keyword targeter allowed
+     */
+    public abstract ImmutableList<String> getValidTargeters();
+
+    /**
      * A method that should be used to parse and initialize arguments (unsafe to use before Keyword::validate)
      *
      * @param context the context in which the keyword was used in

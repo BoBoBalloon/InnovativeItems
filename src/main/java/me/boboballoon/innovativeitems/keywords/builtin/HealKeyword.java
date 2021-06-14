@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
@@ -84,5 +85,10 @@ public class HealKeyword extends Keyword {
         args.add(amount);
 
         return args;
+    }
+
+    @Override
+    public ImmutableList<String> getValidTargeters() {
+        return ImmutableList.of("?player", "?entity");
     }
 }

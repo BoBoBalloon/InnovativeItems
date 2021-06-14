@@ -7,10 +7,7 @@ import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
-import me.boboballoon.innovativeitems.keywords.builtin.DamageKeyword;
-import me.boboballoon.innovativeitems.keywords.builtin.HealKeyword;
-import me.boboballoon.innovativeitems.keywords.builtin.MessageKeyword;
-import me.boboballoon.innovativeitems.keywords.builtin.ParticleKeyword;
+import me.boboballoon.innovativeitems.keywords.builtin.*;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
@@ -33,8 +30,9 @@ public final class InnovativeItems extends JavaPlugin {
     TODO LIST:
     1. Add more basic keywords
     2. Try and make abilities run on their own thread outside of bukkit scheduler
-    3. Add support for mythicmobs and denizens and script
-    4. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    3. Add functionality to DelayKeyword.java
+    4. Add support for mythicmobs and denizens and script
+    5. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override
@@ -45,8 +43,8 @@ public final class InnovativeItems extends JavaPlugin {
         //load up and register all keywords
         this.keywordManager = new KeywordManager();
 
-        this.keywordManager.registerKeywords(new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
-                new MessageKeyword());
+        this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
+                new MessageKeyword(), new EffectKeyword());
     }
 
     @Override

@@ -2,12 +2,14 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,11 +17,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that damages a selected target
+ * Class that represents a keyword in an ability config file that gives a potion effect to a selected target
  */
-public class HealKeyword extends Keyword {
-    public HealKeyword() {
-        super("heal", true, false);
+public class EffectKeyword extends Keyword {
+    public EffectKeyword() {
+        super("effect", true, false, false, false);
     }
 
     @Override
@@ -41,17 +43,9 @@ public class HealKeyword extends Keyword {
             return;
         }
 
-        double rawAmount = (Double) arguments.get(1);
+        PotionEffect effect = (PotionEffect) arguments.get(1);
 
-        double amount = rawAmount + target.getHealth();
-
-        if (amount > target.getMaxHealth()) {
-            amount = target.getMaxHealth();
-        } else if (amount < 0) {
-            amount = 0;
-        }
-
-        target.setHealth(amount);
+        target.addPotionEffect(effect);
     }
 
     @Override
@@ -60,29 +54,44 @@ public class HealKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        KeywordTargeter rawTarget = KeywordTargeter.getFromIdentifier(raw[0]);
+        KeywordTargeter target = KeywordTargeter.getFromIdentifier(raw[0]);
 
-        if (rawTarget == null) {
+        if (target == null) {
             LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
-        if (rawTarget != KeywordTargeter.PLAYER && rawTarget != KeywordTargeter.ENTITY) {
+        if (target != KeywordTargeter.PLAYER && target != KeywordTargeter.ENTITY) {
             LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
-        args.add(rawTarget);
+        args.add(target);
 
-        double amount;
+        PotionEffectType effectType = PotionEffectType.getByName(raw[1].toUpperCase());
+
+        if (effectType == null) {
+            LogUtil.log(Level.WARNING, "There is not a valid potion effect entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        int duration;
         try {
-            amount = Double.parseDouble(raw[1]);
+            duration = Integer.parseInt(raw[2]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid healing entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(Level.WARNING, "There is not a valid duration entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
-        args.add(amount);
+        int level;
+        try {
+            level = Integer.parseInt(raw[3]);
+        } catch (NumberFormatException e) {
+            LogUtil.log(Level.WARNING, "There is not a valid level entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return null;
+        }
+
+        args.add(new PotionEffect(effectType, duration, level));
 
         return args;
     }

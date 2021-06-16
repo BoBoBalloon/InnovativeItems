@@ -10,6 +10,10 @@ import java.util.logging.Level;
 public class LogUtil {
     /**
      * Method wrapper of log method with debug level checks
+     * Debug level of 3 allows everything
+     * Debug level of 2 allows warnings and severes
+     * Debug level of 1 allows severes
+     * Debug level of 0 allows nothing
      *
      * @param level the level of the log
      * @param text  text you wish to log

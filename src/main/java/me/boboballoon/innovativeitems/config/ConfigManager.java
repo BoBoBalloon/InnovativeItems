@@ -21,6 +21,12 @@ import java.util.logging.Level;
  */
 public final class ConfigManager {
     //debug level
+    /**
+     * Debug level of 3 allows everything
+     * Debug level of 2 allows warnings and severes
+     * Debug level of 1 allows severes
+     * Debug level of 0 allows nothing
+     */
     private int debugLevel;
 
     //garbage collector (copy of values)
@@ -57,8 +63,8 @@ public final class ConfigManager {
 
         if (debugLevel > 3) {
             this.debugLevel = 3;
-        } else if (debugLevel < 1) {
-            this.debugLevel = 1;
+        } else if (debugLevel < 0) {
+            this.debugLevel = 0;
         } else {
             this.debugLevel = debugLevel;
         }

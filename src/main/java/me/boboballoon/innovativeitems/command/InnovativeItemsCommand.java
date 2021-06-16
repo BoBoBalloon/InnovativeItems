@@ -133,7 +133,7 @@ public class InnovativeItemsCommand extends BaseCommand {
      * @param sender the command sender that executed the command
      */
     @Subcommand("debug")
-    @CommandCompletion("@range:1-3 @nothing")
+    @CommandCompletion("@range:0-3 @nothing")
     public void onDebug(CommandSender sender, String[] args) {
         if (args.length < 1) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");

@@ -31,8 +31,7 @@ public final class InnovativeItems extends JavaPlugin {
     1. Add more basic keywords
     2. Try and make abilities run on their own thread outside of bukkit scheduler
     3. Add functionality to DelayKeyword.java
-    4. Add support for mythicmobs and denizens and script
-    5. Build auto-updater AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    4. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override

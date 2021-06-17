@@ -23,7 +23,9 @@ public class DelayKeyword extends Keyword {
     public void execute(List<Object> arguments, RuntimeContext context) {
         int delay = (Integer) arguments.get(0);
 
-        //add functionality
+        try {
+            Thread.sleep(delay * 50); //delay in ticks, 1000 milliseconds in second and 20 ticks in second 1000 / 20 = 50
+        } catch (InterruptedException ignore) {}
     }
 
     @Override
@@ -48,5 +50,10 @@ public class DelayKeyword extends Keyword {
     @Override
     public ImmutableList<String> getValidTargeters() {
         return ImmutableList.of();
+    }
+
+    @Override
+    public boolean isAsync() {
+        return true;
     }
 }

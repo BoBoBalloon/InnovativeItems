@@ -5,11 +5,12 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.keywords.keyword.context.ConsumeContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContextBlock;
+import me.boboballoon.innovativeitems.keywords.context.ConsumeContext;
+import me.boboballoon.innovativeitems.keywords.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.context.InteractContext;
+import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -31,52 +32,54 @@ public class AbilityTriggerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent event) {
-        ItemStack itemStack = event.getItem();
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            ItemStack itemStack = event.getItem();
 
-        if (itemStack == null) {
-            return;
-        }
+            if (itemStack == null) {
+                return;
+            }
 
-        if (itemStack.getType() == Material.AIR) {
-            return;
-        }
+            if (itemStack.getType() == Material.AIR) {
+                return;
+            }
 
-        Action action = event.getAction();
+            Action action = event.getAction();
 
-        if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
+            if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
+                return;
+            }
 
-        NBTItem nbtItem = new NBTItem(itemStack);
+            NBTItem nbtItem = new NBTItem(itemStack);
 
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-            return;
-        }
+            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                return;
+            }
 
-        String key = nbtItem.getString("innovativeplugin-customitem-id");
+            String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-        CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
 
-        if (item == null) {
-            LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-            return;
-        }
+            if (item == null) {
+                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                return;
+            }
 
-        Ability ability = item.getAbility();
+            Ability ability = item.getAbility();
 
-        if (ability == null) {
-            return;
-        }
+            if (ability == null) {
+                return;
+            }
 
-        AbilityTrigger trigger = ability.getTrigger();
+            AbilityTrigger trigger = ability.getTrigger();
 
-        if (trigger != AbilityTrigger.LEFT_CLICK && trigger != AbilityTrigger.RIGHT_CLICK) {
-            return;
-        }
+            if (trigger != AbilityTrigger.LEFT_CLICK && trigger != AbilityTrigger.RIGHT_CLICK) {
+                return;
+            }
 
-        InteractContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
+            InteractContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
 
-        ability.execute(context);
+            ability.execute(context);
+        });
     }
 
     /**
@@ -84,52 +87,54 @@ public class AbilityTriggerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteractBlock(PlayerInteractEvent event) {
-        ItemStack itemStack = event.getItem();
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            ItemStack itemStack = event.getItem();
 
-        if (itemStack == null) {
-            return;
-        }
+            if (itemStack == null) {
+                return;
+            }
 
-        if (itemStack.getType() == Material.AIR) {
-            return;
-        }
+            if (itemStack.getType() == Material.AIR) {
+                return;
+            }
 
-        Action action = event.getAction();
+            Action action = event.getAction();
 
-        if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
+            if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
+                return;
+            }
 
-        NBTItem nbtItem = new NBTItem(itemStack);
+            NBTItem nbtItem = new NBTItem(itemStack);
 
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-            return;
-        }
+            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                return;
+            }
 
-        String key = nbtItem.getString("innovativeplugin-customitem-id");
+            String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-        CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
 
-        if (item == null) {
-            LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-            return;
-        }
+            if (item == null) {
+                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                return;
+            }
 
-        Ability ability = item.getAbility();
+            Ability ability = item.getAbility();
 
-        if (ability == null) {
-            return;
-        }
+            if (ability == null) {
+                return;
+            }
 
-        AbilityTrigger trigger = ability.getTrigger();
+            AbilityTrigger trigger = ability.getTrigger();
 
-        if (trigger != AbilityTrigger.LEFT_CLICK_BLOCK && trigger != AbilityTrigger.RIGHT_CLICK_BLOCK) {
-            return;
-        }
+            if (trigger != AbilityTrigger.LEFT_CLICK_BLOCK && trigger != AbilityTrigger.RIGHT_CLICK_BLOCK) {
+                return;
+            }
 
-        InteractContextBlock context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
+            InteractContextBlock context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
 
-        ability.execute(context);
+            ability.execute(context);
+        });
     }
 
     /**
@@ -137,62 +142,64 @@ public class AbilityTriggerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamageByEntityDealt(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof LivingEntity)) {
-            return;
-        }
-
-        Player player = (Player) event.getDamager();
-        LivingEntity entity = (LivingEntity) event.getEntity();
-
-        PlayerInventory inventory = player.getInventory();
-
-        ItemStack[] items = new ItemStack[6];
-        for (int i = 0; i < 4; i++) {
-            items[i] = inventory.getArmorContents()[i];
-        }
-        items[4] = inventory.getItemInMainHand();
-        items[5] = inventory.getItemInOffHand();
-
-        for (ItemStack itemStack : items) {
-            if (itemStack == null) {
-                continue;
-            }
-
-            if (itemStack.getType() == Material.AIR) {
-                continue;
-            }
-
-            NBTItem nbtItem = new NBTItem(itemStack);
-
-            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof LivingEntity)) {
                 return;
             }
 
-            String key = nbtItem.getString("innovativeplugin-customitem-id");
+            Player player = (Player) event.getDamager();
+            LivingEntity entity = (LivingEntity) event.getEntity();
 
-            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+            PlayerInventory inventory = player.getInventory();
 
-            if (item == null) {
-                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-                return;
+            ItemStack[] items = new ItemStack[6];
+            for (int i = 0; i < 4; i++) {
+                items[i] = inventory.getArmorContents()[i];
             }
+            items[4] = inventory.getItemInMainHand();
+            items[5] = inventory.getItemInOffHand();
 
-            Ability ability = item.getAbility();
+            for (ItemStack itemStack : items) {
+                if (itemStack == null) {
+                    continue;
+                }
 
-            if (ability == null) {
-                return;
+                if (itemStack.getType() == Material.AIR) {
+                    continue;
+                }
+
+                NBTItem nbtItem = new NBTItem(itemStack);
+
+                if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                    return;
+                }
+
+                String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+                CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+
+                if (item == null) {
+                    LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                    return;
+                }
+
+                Ability ability = item.getAbility();
+
+                if (ability == null) {
+                    return;
+                }
+
+                AbilityTrigger trigger = ability.getTrigger();
+
+                if (trigger != AbilityTrigger.DAMAGE_DEALT) {
+                    return;
+                }
+
+                DamageContext context = new DamageContext(player, ability.getName(), entity, true);
+
+                ability.execute(context);
             }
-
-            AbilityTrigger trigger = ability.getTrigger();
-
-            if (trigger != AbilityTrigger.DAMAGE_DEALT) {
-                return;
-            }
-
-            DamageContext context = new DamageContext(player, ability.getName(), entity, true);
-
-            ability.execute(context);
-        }
+        });
     }
 
     /**
@@ -200,31 +207,73 @@ public class AbilityTriggerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamageByEntityTaken(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player) || !(event.getDamager() instanceof LivingEntity)) {
-            return;
-        }
-
-        Player player = (Player) event.getEntity();
-        LivingEntity entity = (LivingEntity) event.getDamager();
-
-        PlayerInventory inventory = player.getInventory();
-
-        ItemStack[] items = new ItemStack[6];
-        for (int i = 0; i < 4; i++) {
-            items[i] = inventory.getArmorContents()[i];
-        }
-        items[4] = inventory.getItemInMainHand();
-        items[5] = inventory.getItemInOffHand();
-
-        for (ItemStack itemStack : items) {
-            if (itemStack == null) {
-                continue;
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            if (!(event.getEntity() instanceof Player) || !(event.getDamager() instanceof LivingEntity)) {
+                return;
             }
 
-            if (itemStack.getType() == Material.AIR) {
-                continue;
-            }
+            Player player = (Player) event.getEntity();
+            LivingEntity entity = (LivingEntity) event.getDamager();
 
+            PlayerInventory inventory = player.getInventory();
+
+            ItemStack[] items = new ItemStack[6];
+            for (int i = 0; i < 4; i++) {
+                items[i] = inventory.getArmorContents()[i];
+            }
+            items[4] = inventory.getItemInMainHand();
+            items[5] = inventory.getItemInOffHand();
+
+            for (ItemStack itemStack : items) {
+                if (itemStack == null) {
+                    continue;
+                }
+
+                if (itemStack.getType() == Material.AIR) {
+                    continue;
+                }
+
+                NBTItem nbtItem = new NBTItem(itemStack);
+
+                if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                    return;
+                }
+
+                String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+                CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+
+                if (item == null) {
+                    LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                    return;
+                }
+
+                Ability ability = item.getAbility();
+
+                if (ability == null) {
+                    return;
+                }
+
+                AbilityTrigger trigger = ability.getTrigger();
+
+                if (trigger != AbilityTrigger.DAMAGE_TAKEN) {
+                    return;
+                }
+
+                DamageContext context = new DamageContext(player, ability.getName(), entity, false);
+
+                ability.execute(context);
+            }
+        });
+    }
+
+    /**
+     * Listener used for item eating ability triggers
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerConsumeItem(PlayerItemConsumeEvent event) {
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            ItemStack itemStack = event.getItem();
             NBTItem nbtItem = new NBTItem(itemStack);
 
             if (!nbtItem.hasKey("innovativeplugin-customitem")) {
@@ -246,51 +295,13 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            AbilityTrigger trigger = ability.getTrigger();
-
-            if (trigger != AbilityTrigger.DAMAGE_TAKEN) {
+            if (ability.getTrigger() != AbilityTrigger.CONSUME_ITEM) {
                 return;
             }
 
-            DamageContext context = new DamageContext(player, ability.getName(), entity, false);
+            ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getName(), itemStack);
 
             ability.execute(context);
-        }
-    }
-
-    /**
-     * Listener used for item eating ability triggers
-     */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerConsumeItem(PlayerItemConsumeEvent event) {
-        ItemStack itemStack = event.getItem();
-        NBTItem nbtItem = new NBTItem(itemStack);
-
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-            return;
-        }
-
-        String key = nbtItem.getString("innovativeplugin-customitem-id");
-
-        CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
-
-        if (item == null) {
-            LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-            return;
-        }
-
-        Ability ability = item.getAbility();
-
-        if (ability == null) {
-            return;
-        }
-
-        if (ability.getTrigger() != AbilityTrigger.CONSUME_ITEM) {
-            return;
-        }
-
-        ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getName(), itemStack);
-
-        ability.execute(context);
+        });
     }
 }

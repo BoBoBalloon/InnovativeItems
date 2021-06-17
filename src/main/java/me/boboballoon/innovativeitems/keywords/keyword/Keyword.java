@@ -43,13 +43,6 @@ public abstract class Keyword {
     }
 
     /**
-     * A method that returns the identifier of each keyword targeter allowed
-     *
-     * @return the identifier of each keyword targeter allowed
-     */
-    public abstract ImmutableList<String> getValidTargeters();
-
-    /**
      * A method that should be used to parse and initialize arguments (unsafe to use before Keyword::validate)
      *
      * @param context the context in which the keyword was used in
@@ -65,4 +58,18 @@ public abstract class Keyword {
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
     public abstract void execute(List<Object> arguments, RuntimeContext context);
+
+    /**
+     * A method that returns the identifier of each keyword targeter allowed
+     *
+     * @return the identifier of each keyword targeter allowed
+     */
+    public abstract ImmutableList<String> getValidTargeters();
+
+    /**
+     * A method that returns a boolean that is true when the keyword can be run async
+     *
+     * @return a boolean that is true when the keyword can be run async
+     */
+    public abstract boolean isAsync();
 }

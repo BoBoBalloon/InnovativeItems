@@ -5,8 +5,8 @@ import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.keyword.context.InteractContextBlock;
+import me.boboballoon.innovativeitems.keywords.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -133,5 +133,10 @@ public class ParticleKeyword extends Keyword {
     @Override
     public ImmutableList<String> getValidTargeters() {
         return ImmutableList.of("?player", "?entity", "?block");
+    }
+
+    @Override
+    public boolean isAsync() {
+        return true;
     }
 }

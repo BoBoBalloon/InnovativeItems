@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.keywords.keyword.context;
+package me.boboballoon.innovativeitems.keywords.context;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

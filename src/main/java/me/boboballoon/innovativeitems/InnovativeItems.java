@@ -29,9 +29,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     1. Add more basic keywords
-    2. Try and make abilities run on their own thread outside of bukkit scheduler
-    3. Add functionality to DelayKeyword.java
-    4. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 
     @Override

@@ -47,7 +47,7 @@ public class Ability {
     }
 
     /**
-     * A method used to execute an ability
+     * A method used to execute an ability (will always be fired async)
      *
      * @param context the context in which the ability was triggered
      */

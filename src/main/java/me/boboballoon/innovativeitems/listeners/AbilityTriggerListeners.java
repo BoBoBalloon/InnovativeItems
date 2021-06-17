@@ -9,6 +9,7 @@ import me.boboballoon.innovativeitems.keywords.context.ConsumeContext;
 import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.InteractContext;
 import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
+import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ import java.util.logging.Level;
 
 public class AbilityTriggerListeners implements Listener {
     /**
-     * Listener used for left click and right click ability triggers
+     * Listener used for all item click triggers
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent event) {
@@ -43,12 +44,6 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            Action action = event.getAction();
-
-            if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
-                return;
-            }
-
             NBTItem nbtItem = new NBTItem(itemStack);
 
             if (!nbtItem.hasKey("innovativeplugin-customitem")) {
@@ -70,71 +65,103 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            AbilityTrigger trigger = ability.getTrigger();
-
-            if (trigger != AbilityTrigger.LEFT_CLICK && trigger != AbilityTrigger.RIGHT_CLICK) {
-                return;
-            }
-
-            InteractContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
-
-            ability.execute(context);
+            this.checkLeftClick(event, ability);
+            this.checkLeftClickBlock(event, ability);
+            this.checkRightClick(event, ability);
+            this.checkRightClickBlock(event, ability);
         });
     }
 
     /**
-     * Listener used for left click and right click block ability triggers
+     * Util method to handle when item fires on left click
      */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onInteractBlock(PlayerInteractEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
-            ItemStack itemStack = event.getItem();
+    private void checkLeftClick(PlayerInteractEvent event, Ability ability) {
+        Action action = event.getAction();
 
-            if (itemStack == null) {
-                return;
-            }
+        if (action != Action.LEFT_CLICK_AIR && action != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
 
-            if (itemStack.getType() == Material.AIR) {
-                return;
-            }
+        if (ability.getTrigger() != AbilityTrigger.LEFT_CLICK) {
+            return;
+        }
 
-            Action action = event.getAction();
+        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
 
-            if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK) {
-                return;
-            }
+        Bukkit.broadcastMessage("left click"); //remove
 
-            NBTItem nbtItem = new NBTItem(itemStack);
+        ability.execute(context);
+    }
 
-            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                return;
-            }
+    /**
+     * Util method to handle when item fires on right click
+     */
+    private void checkRightClick(PlayerInteractEvent event, Ability ability) {
+        Action action = event.getAction();
 
-            String key = nbtItem.getString("innovativeplugin-customitem-id");
+        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
 
-            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+        if (ability.getTrigger() != AbilityTrigger.RIGHT_CLICK) {
+            return;
+        }
 
-            if (item == null) {
-                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-                return;
-            }
+        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
 
-            Ability ability = item.getAbility();
+        Bukkit.broadcastMessage("right click"); //remove
 
-            if (ability == null) {
-                return;
-            }
+        ability.execute(context);
+    }
 
-            AbilityTrigger trigger = ability.getTrigger();
+    /**
+     * Util method to handle when item fires on left click block
+     */
+    private void checkLeftClickBlock(PlayerInteractEvent event, Ability ability) {
+        if (!event.hasBlock()) {
+            return;
+        }
 
-            if (trigger != AbilityTrigger.LEFT_CLICK_BLOCK && trigger != AbilityTrigger.RIGHT_CLICK_BLOCK) {
-                return;
-            }
+        Action action = event.getAction();
 
-            InteractContextBlock context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
+        if (action != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
 
-            ability.execute(context);
-        });
+        if (ability.getTrigger() != AbilityTrigger.LEFT_CLICK_BLOCK) {
+            return;
+        }
+
+        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
+
+        Bukkit.broadcastMessage("left click block"); //remove
+
+        ability.execute(context);
+    }
+
+    /**
+     * Util method to handle when item fires on right click block
+     */
+    private void checkRightClickBlock(PlayerInteractEvent event, Ability ability) {
+        if (!event.hasBlock()) {
+            return;
+        }
+
+        Action action = event.getAction();
+
+        if (action != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        if (ability.getTrigger() != AbilityTrigger.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
+
+        Bukkit.broadcastMessage("right click block"); //remove
+
+        ability.execute(context);
     }
 
     /**

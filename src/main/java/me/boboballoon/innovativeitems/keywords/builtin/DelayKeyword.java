@@ -24,7 +24,7 @@ public class DelayKeyword extends Keyword {
         int delay = (Integer) arguments.get(0);
 
         try {
-            Thread.sleep(delay * 50); //delay in ticks, 1000 milliseconds in second and 20 ticks in second 1000 / 20 = 50
+            Thread.sleep(delay);
         } catch (InterruptedException ignore) {}
     }
 
@@ -42,7 +42,7 @@ public class DelayKeyword extends Keyword {
             return null;
         }
 
-        args.add(delay);
+        args.add(delay * 50); //delay in ticks, 1000 milliseconds in second and 20 ticks in second 1000 / 20 = 50
 
         return args;
     }

@@ -99,6 +99,7 @@ public final class GarbageCollector implements Listener {
     public void cleanInventory(Inventory inventory) {
         if (!this.enabled) {
             LogUtil.log(Level.WARNING, "The garbage collector tried to run while disabled!");
+            return;
         }
 
         ItemStack[] items = inventory.getContents();
@@ -149,6 +150,7 @@ public final class GarbageCollector implements Listener {
     public void cleanAllPlayerInventories() {
         if (!this.enabled) {
             LogUtil.log(Level.WARNING, "The garbage collector tried to run while disabled!");
+            return;
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {

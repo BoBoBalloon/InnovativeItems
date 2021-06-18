@@ -24,7 +24,7 @@ public class MessageKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         LivingEntity target = null;
         KeywordTargeter rawTarget = (KeywordTargeter) arguments.get(0);
 

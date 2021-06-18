@@ -1,11 +1,11 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.keywords.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
-import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that damages a selected target
+ * Class that represents a keyword in an ability config file that heals a selected target
  */
-public class DamageKeyword extends Keyword {
-    public DamageKeyword() {
-        super("damage", true, false);
+public class SetHealthKeyword extends Keyword {
+    public SetHealthKeyword() {
+        super("sethealth", true, false);
     }
 
     @Override
@@ -43,7 +43,13 @@ public class DamageKeyword extends Keyword {
 
         double amount = (Double) arguments.get(1);
 
-        target.damage(amount);
+        if (amount > target.getMaxHealth()) {
+            amount = target.getMaxHealth();
+        } else if (amount < 0) {
+            amount = 0;
+        }
+
+        target.setHealth(amount);
     }
 
     @Override
@@ -70,7 +76,7 @@ public class DamageKeyword extends Keyword {
         try {
             amount = Double.parseDouble(raw[1]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid damage entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(Level.WARNING, "There is not a valid health value entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -86,6 +92,6 @@ public class DamageKeyword extends Keyword {
 
     @Override
     public boolean isAsync() {
-        return false;
+        return true;
     }
 }

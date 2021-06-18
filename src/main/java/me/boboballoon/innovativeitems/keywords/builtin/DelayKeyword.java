@@ -20,7 +20,7 @@ public class DelayKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         int delay = (Integer) arguments.get(0);
 
         try {

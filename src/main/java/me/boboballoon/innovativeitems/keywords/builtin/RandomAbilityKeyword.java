@@ -24,7 +24,7 @@ public class RandomAbilityKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         List<String> rawAbilities = (List<String>) arguments.get(0);
         List<Ability> abilities = new ArrayList<>();
 

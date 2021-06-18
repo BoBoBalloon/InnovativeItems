@@ -22,7 +22,7 @@ public class CommandKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         String rawCommand = (String) arguments.get(0);
 
         try {

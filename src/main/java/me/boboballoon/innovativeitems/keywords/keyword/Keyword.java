@@ -90,10 +90,10 @@ public abstract class Keyword {
 
         Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
             this.call(arguments, context);
-            this.unpause();
+            this.unpause(); //fires after pause
         });
 
-        this.pause();
+        this.pause(); //fires before unpause due to thread shit
     }
 
     /**
@@ -108,7 +108,7 @@ public abstract class Keyword {
      */
     private synchronized void pause() {
         try {
-            this.wait();
+            this.wait(10000);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }

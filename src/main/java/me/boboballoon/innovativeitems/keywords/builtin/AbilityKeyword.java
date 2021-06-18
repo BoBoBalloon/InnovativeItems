@@ -22,7 +22,7 @@ public class AbilityKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         String rawAbility = (String) arguments.get(0);
 
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);

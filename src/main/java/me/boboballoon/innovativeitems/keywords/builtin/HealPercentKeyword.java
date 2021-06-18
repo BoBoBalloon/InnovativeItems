@@ -23,7 +23,7 @@ public class HealPercentKeyword extends Keyword {
     }
 
     @Override
-    public void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(List<Object> arguments, RuntimeContext context) {
         LivingEntity target = null;
         KeywordTargeter rawTarget = (KeywordTargeter) arguments.get(0);
 
@@ -78,7 +78,7 @@ public class HealPercentKeyword extends Keyword {
         try {
             percent = Double.parseDouble(raw[1]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid damage entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(Level.WARNING, "There is not a valid healing value entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 

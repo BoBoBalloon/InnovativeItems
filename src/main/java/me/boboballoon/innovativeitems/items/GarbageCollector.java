@@ -170,7 +170,7 @@ public final class GarbageCollector implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory!");
+        LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(player.getInventory()));
     }
@@ -204,7 +204,13 @@ public final class GarbageCollector implements Listener {
 
         Inventory inventory = event.getInventory();
 
-        LogUtil.log(Level.INFO, "Cleaning up inventory that is owned by a " + inventory.getHolder().getClass().getSimpleName() + " picked up an item!");
+        if (!(inventory.getHolder() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) inventory.getHolder();
+
+        LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(inventory));
     }

@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.keywords.context;
 
+import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -10,8 +11,8 @@ public class DamageContext extends RuntimeContext {
     private final LivingEntity entity;
     private final boolean playerDamager;
 
-    public DamageContext(Player player, String abilityName, LivingEntity entity, boolean playerDamager) {
-        super(player, abilityName);
+    public DamageContext(Player player, String abilityName, AbilityTrigger abilityTrigger, LivingEntity entity, boolean playerDamager) {
+        super(player, abilityName, abilityTrigger);
         this.entity = entity;
         this.playerDamager = playerDamager;
     }

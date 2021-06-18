@@ -23,7 +23,24 @@ public class AbilityKeyword extends Keyword {
 
     @Override
     public void execute(List<Object> arguments, RuntimeContext context) {
-        Ability ability = (Ability) arguments.get(0);
+        String rawAbility = (String) arguments.get(0);
+
+        Ability ability = InnovativeItems.getInstance().getCache().getAbility(rawAbility);
+
+        if (ability == null) {
+            LogUtil.log(Level.WARNING, "There is not a valid ability name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            return;
+        }
+
+        if (ability.getName().equals(context.getAbilityName())) {
+            LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to recursively call the " + context.getAbilityName() + " ability!");
+            return;
+        }
+
+        if (context.getAbilityTrigger() != ability.getTrigger()) {
+            LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same trigger as the " + context.getAbilityName() + " ability!");
+            return;
+        }
 
         ability.execute(context);
     }
@@ -34,24 +51,9 @@ public class AbilityKeyword extends Keyword {
         String[] raw = context.getContext();
         List<Object> args = new ArrayList<>();
 
-        Ability ability = InnovativeItems.getInstance().getCache().getAbility(raw[0]);
+        String rawAbility = raw[0];
 
-        if (ability == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid ability name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
-            return null;
-        }
-
-        if (ability.getName().equals(context.getAbilityName())) {
-            LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to recursively call the " + context.getAbilityName() + " ability!");
-            return null;
-        }
-
-        if (context.getAbilityTrigger() != ability.getTrigger()) {
-            LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same trigger as the " + context.getAbilityName() + " ability!");
-            return null;
-        }
-
-        args.add(ability);
+        args.add(rawAbility);
 
         return args;
     }

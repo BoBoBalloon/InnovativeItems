@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.keywords.context;
 
+import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
 
 /**
@@ -8,15 +9,17 @@ import org.bukkit.entity.Player;
 public class RuntimeContext {
     private final Player player;
     private final String abilityName;
+    private final AbilityTrigger abilityTrigger;
 
     /**
      * A constructor that builds the runtime context
      *
      * @param player the player involved with the execution
      */
-    public RuntimeContext(Player player, String abilityName) {
+    public RuntimeContext(Player player, String abilityName, AbilityTrigger abilityTrigger) {
         this.player = player;
         this.abilityName = abilityName;
+        this.abilityTrigger = abilityTrigger;
     }
 
     /**
@@ -35,5 +38,14 @@ public class RuntimeContext {
      */
     public String getAbilityName() {
         return this.abilityName;
+    }
+
+    /**
+     * A method that returns the trigger of the ability that fired this keyword
+     *
+     * @return the trigger of the ability that fired this keyword
+     */
+    public AbilityTrigger getAbilityTrigger() {
+        return this.abilityTrigger;
     }
 }

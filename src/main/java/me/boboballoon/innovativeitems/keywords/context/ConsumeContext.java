@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.keywords.context;
 
+import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 public class ConsumeContext extends RuntimeContext {
     private final ItemStack item;
 
-    public ConsumeContext(Player player, String abilityName, ItemStack item) {
-        super(player, abilityName);
+    public ConsumeContext(Player player, String abilityName, AbilityTrigger abilityTrigger, ItemStack item) {
+        super(player, abilityName, abilityTrigger);
         this.item = item;
     }
 

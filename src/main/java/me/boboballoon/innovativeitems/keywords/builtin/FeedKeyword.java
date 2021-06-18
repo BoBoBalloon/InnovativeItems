@@ -43,7 +43,8 @@ public class FeedKeyword extends Keyword {
             return;
         }
 
-        int amount = (Integer) arguments.get(1);
+        int rawAmount = (Integer) arguments.get(1);
+        int amount = rawAmount + target.getFoodLevel();
 
         target.setFoodLevel(amount);
     }

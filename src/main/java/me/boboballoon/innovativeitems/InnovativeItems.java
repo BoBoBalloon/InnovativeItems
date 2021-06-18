@@ -45,7 +45,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
-                new FeedKeyword());
+                new FeedKeyword(), new LightningKeyword());
     }
 
     @Override

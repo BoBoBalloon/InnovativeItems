@@ -7,7 +7,7 @@ import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that sets the health of a selected target
+ * Class that represents a keyword in an ability config file that damages a selected target
  */
-public class SetHealthKeyword extends Keyword {
-    public SetHealthKeyword() {
-        super("sethealth", true, false);
+public class FeedKeyword extends Keyword {
+    public FeedKeyword() {
+        super("feed", true, false);
     }
 
     @Override
     protected void call(List<Object> arguments, RuntimeContext context) {
-        LivingEntity target = null;
+        Player target = null;
         KeywordTargeter rawTarget = (KeywordTargeter) arguments.get(0);
 
         if (rawTarget == KeywordTargeter.PLAYER) {
@@ -33,7 +33,9 @@ public class SetHealthKeyword extends Keyword {
 
         if (context instanceof DamageContext && rawTarget == KeywordTargeter.ENTITY) {
             DamageContext damageContext = (DamageContext) context;
-            target = damageContext.getEntity();
+            if (damageContext.getEntity() instanceof Player) {
+                target = (Player) damageContext.getEntity();
+            }
         }
 
         if (target == null) {
@@ -41,15 +43,9 @@ public class SetHealthKeyword extends Keyword {
             return;
         }
 
-        double amount = (Double) arguments.get(1);
+        int amount = (Integer) arguments.get(1);
 
-        if (amount > target.getMaxHealth()) {
-            amount = target.getMaxHealth();
-        } else if (amount < 0) {
-            amount = 0;
-        }
-
-        target.setHealth(amount);
+        target.setFoodLevel(amount);
     }
 
     @Override
@@ -72,11 +68,11 @@ public class SetHealthKeyword extends Keyword {
 
         args.add(rawTarget);
 
-        double amount;
+        int amount;
         try {
-            amount = Double.parseDouble(raw[1]);
+            amount = Integer.parseInt(raw[1]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid health value entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(Level.WARNING, "There is not a valid food amount entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -92,6 +88,6 @@ public class SetHealthKeyword extends Keyword {
 
     @Override
     public boolean isAsync() {
-        return true;
+        return false;
     }
 }

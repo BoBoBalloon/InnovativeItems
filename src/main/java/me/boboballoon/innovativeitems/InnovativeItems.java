@@ -4,6 +4,7 @@ import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
@@ -24,6 +25,7 @@ public final class InnovativeItems extends JavaPlugin {
     private ConfigManager configManager;
     private KeywordManager keywordManager;
     private InnovativeCache cache;
+    private AbilityTimerManager timerManager;
     private GarbageCollector garbageCollector;
 
     /*
@@ -53,6 +55,7 @@ public final class InnovativeItems extends JavaPlugin {
 
         //load up and parse configs
         this.cache = new InnovativeCache();
+        this.timerManager = new AbilityTimerManager();
 
         this.configManager.init();
 
@@ -130,6 +133,15 @@ public final class InnovativeItems extends JavaPlugin {
      */
     public KeywordManager getKeywordManager() {
         return this.keywordManager;
+    }
+
+    /**
+     * A method used to return the active instance of the ability timer manager
+     *
+     * @return the active instance of the ability timer manager
+     */
+    public AbilityTimerManager getAbilityTimerManager() {
+        return this.timerManager;
     }
 
     /**

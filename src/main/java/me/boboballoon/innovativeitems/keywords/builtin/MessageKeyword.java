@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;

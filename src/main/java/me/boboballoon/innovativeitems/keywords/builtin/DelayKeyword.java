@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.keywords.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.Nullable;
 

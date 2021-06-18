@@ -9,7 +9,7 @@ import me.boboballoon.innovativeitems.keywords.context.ConsumeContext;
 import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.InteractContext;
 import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
-import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

@@ -145,6 +145,7 @@ public final class ConfigManager {
 
             InnovativeCache cache = plugin.getCache();
             cache.clearCache();
+            plugin.getAbilityTimerManager().clearCache();
 
             LogUtil.log(Level.INFO, "Cache invalidation complete!");
 
@@ -232,12 +233,16 @@ public final class ConfigManager {
                     continue;
                 }
 
-                Ability ability = AbilityParser.parseAbility(configuration.getConfigurationSection(key), key);
+                ConfigurationSection section = configuration.getConfigurationSection(key);
+
+                Ability ability = AbilityParser.parseAbility(section, key);
 
                 if (ability == null) {
                     //error message was already sent from parseAbility method, no need to put in here
                     continue;
                 }
+
+                AbilityParser.registerAbilityTimer(ability, section);
 
                 cache.registerAbility(ability);
             }

@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.config;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
@@ -10,6 +11,7 @@ import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class AbilityParser {
      * @param name the name of the ability
      * @return the ability (null if an error occurred)
      */
+    @Nullable
     public static Ability parseAbility(ConfigurationSection section, String name) {
         String triggerName;
         if (section.contains("trigger")) {
@@ -95,6 +98,44 @@ public class AbilityParser {
         }
 
         return new Ability(name, keywords, trigger);
+    }
+
+    /**
+     * A util method to check if the ability requires a timer and if so to register one
+     *
+     * @param ability the ability to check
+     * @param section the ability's config section
+     * @throws IllegalArgumentException when the section argument cannot possibility match the provided ability
+     */
+    public static void registerAbilityTimer(Ability ability, ConfigurationSection section) {
+        if (ability.getTrigger() != AbilityTrigger.TIMER) {
+            return;
+        }
+
+        String triggerName;
+        if (section.contains("trigger")) {
+            triggerName = section.getString("trigger");
+        } else {
+            LogUtil.log(Level.SEVERE, "(Dev warning) There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
+            throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to lack of trigger argument!");
+        }
+
+        if (!triggerName.matches("timer:\\d+")) {
+            LogUtil.log(Level.SEVERE, "(Dev warning) The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
+            throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the trigger argument not meeting the syntax requirements!");
+        }
+
+        long timer;
+        try {
+            timer = Long.parseLong(triggerName.split(":")[1]);
+        } catch (NumberFormatException ignored) {
+            LogUtil.log(Level.SEVERE, "(Dev warning) There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
+            throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the delay not matching the long data type!");
+        }
+
+        AbilityTimerManager manager = InnovativeItems.getInstance().getAbilityTimerManager();
+
+        manager.registerTimer(ability, timer);
     }
 
     /**

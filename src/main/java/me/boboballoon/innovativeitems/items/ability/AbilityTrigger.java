@@ -43,7 +43,12 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the ConsumeContext.java
      */
-    CONSUME_ITEM("item-consume");
+    CONSUME_ITEM("item-consume"),
+
+    /**
+     * An ability trigger that will always fire the RuntimeContext.java
+     */
+    TIMER("timer");
 
     private final String identifier;
     private final List<String> allowedTargeters;
@@ -84,6 +89,11 @@ public enum AbilityTrigger {
             if (identifier.equalsIgnoreCase(trigger.getIdentifier())) {
                 return trigger;
             }
+        }
+
+        //checks to make sure it matches the timer
+        if (identifier.matches("timer:\\d+")) { //regex = ^timer:\d+$
+            return AbilityTrigger.TIMER;
         }
 
         return null;

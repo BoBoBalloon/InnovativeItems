@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.keywords.context;
 
-import me.boboballoon.innovativeitems.keywords.keyword.RuntimeContext;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 

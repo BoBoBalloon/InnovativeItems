@@ -24,12 +24,12 @@ public class RandomAbilityKeyword extends Keyword {
     }
 
     @Override
-    public void execute(List<Object> arguments, RuntimeContext context) {
+    public void call(List<Object> arguments, RuntimeContext context) {
         List<String> rawAbilities = (List<String>) arguments.get(0);
         List<Ability> abilities = new ArrayList<>();
 
         for (String rawAbility : rawAbilities) {
-            Ability ability = InnovativeItems.getInstance().getCache().getAbility(rawAbility);
+            Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
 
             if (ability == null) {
                 LogUtil.log(Level.WARNING, "There is not a valid ability name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");

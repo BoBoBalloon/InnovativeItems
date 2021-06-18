@@ -118,7 +118,7 @@ public final class GarbageCollector implements Listener {
                 continue;
             }
 
-            CustomItem customItem = InnovativeItems.getInstance().getCache().getItem(nbtItem.getString("innovativeplugin-customitem-id"));
+            CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(nbtItem.getString("innovativeplugin-customitem-id"));
 
             if (customItem == null) {
                 if (this.shouldDelete) {

@@ -44,7 +44,7 @@ public final class InnovativeItems extends JavaPlugin {
 
         this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
-                new RandomAbilityKeyword(), new DamagePercentKeyword());
+                new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword());
     }
 
     @Override
@@ -96,6 +96,11 @@ public final class InnovativeItems extends JavaPlugin {
         return InnovativeItems.instance;
     }
 
+    /**
+     * A method used to return the active instance of the command manager
+     *
+     * @return the active instance of the command manager
+     */
     public BukkitCommandManager getCommandManager() {
         return this.commandManager;
     }
@@ -105,7 +110,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the cache
      */
-    public InnovativeCache getCache() {
+    public InnovativeCache getItemCache() {
         return this.cache;
     }
 

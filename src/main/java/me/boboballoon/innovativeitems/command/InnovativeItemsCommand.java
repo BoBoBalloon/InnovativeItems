@@ -55,7 +55,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        CustomItem customItem = InnovativeItems.getInstance().getCache().getItem(args[0]);
+        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(args[0]);
 
         if (customItem == null) {
             TextUtil.sendMessage(player, "&r&cYou have entered an item that does not exist!");
@@ -101,7 +101,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        CustomItem customItem = InnovativeItems.getInstance().getCache().getItem(args[1]);
+        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(args[1]);
 
         if (customItem == null) {
             TextUtil.sendMessage(sender, "&r&cYou have entered an item that does not exist!");

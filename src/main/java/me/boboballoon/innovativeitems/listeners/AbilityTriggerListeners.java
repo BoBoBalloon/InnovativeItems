@@ -52,7 +52,7 @@ public class AbilityTriggerListeners implements Listener {
 
             String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
             if (item == null) {
                 LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
@@ -195,7 +195,7 @@ public class AbilityTriggerListeners implements Listener {
 
                 String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-                CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+                CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
                 if (item == null) {
                     LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
@@ -260,7 +260,7 @@ public class AbilityTriggerListeners implements Listener {
 
                 String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-                CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+                CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
                 if (item == null) {
                     LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
@@ -301,7 +301,7 @@ public class AbilityTriggerListeners implements Listener {
 
             String key = nbtItem.getString("innovativeplugin-customitem-id");
 
-            CustomItem item = InnovativeItems.getInstance().getCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
             if (item == null) {
                 LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");

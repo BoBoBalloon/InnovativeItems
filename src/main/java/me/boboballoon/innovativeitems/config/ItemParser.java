@@ -131,7 +131,7 @@ public class ItemParser {
      */
     private static Ability getAbility(ConfigurationSection section, String itemName) {
         String rawAbility = section.getString("ability");
-        Ability ability = InnovativeItems.getInstance().getCache().getAbility(rawAbility);
+        Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
 
         if (ability == null) {
             LogUtil.log(Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");

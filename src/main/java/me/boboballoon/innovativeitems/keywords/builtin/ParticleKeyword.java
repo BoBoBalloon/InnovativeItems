@@ -25,7 +25,7 @@ public class ParticleKeyword extends Keyword {
     }
 
     @Override
-    public void execute(List<Object> arguments, RuntimeContext context) {
+    public void call(List<Object> arguments, RuntimeContext context) {
         Location location = null;
         KeywordTargeter rawLocation = (KeywordTargeter) arguments.get(0);
 

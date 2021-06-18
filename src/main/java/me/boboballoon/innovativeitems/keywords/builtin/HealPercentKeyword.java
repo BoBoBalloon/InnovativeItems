@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that damages by percent of max health at a selected target
+ * Class that represents a keyword in an ability config file that heals by percent of max health at a selected target
  */
-public class DamagePercentKeyword extends Keyword {
-    public DamagePercentKeyword() {
-        super("damagepercent", true, false);
+public class HealPercentKeyword extends Keyword {
+    public HealPercentKeyword() {
+        super("healpercent", true, false);
     }
 
     @Override
@@ -43,9 +43,15 @@ public class DamagePercentKeyword extends Keyword {
 
         double percent = (Double) arguments.get(1);
 
-        double amount = target.getMaxHealth() * percent;
+        double amount = target.getHealth() + (target.getMaxHealth() * percent);
 
-        target.damage(amount);
+        if (amount > target.getMaxHealth()) {
+            amount = target.getMaxHealth();
+        } else if (amount < 0) {
+            amount = 0;
+        }
+
+        target.setHealth(amount);
     }
 
     @Override
@@ -88,6 +94,6 @@ public class DamagePercentKeyword extends Keyword {
 
     @Override
     public boolean isAsync() {
-        return false;
+        return true;
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Class that represents a keyword in an ability config file that damages a selected target
+ * Class that represents a keyword in an ability config file that heals a selected target
  */
 public class HealKeyword extends Keyword {
     public HealKeyword() {
@@ -23,7 +23,7 @@ public class HealKeyword extends Keyword {
     }
 
     @Override
-    public void execute(List<Object> arguments, RuntimeContext context) {
+    public void call(List<Object> arguments, RuntimeContext context) {
         LivingEntity target = null;
         KeywordTargeter rawTarget = (KeywordTargeter) arguments.get(0);
 

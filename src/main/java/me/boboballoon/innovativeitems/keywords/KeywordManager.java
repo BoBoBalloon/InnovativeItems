@@ -27,7 +27,7 @@ public final class KeywordManager {
 
         if (this.contains(identifier)) {
             //unblocked because debug level may be null at this point
-            LogUtil.logUnblocked(Level.WARNING, "Keyword with the identifier of " + keyword.getIdentifier() + ", is already registered! Skipping...");
+            LogUtil.logUnblocked(Level.WARNING, "Keyword with the identifier of " + keyword.getIdentifier() + " is already registered! Skipping...");
             return;
         }
 

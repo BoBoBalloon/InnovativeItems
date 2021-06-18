@@ -1,7 +1,9 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +46,7 @@ public abstract class Keyword {
     }
 
     /**
-     * A method that should be used to parse and initialize arguments (unsafe to use before Keyword::validate)
+     * A method that should be used to parse and initialize arguments
      *
      * @param context the context in which the keyword was used in
      * @return the parsed arguments (null if an error occurred)
@@ -58,7 +60,7 @@ public abstract class Keyword {
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    public abstract void execute(List<Object> arguments, RuntimeContext context);
+    protected abstract void call(List<Object> arguments, RuntimeContext context);
 
     /**
      * A method that returns the identifier of each keyword targeter allowed
@@ -68,9 +70,47 @@ public abstract class Keyword {
     public abstract ImmutableList<String> getValidTargeters();
 
     /**
-     * A method that returns a boolean that is true when the keyword can be run async
+     * A method that returns a boolean that is true when the keyword will be run async
      *
-     * @return a boolean that is true when the keyword can be run async
+     * @return a boolean that is true when the keyword will be run async
      */
     public abstract boolean isAsync();
+
+    /**
+     * A method that executes code that will be fired by the keyword (FIRE ASYNC)
+     *
+     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
+     */
+    public void execute(List<Object> arguments, RuntimeContext context) {
+        if (this.isAsync()) {
+            this.call(arguments, context);
+            return;
+        }
+
+        Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
+            this.call(arguments, context);
+            this.unpause();
+        });
+
+        this.pause();
+    }
+
+    /**
+     * A util method to pause the current thread
+     */
+    private synchronized void unpause() {
+        this.notify();
+    }
+
+    /**
+     * A util method to unpause the current thread
+     */
+    private synchronized void pause() {
+        try {
+            this.wait();
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }

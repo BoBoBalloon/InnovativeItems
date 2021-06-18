@@ -143,8 +143,7 @@ public final class ConfigManager {
 
             LogUtil.log(Level.INFO, "Starting cache invalidation...");
 
-            InnovativeCache cache = plugin.getCache();
-            cache.clearCache();
+            plugin.getItemCache().clearCache();
             plugin.getAbilityTimerManager().clearCache();
 
             LogUtil.log(Level.INFO, "Cache invalidation complete!");
@@ -196,7 +195,7 @@ public final class ConfigManager {
 
         LogUtil.log(Level.INFO, "Directory initialization complete!");
 
-        InnovativeCache cache = plugin.getCache();
+        InnovativeCache cache = plugin.getItemCache();
 
         this.loadAbilities(abilities, cache);
 

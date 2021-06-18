@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -186,6 +187,24 @@ public final class GarbageCollector implements Listener {
         }
 
         LogUtil.log(Level.INFO, "Cleaning up container inventory that " + event.getPlayer().getName() + " opened!");
+
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(inventory));
+    }
+
+    /**
+     * Listen for when an item is picked up
+     */
+    @EventHandler
+    public void onItemPickup(InventoryPickupItemEvent event) {
+        NBTItem nbtItem = new NBTItem(event.getItem().getItemStack());
+
+        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+            return;
+        }
+
+        Inventory inventory = event.getInventory();
+
+        LogUtil.log(Level.INFO, "Cleaning up inventory that is owned by a " + inventory.getHolder().getClass().getSimpleName() + " picked up an item!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(inventory));
     }

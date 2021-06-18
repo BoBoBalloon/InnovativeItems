@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -166,7 +167,7 @@ public final class GarbageCollector implements Listener {
     /**
      * Listen for when a player joins and check their inventory
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
@@ -178,7 +179,7 @@ public final class GarbageCollector implements Listener {
     /**
      * Listen for when a container opens
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryOpen(InventoryOpenEvent event) {
         Inventory inventory = event.getInventory();
 
@@ -194,7 +195,7 @@ public final class GarbageCollector implements Listener {
     /**
      * Listen for when an item is picked up
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onItemPickup(InventoryPickupItemEvent event) {
         NBTItem nbtItem = new NBTItem(event.getItem().getItemStack());
 

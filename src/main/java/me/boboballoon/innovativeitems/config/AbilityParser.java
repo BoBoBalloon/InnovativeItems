@@ -92,7 +92,7 @@ public class AbilityParser {
                 continue;
             }
 
-            KeywordContext context = new KeywordContext(rawArguments, name);
+            KeywordContext context = new KeywordContext(rawArguments, name, trigger);
 
             keywords.add(new ActiveKeyword(keyword, context));
         }

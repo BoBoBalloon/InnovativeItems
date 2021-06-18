@@ -88,8 +88,6 @@ public class AbilityTriggerListeners implements Listener {
 
         RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
 
-        Bukkit.broadcastMessage("left click"); //remove
-
         ability.execute(context);
     }
 
@@ -108,8 +106,6 @@ public class AbilityTriggerListeners implements Listener {
         }
 
         RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), action, event.getHand());
-
-        Bukkit.broadcastMessage("right click"); //remove
 
         ability.execute(context);
     }
@@ -134,8 +130,6 @@ public class AbilityTriggerListeners implements Listener {
 
         RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
 
-        Bukkit.broadcastMessage("left click block"); //remove
-
         ability.execute(context);
     }
 
@@ -158,8 +152,6 @@ public class AbilityTriggerListeners implements Listener {
         }
 
         RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), action, event.getHand(), event.getClickedBlock());
-
-        Bukkit.broadcastMessage("right click block"); //remove
 
         ability.execute(context);
     }

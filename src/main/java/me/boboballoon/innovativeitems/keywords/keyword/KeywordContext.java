@@ -1,15 +1,19 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+
 /**
  * Represents the context in which a keyword was used in
  */
 public class KeywordContext {
     private final String[] context;
     private final String abilityName;
+    private final AbilityTrigger abilityTrigger;
 
-    public KeywordContext(String[] context, String abilityName) {
+    public KeywordContext(String[] context, String abilityName, AbilityTrigger abilityTrigger) {
         this.context = context;
         this.abilityName = abilityName;
+        this.abilityTrigger = abilityTrigger;
     }
 
     /**
@@ -19,6 +23,15 @@ public class KeywordContext {
      */
     public String[] getContext() {
         return this.context;
+    }
+
+    /**
+     * A method that returns the trigger of the ability that contains this keyword
+     *
+     * @return the trigger of the ability that contains this keyword
+     */
+    public AbilityTrigger getAbilityTrigger() {
+        return this.abilityTrigger;
     }
 
     /**

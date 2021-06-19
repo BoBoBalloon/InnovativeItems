@@ -46,6 +46,14 @@ public abstract class Keyword {
     }
 
     /**
+     * A method that executes code that will be fired by the keyword
+     *
+     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
+     */
+    protected abstract void call(List<Object> arguments, RuntimeContext context);
+
+    /**
      * A method that should be used to parse and initialize arguments
      *
      * @param context the context in which the keyword was used in
@@ -53,14 +61,6 @@ public abstract class Keyword {
      */
     @Nullable
     public abstract List<Object> load(KeywordContext context);
-
-    /**
-     * A method that executes code that will be fired by the keyword
-     *
-     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
-     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
-     */
-    protected abstract void call(List<Object> arguments, RuntimeContext context);
 
     /**
      * A method that returns the identifier of each keyword targeter allowed

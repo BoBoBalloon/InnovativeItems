@@ -107,7 +107,7 @@ public class ItemParser {
         //skull item
         if (section.contains("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getSkullName(skullSection));
+            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
@@ -247,6 +247,17 @@ public class ItemParser {
         }
 
         return section.getString("player-name");
+    }
+
+    /**
+     * Get the skull base64 field from an skull config section
+     */
+    private static String getSkullBase64(ConfigurationSection section) {
+        if (!section.contains("base64")) {
+            return null;
+        }
+
+        return section.getString("base64");
     }
 
     /**

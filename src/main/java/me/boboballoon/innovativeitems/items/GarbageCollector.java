@@ -168,7 +168,7 @@ public final class GarbageCollector implements Listener {
      * Listen for when a player joins and check their inventory
      */
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    private void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
@@ -180,7 +180,7 @@ public final class GarbageCollector implements Listener {
      * Listen for when a container opens
      */
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onInventoryOpen(InventoryOpenEvent event) {
+    private void onInventoryOpen(InventoryOpenEvent event) {
         Inventory inventory = event.getInventory();
 
         if (!(inventory.getHolder() instanceof Container)) {
@@ -196,7 +196,7 @@ public final class GarbageCollector implements Listener {
      * Listen for when an item is picked up
      */
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onItemPickup(InventoryPickupItemEvent event) {
+    private void onItemPickup(InventoryPickupItemEvent event) {
         NBTItem nbtItem = new NBTItem(event.getItem().getItemStack());
 
         if (!nbtItem.hasKey("innovativeplugin-customitem")) {

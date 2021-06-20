@@ -41,9 +41,6 @@ public class InnovativeItemsCommand extends BaseCommand {
 
     /**
      * A "command" that gives the executing player a custom item
-     *
-     * @param player the player that executed the command
-     * @param args the args that the player entered
      */
     @Subcommand("get")
     @Conditions("is-player")
@@ -81,9 +78,6 @@ public class InnovativeItemsCommand extends BaseCommand {
 
     /**
      * A "command" that gives a player a custom item
-     *
-     * @param sender the command sender that executed the command
-     * @param args the args that the player entered
      */
     @Subcommand("give")
     @CommandCompletion("@players @valid-items @range:1-64 -s @nothing")
@@ -129,8 +123,6 @@ public class InnovativeItemsCommand extends BaseCommand {
 
     /**
      * A "command" used to set the current debug level
-     *
-     * @param sender the command sender that executed the command
      */
     @Subcommand("debug")
     @CommandCompletion("@range:0-3 @nothing")
@@ -158,8 +150,6 @@ public class InnovativeItemsCommand extends BaseCommand {
 
     /**
      * A "command" used to reload all caches from disk
-     *
-     * @param sender the command sender that executed the command
      */
     @Subcommand("reload")
     @CommandCompletion("@nothing")

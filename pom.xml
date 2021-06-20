@@ -8,7 +8,6 @@
     <artifactId>InnovativeItems</artifactId>
     <version>0.1</version>
     <packaging>jar</packaging>
-
     <name>InnovativeItems</name>
 
     <description>A customizable item plugin that allows server owners to build custom items without any Java

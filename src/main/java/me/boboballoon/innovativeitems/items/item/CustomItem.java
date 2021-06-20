@@ -53,7 +53,7 @@ public interface CustomItem {
      * @param unbreakable if the custom item is unbreakable
      * @return the itemstack
      */
-    static ItemStack generateItemNormal(@NotNull String name, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
+    static ItemStack generateItem(@NotNull String name, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 

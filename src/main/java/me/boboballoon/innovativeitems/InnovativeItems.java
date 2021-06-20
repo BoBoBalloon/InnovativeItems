@@ -30,9 +30,9 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Revise the docs
-    2. Give to T00P
-    3. Test in minecraft 1.17
+    1. Get logo designed
+    2. Get support discord up and running
+    3. Make alpha version public and free on spigot
     4. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
      */
 

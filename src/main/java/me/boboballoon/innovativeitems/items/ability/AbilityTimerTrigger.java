@@ -31,7 +31,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
      */
     public AbilityTimerTrigger(long timer, Set<Ability> abilities) {
         this.abilities = abilities;
-        this.runTaskTimerAsynchronously(InnovativeItems.getInstance(), 100L, timer);
+        this.runTaskTimerAsynchronously(InnovativeItems.getInstance(), 0L, timer);
     }
 
     /**

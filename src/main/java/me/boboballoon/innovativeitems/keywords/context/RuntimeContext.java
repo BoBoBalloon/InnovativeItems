@@ -15,6 +15,8 @@ public class RuntimeContext {
      * A constructor that builds the runtime context
      *
      * @param player the player involved with the execution
+     * @param abilityName the name of the ability involved with the execution
+     * @param abilityTrigger the trigger of the ability involved with the execution
      */
     public RuntimeContext(Player player, String abilityName, AbilityTrigger abilityTrigger) {
         this.player = player;

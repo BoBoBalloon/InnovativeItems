@@ -87,7 +87,7 @@ public class CustomItemLeatherArmor implements CustomItem {
      * @return the itemstack
      */
     private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
-        ItemStack item = CustomItem.generateItemNormal(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);
+        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
 
         if (rgb != null) {

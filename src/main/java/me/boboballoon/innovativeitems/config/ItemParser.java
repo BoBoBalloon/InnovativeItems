@@ -25,7 +25,12 @@ import java.util.logging.Level;
 /**
  * A class built for parsing configuration sections and convert into CustomItem objects
  */
-public class ItemParser {
+public final class ItemParser {
+    /**
+     * Constructor to prevent people from using this util class in an object oriented way
+     */
+    private ItemParser() {}
+
     /**
      * A util method used to parse a custom item from a config section
      * 

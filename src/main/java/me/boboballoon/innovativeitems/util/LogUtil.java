@@ -7,7 +7,12 @@ import java.util.logging.Level;
 /**
  * A class used to store util methods regarding logging
  */
-public class LogUtil {
+public final class LogUtil {
+    /**
+     * Constructor to prevent people from using this util class in an object oriented way
+     */
+    private LogUtil() {}
+
     /**
      * Method wrapper of log method with debug level checks
      * Debug level of 3 allows everything

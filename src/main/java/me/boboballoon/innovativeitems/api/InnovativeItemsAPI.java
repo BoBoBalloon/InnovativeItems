@@ -8,7 +8,12 @@ import me.boboballoon.innovativeitems.keywords.KeywordManager;
 /**
  * A class used to easily retrieve internal information about the plugin
  */
-public class InnovativeItemsAPI {
+public final class InnovativeItemsAPI {
+    /**
+     * Constructor to prevent people from using this util class in an object oriented way
+     */
+    private InnovativeItemsAPI() {}
+
     /**
      * A method used to return the active instance of the keyword manager
      *

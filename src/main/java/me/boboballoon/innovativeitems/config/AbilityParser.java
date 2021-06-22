@@ -20,7 +20,12 @@ import java.util.logging.Level;
 /**
  * A class built for parsing configuration sections and convert into Ability objects
  */
-public class AbilityParser {
+public final class AbilityParser {
+    /**
+     * Constructor to prevent people from using this util class in an object oriented way
+     */
+    private AbilityParser() {}
+
     /**
      * A util method used to parse a custom item from a config section
      *

@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems;
 
-import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.PaperCommandManager;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public final class InnovativeItems extends JavaPlugin {
     private static InnovativeItems instance;
 
-    private BukkitCommandManager commandManager;
+    private PaperCommandManager commandManager;
     private ConfigManager configManager;
     private KeywordManager keywordManager;
     private InnovativeCache cache;
@@ -30,10 +30,9 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Get logo designed
-    2. Get support discord up and running
-    3. Make alpha version public and free on spigot
-    4. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    1. Unlock perms to post premium resource on spigot
+    2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    3. Build ability conditionals api and make it work dumbass
      */
 
     @Override
@@ -68,7 +67,7 @@ public final class InnovativeItems extends JavaPlugin {
 
         //register commands and conditions
         LogUtil.log(Level.INFO, "Registering commands...");
-        this.commandManager = new BukkitCommandManager(this);
+        this.commandManager = new PaperCommandManager(this);
 
         this.commandManager.getCommandConditions().addCondition("is-player", context -> {
             if (!(context.getIssuer().getIssuer() instanceof Player)) {
@@ -104,7 +103,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the command manager
      */
-    public BukkitCommandManager getCommandManager() {
+    public PaperCommandManager getCommandManager() {
         return this.commandManager;
     }
 

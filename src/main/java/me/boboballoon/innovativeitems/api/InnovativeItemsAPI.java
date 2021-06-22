@@ -5,6 +5,9 @@ import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 
+/**
+ * A class used to easily retrieve internal information about the plugin
+ */
 public class InnovativeItemsAPI {
     /**
      * A method used to return the active instance of the keyword manager

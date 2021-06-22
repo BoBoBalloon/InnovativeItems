@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * A class built for parsing configuration sections and convert into CustomItem objects
+ * A class built for parsing configuration sections and convert into Ability objects
  */
 public class AbilityParser {
     /**

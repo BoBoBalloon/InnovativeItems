@@ -30,9 +30,12 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Unlock perms to post premium resource on spigot
+    1. Structure the plugin page and make gifs of using the plugin! (make a paypal account)
     2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
-    3. Build ability conditionals api and make it work dumbass
+    3. Add support for banners (items)
+    4. Add support for fireworks (items)
+    5. Add support for books (items)
+    5. Build ability conditionals api and make it work dumbass
      */
 
     @Override

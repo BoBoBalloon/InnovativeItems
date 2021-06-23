@@ -93,22 +93,22 @@ public abstract class Keyword {
             this.unpause(); //fires after pause
         });
 
-        this.pause(); //fires before unpause due to thread shit
+        this.pause(); //fires before unpause due to time it takes to go through bukkit scheduler
     }
 
     /**
-     * A util method to pause the current thread
+     * A util method to unpause the current thread
      */
     private synchronized void unpause() {
         this.notify();
     }
 
     /**
-     * A util method to unpause the current thread
+     * A util method to pause the current thread
      */
     private synchronized void pause() {
         try {
-            this.wait(10000);
+            this.wait(10000); //timeout of 10 seconds (time provided in milliseconds)
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }

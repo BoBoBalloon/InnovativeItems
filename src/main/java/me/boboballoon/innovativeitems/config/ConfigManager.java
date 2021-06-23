@@ -38,9 +38,34 @@ public final class ConfigManager {
         plugin.saveDefaultConfig();
         FileConfiguration config = plugin.getConfig();
 
-        this.setDebugLevel(config.getInt("debug-level"));
-        this.setShouldUpdate(config.getBoolean("garbage-collector.should-update"));
-        this.setShouldDelete(config.getBoolean("garbage-collector.should-delete"));
+        int debugLevel;
+        if (config.contains("debug-level")) {
+            debugLevel = config.getInt("debug-level");
+        } else {
+            debugLevel = 2;
+            config.set("debug-level", 2);
+        }
+        this.setDebugLevel(debugLevel);
+
+        boolean shouldUpdate;
+        if (config.contains("garbage-collector.should-update")) {
+            shouldUpdate = config.getBoolean("garbage-collector.should-update");
+        } else {
+            shouldUpdate = true;
+            config.set("garbage-collector.should-update", true);
+        }
+        this.setShouldUpdate(shouldUpdate);
+
+        boolean shouldDelete;
+        if (config.contains("garbage-collector.should-delete")) {
+            shouldDelete = config.getBoolean("garbage-collector.should-delete");
+        } else {
+            shouldDelete = true;
+            config.set("garbage-collector.should-delete", true);
+        }
+        this.setShouldDelete(shouldDelete);
+
+        plugin.saveConfig();
     }
 
     /**

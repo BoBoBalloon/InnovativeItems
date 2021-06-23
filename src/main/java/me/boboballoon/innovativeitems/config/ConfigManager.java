@@ -34,10 +34,18 @@ public final class ConfigManager {
     private boolean shouldDeleteLocal;
 
     public ConfigManager() {
+        this.reloadMainConfigValues();
+    }
+
+    /**
+     * A util method that reloads all values of the main plugin config file
+     */
+    public void reloadMainConfigValues() {
         Plugin plugin = InnovativeItems.getInstance();
         plugin.saveDefaultConfig();
         FileConfiguration config = plugin.getConfig();
 
+        //load up debug level, sets to 2 if no value is present
         int debugLevel;
         if (config.contains("debug-level")) {
             debugLevel = config.getInt("debug-level");
@@ -45,8 +53,9 @@ public final class ConfigManager {
             debugLevel = 2;
             config.set("debug-level", 2);
         }
-        this.setDebugLevel(debugLevel);
+        this.setDebugLevel(debugLevel, false);
 
+        //load up garbage collector should update option, sets to true if no value is present
         boolean shouldUpdate;
         if (config.contains("garbage-collector.should-update")) {
             shouldUpdate = config.getBoolean("garbage-collector.should-update");
@@ -56,6 +65,7 @@ public final class ConfigManager {
         }
         this.setShouldUpdate(shouldUpdate);
 
+        //load up garbage collector should delete option, sets to true if no value is present
         boolean shouldDelete;
         if (config.contains("garbage-collector.should-delete")) {
             shouldDelete = config.getBoolean("garbage-collector.should-delete");
@@ -81,11 +91,9 @@ public final class ConfigManager {
      * A method used to set the current debug level
      *
      * @param debugLevel the debug level you wish to set to
+     * @param saveConfig if the config file should be updated to reflect this change
      */
-    public void setDebugLevel(int debugLevel) {
-        Plugin plugin = InnovativeItems.getInstance();
-        FileConfiguration config = plugin.getConfig();
-
+    public void setDebugLevel(int debugLevel, boolean saveConfig) {
         if (debugLevel > 3) {
             this.debugLevel = 3;
         } else if (debugLevel < 0) {
@@ -94,8 +102,13 @@ public final class ConfigManager {
             this.debugLevel = debugLevel;
         }
 
-        config.set("debug-level", this.debugLevel);
-        plugin.saveConfig();
+        if (saveConfig) {
+            Plugin plugin = InnovativeItems.getInstance();
+            FileConfiguration config = plugin.getConfig();
+
+            config.set("debug-level", this.debugLevel);
+            plugin.saveConfig();
+        }
     }
 
     /**
@@ -155,14 +168,7 @@ public final class ConfigManager {
 
             plugin.reloadConfig();
 
-            FileConfiguration config = plugin.getConfig();
-
-            //debug level
-            this.setDebugLevel(config.getInt("debug-level"));
-
-            //garbage collector
-            this.setShouldUpdate(config.getBoolean("garbage-collector.should-update"));
-            this.setShouldDelete(config.getBoolean("garbage-collector.should-delete"));
+            this.reloadMainConfigValues();
 
             LogUtil.log(Level.INFO, "Basic config reload complete!");
 

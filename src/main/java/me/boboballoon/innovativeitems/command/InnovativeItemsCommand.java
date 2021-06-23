@@ -143,7 +143,7 @@ public class InnovativeItemsCommand extends BaseCommand {
 
         ConfigManager configManager = InnovativeItems.getInstance().getConfigManager();
 
-        configManager.setDebugLevel(level);
+        configManager.setDebugLevel(level, true);
 
         TextUtil.sendMessage(sender, "&r&aYou have set the debug level to " + configManager.getDebugLevel() + "!");
     }

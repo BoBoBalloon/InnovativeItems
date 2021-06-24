@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * An interface to be implemented by all custom items
+ */
 public interface CustomItem {
     /**
      * A method used to get the internal name of the custom item

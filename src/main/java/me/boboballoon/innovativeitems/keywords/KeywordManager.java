@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+/**
+ * A class that is responsible for holding all keywords in memory during runtime
+ */
 public final class KeywordManager {
     private final HashMap<String, Keyword> keywords;
 

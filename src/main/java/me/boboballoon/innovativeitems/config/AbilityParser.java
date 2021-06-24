@@ -27,7 +27,7 @@ public final class AbilityParser {
     private AbilityParser() {}
 
     /**
-     * A util method used to parse a custom item from a config section
+     * A util method used to parse a custom ability from a config section
      *
      * @param section the config section
      * @param name the name of the ability

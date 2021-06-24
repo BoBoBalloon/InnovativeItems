@@ -30,12 +30,16 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Structure the plugin page and make gifs of using the plugin! (make a paypal account)
-    2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
-    3. Add support for banners (items)
-    4. Add support for fireworks (items)
-    5. Add support for books (items)
-    5. Build ability conditionals api and make it work dumbass
+    1. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    2. Add support for banners (items)
+    3. Add support for fireworks (items)
+    4. Add support for books (items)
+    5. sound keyword (play sound effect)
+    6. Add example configs that are generated on reload (put option in main config to disable)
+    7. teleport keyword
+    8. giveitem keyword (give a custom item)
+    9. gamemode keyword (set a players gamemode)
+    10. Build ability conditionals api and make it work dumbass
      */
 
     @Override

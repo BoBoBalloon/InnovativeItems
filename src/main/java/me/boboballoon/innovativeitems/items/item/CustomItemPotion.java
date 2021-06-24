@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * A class that represents a custom item that is a potion
+ */
 public class CustomItemPotion implements CustomItem {
     private final String name;
     private final Ability ability;

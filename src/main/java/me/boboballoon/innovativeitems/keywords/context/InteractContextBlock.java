@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
 
+/**
+ * A class that represents context where the item was clicked and targeting a block that can assist execution that cannot be cached and must be parsed during runtime separately
+ */
 public class InteractContextBlock extends InteractContext {
     private final Block block;
 

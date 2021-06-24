@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * A class that represents a custom item
+ * A class that represents a custom item that is a player skull
  */
 public class CustomItemSkull implements CustomItem {
     private final String name;

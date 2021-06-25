@@ -82,7 +82,7 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Subcommand("give")
     @CommandCompletion("@players @valid-items @range:1-64 -s @nothing")
     public void onGiveItem(CommandSender sender, String[] args) {
-        if (args.length < 3 || args.length > 4) {
+        if (args.length < 2 || args.length > 4) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");
             this.onHelp(sender);
             return;
@@ -104,7 +104,11 @@ public class InnovativeItemsCommand extends BaseCommand {
 
         int amount;
         try {
-            amount = Integer.parseInt(args[2]);
+            if (args.length > 2) {
+                amount = Integer.parseInt(args[2]);
+            } else {
+                amount = 1;
+            }
         } catch (NumberFormatException e) {
             TextUtil.sendMessage(sender, "&r&cYou have entered an invalid amount!");
             return;

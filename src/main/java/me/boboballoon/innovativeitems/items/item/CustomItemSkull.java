@@ -108,9 +108,7 @@ public class CustomItemSkull implements CustomItem {
             Method setProfile = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
             setProfile.setAccessible(true);
 
-            UUID uuid = new UUID(base64.substring(base64.length() - 20).hashCode(), base64.substring(base64.length() - 10).hashCode());
-
-            GameProfile profile = new GameProfile(uuid, "skull-texture");
+            GameProfile profile = new GameProfile(UUID.randomUUID(), "skull-texture");
             profile.getProperties().put("textures", new Property("textures", base64));
 
             setProfile.invoke(meta, profile);

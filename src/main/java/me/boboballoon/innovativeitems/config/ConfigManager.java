@@ -272,9 +272,14 @@ public final class ConfigManager {
                     continue;
                 }
 
-                AbilityParser.registerAbilityTimer(ability, section);
-
                 cache.registerAbility(ability);
+
+                //if it is not present in the cache something went wrong, do not register an ability timer
+                if (!cache.contains(key)) {
+                    continue;
+                }
+
+                AbilityParser.registerAbilityTimer(ability, section);
             }
         }
 

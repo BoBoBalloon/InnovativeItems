@@ -42,6 +42,11 @@ public final class InnovativeItems extends JavaPlugin {
     10. Build ability conditionals api and make it work dumbass
      */
 
+    /*
+    CHANGE LIST:
+    1. Amount arg in the give command can now be omitted
+     */
+
     @Override
     public void onLoad() {
         //instance init

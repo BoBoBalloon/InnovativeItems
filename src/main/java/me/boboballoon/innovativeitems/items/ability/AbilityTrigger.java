@@ -13,59 +13,71 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    RIGHT_CLICK("right-click"),
+    RIGHT_CLICK("right-click", null),
 
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    LEFT_CLICK("left-click"),
+    LEFT_CLICK("left-click", null),
 
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    RIGHT_CLICK_BLOCK("right-click-block", "?block"),
+    RIGHT_CLICK_BLOCK("right-click-block", null, "?block"),
 
     /**
      * An ability trigger that will always fire the InteractContext.java
      */
-    LEFT_CLICK_BLOCK("left-click-block", "?block"),
+    LEFT_CLICK_BLOCK("left-click-block", null, "?block"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_DEALT("damage-dealt", "?entity"),
+    DAMAGE_DEALT("damage-dealt", null, "?entity"),
 
     /**
      * An ability trigger that will always fire the DamageContext.java
      */
-    DAMAGE_TAKEN("damage-taken", "?entity"),
+    DAMAGE_TAKEN("damage-taken", null, "?entity"),
 
     /**
      * An ability trigger that will always fire the ConsumeContext.java
      */
-    CONSUME_ITEM("item-consume"),
+    CONSUME_ITEM("item-consume", null),
 
     /**
      * An ability trigger that will always fire the RuntimeContext.java
      */
-    TIMER("timer");
+    TIMER("timer", "timer:\\d+");
 
     private final String identifier;
+    private final String regex;
     private final List<String> allowedTargeters;
 
-    AbilityTrigger(String identifier, String... allowedTargeters) {
+    AbilityTrigger(String identifier, @Nullable String regex, String... allowedTargeters) {
         this.identifier = identifier;
+        this.regex = regex;
         this.allowedTargeters = this.toList(allowedTargeters);
         this.allowedTargeters.add("?player"); //player is valid on all triggers
     }
 
     /**
-     * A method that returns the identifier that is used to parse the ability trigger
+     * A method that returns the identifier that is used to identify and sometimes parse the ability trigger
      *
-     * @return the identifier that is used to parse the ability trigger
+     * @return the identifier that is used to identify and sometimes parse the ability trigger
      */
     public String getIdentifier() {
         return this.identifier;
+    }
+
+    /**
+     * A method that returns the specific regex that is used to parse the ability trigger
+     *
+     * @return the specific regex that is used to parse the ability trigger
+     */
+    @Nullable
+    public String getRegex() {
+        return this.regex;
     }
 
     /**
@@ -78,22 +90,21 @@ public enum AbilityTrigger {
     }
 
     /**
-     * A method used to identify an ability trigger via its identifier
+     * A method used to identify an ability trigger via a provided string
      *
-     * @param identifier the trigger's identifier
+     * @param provided the provided string
      * @return the corresponding ability trigger (null if nothing matches)
      */
     @Nullable
-    public static AbilityTrigger getFromIdentifier(String identifier) {
+    public static AbilityTrigger getFromIdentifier(String provided) {
         for (AbilityTrigger trigger : AbilityTrigger.values()) {
-            if (identifier.equalsIgnoreCase(trigger.getIdentifier())) {
+            if (trigger.getRegex() != null && provided.matches(trigger.getRegex())) {
                 return trigger;
             }
-        }
 
-        //checks to make sure it matches the timer
-        if (identifier.matches("timer:\\d+")) { //regex = ^timer:\d+$
-            return AbilityTrigger.TIMER;
+            if (provided.equalsIgnoreCase(trigger.getIdentifier())) {
+                return trigger;
+            }
         }
 
         return null;

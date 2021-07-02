@@ -45,7 +45,9 @@ public final class InnovativeItems extends JavaPlugin {
     13. durabilitydamage keyword
     14. durabilityheal keyword
     15. gamemode keyword (set a players gamemode)
-    16. Build ability conditionals api and make it work dumbass
+    16. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    17. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    18. Build ability conditionals api and make it work dumbass
      */
 
     /*

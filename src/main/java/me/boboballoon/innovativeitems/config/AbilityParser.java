@@ -125,7 +125,7 @@ public final class AbilityParser {
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to lack of trigger argument!");
         }
 
-        if (!triggerName.matches("timer:\\d+")) {
+        if (!triggerName.matches(AbilityTrigger.TIMER.getRegex())) {
             LogUtil.log(Level.SEVERE, "(Dev warning) The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the trigger argument not meeting the syntax requirements!");
         }

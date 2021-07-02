@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.items.ability;
 
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -52,13 +53,12 @@ public enum AbilityTrigger {
 
     private final String identifier;
     private final String regex;
-    private final List<String> allowedTargeters;
+    private final ImmutableList<String> allowedTargeters;
 
     AbilityTrigger(String identifier, @Nullable String regex, String... allowedTargeters) {
         this.identifier = identifier;
         this.regex = regex;
-        this.allowedTargeters = this.toList(allowedTargeters);
-        this.allowedTargeters.add("?player"); //player is valid on all triggers
+        this.allowedTargeters = this.toImmutableList(allowedTargeters);
     }
 
     /**
@@ -85,7 +85,7 @@ public enum AbilityTrigger {
      *
      * @return all allowed targeters used for this trigger
      */
-    public List<String> getAllowedTargeters() {
+    public ImmutableList<String> getAllowedTargeters() {
         return this.allowedTargeters;
     }
 
@@ -116,11 +116,12 @@ public enum AbilityTrigger {
      * @param strings the var arg
      * @return the list
      */
-    private List<String> toList(String... strings) {
+    private ImmutableList<String> toImmutableList(String... strings) {
         List<String> list = new ArrayList<>();
 
         Collections.addAll(list, strings);
+        list.add("?player"); //player is valid on all triggers
 
-        return list;
+        return ImmutableList.copyOf(list);
     }
 }

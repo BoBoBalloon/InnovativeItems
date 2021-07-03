@@ -56,7 +56,7 @@ public interface CustomItem {
      * @param unbreakable if the custom item is unbreakable
      * @return the itemstack
      */
-    static ItemStack generateItem(@NotNull String name, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
+    static ItemStack generateItem(@NotNull String name, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -99,6 +99,7 @@ public interface CustomItem {
         NBTItem nbtItem = new NBTItem(item, true);
         nbtItem.setBoolean("innovativeplugin-customitem", true);
         nbtItem.setString("innovativeplugin-customitem-id", name);
+        nbtItem.setBoolean("innovativeplugin-customitem-placeable", placeable);
 
         return item;
     }

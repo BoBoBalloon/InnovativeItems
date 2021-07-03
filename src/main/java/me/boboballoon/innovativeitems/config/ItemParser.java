@@ -109,10 +109,17 @@ public final class ItemParser {
             unbreakable = false;
         }
 
+        boolean placeable;
+        if (section.contains("placeable")) {
+            placeable = section.getBoolean("placeable");
+        } else {
+            placeable = true;
+        }
+
         //skull item
         if (section.contains("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
@@ -128,7 +135,7 @@ public final class ItemParser {
         }
         
         //generic item
-        return new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable);
+        return new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
     }
 
     /**

@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 import me.boboballoon.innovativeitems.keywords.builtin.*;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
+import me.boboballoon.innovativeitems.listeners.BlockPlaceableListener;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,24 +36,30 @@ public final class InnovativeItems extends JavaPlugin {
     3. Add support for banners (items)
     4. Add support for fireworks (items)
     5. Add support for books (items)
-    6. Add support to prevent block items being placed
-    7. Add example configs that are generated on reload (put option in main config to disable)
-    8. sound keyword (play sound effect)
-    9. teleport keyword
-    10. giveitem keyword (give a normal minecraft item)
-    11. givecustomitem keyword (give a custom item)
-    12. removehelditem keyword (with amount arg)
-    13. durabilitydamage keyword
-    14. durabilityheal keyword
-    15. gamemode keyword (set a players gamemode)
-    16. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    17. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    18. Build ability conditionals api and make it work dumbass
+    (at this point change the version to 1.1 and make a new branch to save all of this while the master can be updated more)
+    6. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    7. sound keyword (play sound effect)
+    8. teleport keyword
+    9. giveitem keyword (give a normal minecraft item)
+    10. givecustomitem keyword (give a custom item)
+    11. removehelditem keyword (with amount arg)
+    12. durabilitydamage keyword
+    13. durabilityheal keyword
+    14. gamemode keyword (set a players gamemode)
+    (at this point change the version to 1.2 and make a new branch to save all of this while the master can be updated more)
+    15. Add example configs that are generated on reload (put option in main config to disable)
+    (new update at this point 1.3)
+    16. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
+    (new update at this point 1.4)
+    17. Build ability conditionals api and make it work dumbass
+    (new update at this point 2.0)
+    18. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
     1. Amount arg in the give command can now be omitted
+    2. Added "placeable" field to all items to make a block item, unable to be placed (add to docs)
      */
 
     @Override
@@ -104,7 +111,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(Level.INFO, "Registering event listeners...");
 
-        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners());
+        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new BlockPlaceableListener());
 
         LogUtil.log(Level.INFO, "Event listener registration complete!");
     }

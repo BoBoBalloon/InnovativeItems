@@ -22,10 +22,10 @@ public class CustomItemGeneric implements CustomItem {
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public CustomItemGeneric(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable) {
+    public CustomItemGeneric(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable) {
         this.name = name;
         this.ability = ability;
-        this.itemStack = CustomItem.generateItem(name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);
+        this.itemStack = CustomItem.generateItem(name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
     }
 
     /**

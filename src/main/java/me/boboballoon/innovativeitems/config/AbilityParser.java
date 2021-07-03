@@ -157,9 +157,7 @@ public final class AbilityParser {
      */
     private static boolean hasValidTargeters(String[] args, ImmutableList<Boolean> arguments, ImmutableList<String> allowedTargeters, String keywordName, AbilityTrigger trigger, int line, String abilityName) {
         for (int i = 0; i < args.length; i++) {
-            boolean check = arguments.get(i);
-
-            if (!check) {
+            if (!arguments.get(i)) {
                 continue;
             }
 

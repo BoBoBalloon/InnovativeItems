@@ -78,21 +78,21 @@ public class CustomItemPotion implements CustomItem {
     /**
      * A method used to generate an itemstack based on this items internal values
      *
-     * @param material the material of the itemstack
-     * @param itemName the display name of the itemstack
-     * @param lore the lore of the itemstack
-     * @param enchantments the enchantments on the itemstack
-     * @param flags the item flags on the itemstack
-     * @param attributes all attributes for this item
+     * @param material        the material of the itemstack
+     * @param itemName        the display name of the itemstack
+     * @param lore            the lore of the itemstack
+     * @param enchantments    the enchantments on the itemstack
+     * @param flags           the item flags on the itemstack
+     * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable if the custom item is unbreakable
-     * @param rgb color of the potion via rgb
-     * @param color color of the potion via color name
-     * @param effects all the custom potion effects applied on this item
+     * @param unbreakable     if the custom item is unbreakable
+     * @param rgb             color of the potion via rgb
+     * @param color           color of the potion via color name
+     * @param effects         all the custom potion effects applied on this item
      * @return the itemstack
      */
     private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
-        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable);
+        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, true);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
         if (rgb != null) {

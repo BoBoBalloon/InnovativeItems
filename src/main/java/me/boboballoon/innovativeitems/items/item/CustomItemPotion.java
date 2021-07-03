@@ -120,8 +120,8 @@ public class CustomItemPotion implements CustomItem {
      * @return a boolean that is true if the material provided is a potion
      */
     public static boolean isPotion(Material material) {
-        return (material == Material.POTION || material == Material.LEGACY_POTION ||
-                material == Material.LINGERING_POTION || material == Material.LEGACY_LINGERING_POTION ||
-                material == Material.SPLASH_POTION || material == Material.LEGACY_SPLASH_POTION);
+        return (material == Material.POTION ||
+                material == Material.LINGERING_POTION ||
+                material == Material.SPLASH_POTION);
     }
 }

@@ -12,6 +12,8 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -132,6 +134,12 @@ public final class ItemParser {
         if (section.contains("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
             return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
+        }
+
+        //banner item
+        if (section.contains("banner") && CustomItemBanner.isBanner(material)) {
+            ConfigurationSection bannerSection = section.getConfigurationSection("banner");
+            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, ItemParser.getBannerPatterns(bannerSection, name));
         }
         
         //generic item
@@ -362,5 +370,42 @@ public final class ItemParser {
         }
 
         return effects;
+    }
+
+    /**
+     * Get the patterns field from the banner field from a banner config section
+     */
+    private static List<Pattern> getBannerPatterns(ConfigurationSection section, String itemName) {
+        List<String> rawPatterns = section.getStringList("patterns");
+        List<Pattern> patterns = new ArrayList<>();
+
+        for (String rawPattern : rawPatterns) {
+            String[] components = rawPattern.split(" ");
+
+            if (components.length != 2) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the value you entered followed the banner pattern syntax!");
+                continue;
+            }
+
+            PatternType type;
+            try {
+                type = PatternType.valueOf(components[0]);
+            } catch (IllegalArgumentException e) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the pattern type name you entered was correct!");
+                continue;
+            }
+
+            DyeColor color;
+            try {
+                color = DyeColor.valueOf(components[1]);
+            } catch (IllegalArgumentException e) {
+                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the dye color name you entered was correct!");
+                continue;
+            }
+
+            patterns.add(new Pattern(color, type));
+        }
+
+        return patterns;
     }
 }

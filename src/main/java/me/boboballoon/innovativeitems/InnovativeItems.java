@@ -33,33 +33,27 @@ public final class InnovativeItems extends JavaPlugin {
     TODO LIST:
     1. Push new update
     2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
-    3. Add support for banners (items)
-    4. Add support for fireworks (items)
-    5. Add support for books (items)
-    (at this point change the version to 1.1 and make a new branch to save all of this while the master can be updated more)
-    6. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    7. sound keyword (play sound effect)
-    8. teleport keyword
-    9. giveitem keyword (give a normal minecraft item)
-    10. givecustomitem keyword (give a custom item)
-    11. removehelditem keyword (with amount arg)
-    12. durabilitydamage keyword
-    13. durabilityheal keyword
-    14. gamemode keyword (set a players gamemode)
-    (at this point change the version to 1.2 and make a new branch to save all of this while the master can be updated more)
-    15. Add example configs that are generated on reload (put option in main config to disable)
-    (new update at this point 1.3)
-    16. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
-    (new update at this point 1.4)
-    17. Build ability conditionals api and make it work dumbass
+    3. Add support for fireworks (items)
+    4. Add support for books (items)
+    5. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    6. sound keyword (play sound effect)
+    7. teleport keyword
+    8. giveitem keyword (give a normal minecraft item)
+    9. givecustomitem keyword (give a custom item)
+    10. removehelditem keyword (with amount arg)
+    11. durabilitydamage keyword
+    12. durabilityheal keyword
+    13. gamemode keyword (set a players gamemode)
+    14. Add example configs that are generated on reload (put option in main config to disable)
+    15. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
+    16. Build ability conditionals api and make it work dumbass
     (new update at this point 2.0)
-    18. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    17. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
-    1. Amount arg in the give command can now be omitted
-    2. Added "placeable" field to all items to make a block item, unable to be placed (add to docs)
+    1. Added support for banners (add to advanced item docs)
      */
 
     @Override

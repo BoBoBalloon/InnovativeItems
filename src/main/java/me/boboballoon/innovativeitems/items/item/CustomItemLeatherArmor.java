@@ -112,9 +112,9 @@ public class CustomItemLeatherArmor implements CustomItem {
      * @return a boolean that is true if the material provided is leather armor
      */
     public static boolean isLeatherArmor(Material material) {
-        return (material == Material.LEATHER_HELMET || material == Material.LEGACY_LEATHER_HELMET ||
-                material == Material.LEATHER_CHESTPLATE || material == Material.LEGACY_LEATHER_CHESTPLATE ||
-                material == Material.LEATHER_LEGGINGS || material == Material.LEGACY_LEATHER_LEGGINGS ||
-                material == Material.LEATHER_BOOTS || material == Material.LEGACY_LEATHER_BOOTS);
+        return (material == Material.LEATHER_HELMET ||
+                material == Material.LEATHER_CHESTPLATE ||
+                material == Material.LEATHER_LEGGINGS ||
+                material == Material.LEATHER_BOOTS);
     }
 }

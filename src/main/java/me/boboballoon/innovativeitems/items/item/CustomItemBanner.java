@@ -26,7 +26,7 @@ public class CustomItemBanner implements CustomItem {
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public CustomItemBanner(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, @Nullable List<Pattern> patterns) {
+    public CustomItemBanner(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
         //if not banner
         if (!isBanner(material)) {
             LogUtil.log(Level.SEVERE, "Error while loading item " + name + " because material is not an instance of a banner!");
@@ -40,7 +40,7 @@ public class CustomItemBanner implements CustomItem {
 
         this.name = name;
         this.ability = ability;
-        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, patterns);
+        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, placeable, patterns);
     }
 
     /**
@@ -84,13 +84,12 @@ public class CustomItemBanner implements CustomItem {
      * @param flags           the item flags on the itemstack
      * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable     if the custom item is unbreakable
      * @param placeable       if the material is a block and can be placed
      * @param patterns        the patterns to be applied on the banner itemstack
      * @return the itemstack
      */
-    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, @Nullable List<Pattern> patterns) {
-        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
+    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
+        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
         BannerMeta meta = (BannerMeta) item.getItemMeta();
 
         if (patterns != null) {

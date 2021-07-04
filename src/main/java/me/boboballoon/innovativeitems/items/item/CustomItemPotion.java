@@ -27,7 +27,7 @@ public class CustomItemPotion implements CustomItem {
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public CustomItemPotion(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+    public CustomItemPotion(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
         //if not potion
         if (!isPotion(material)) {
             LogUtil.log(Level.SEVERE, "Error while loading item " + name + " because material is not an instance of a potion!");
@@ -41,7 +41,7 @@ public class CustomItemPotion implements CustomItem {
 
         this.name = name;
         this.ability = ability;
-        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, rgb, color, effects);
+        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, rgb, color, effects);
     }
 
     /**
@@ -85,14 +85,13 @@ public class CustomItemPotion implements CustomItem {
      * @param flags           the item flags on the itemstack
      * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable     if the custom item is unbreakable
      * @param rgb             color of the potion via rgb
      * @param color           color of the potion via color name
      * @param effects         all the custom potion effects applied on this item
      * @return the itemstack
      */
-    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
-        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, true);
+    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, false, true);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
         if (rgb != null) {

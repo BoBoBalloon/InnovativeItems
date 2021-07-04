@@ -30,10 +30,10 @@ public class CustomItemSkull implements CustomItem {
     private final Ability ability;
     private final ItemStack itemStack;
 
-    public CustomItemSkull(@NotNull String name, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, @Nullable String skullName, @Nullable String base64) {
+    public CustomItemSkull(@NotNull String name, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
         this.name = name;
         this.ability = ability;
-        this.itemStack = this.generateItem(itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, skullName, base64);
+        this.itemStack = this.generateItem(itemName, lore, enchantments, flags, attributes, customModelData, placeable, skullName, base64);
     }
 
     /**
@@ -76,14 +76,13 @@ public class CustomItemSkull implements CustomItem {
      * @param flags           the item flags on the itemstack
      * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable     if the custom item is unbreakable
      * @param placeable       if the material is a block and can be placed
      * @param skullName       the name of the player whose skin you wish to place on a player skull (if applicable)
      * @param base64          a base64 encoded string of the skin you wish to place on a player skull (if applicable)
      * @return the itemstack
      */
-    private ItemStack generateItem(@Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, @Nullable String skullName, @Nullable String base64) {
-        ItemStack item = CustomItem.generateItem(this.name, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
+    private ItemStack generateItem(@Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
+        ItemStack item = CustomItem.generateItem(this.name, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         if (base64 != null) {

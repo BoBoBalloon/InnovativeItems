@@ -20,6 +20,9 @@ import java.util.logging.Level;
  * A class used to cache and parse config files
  */
 public final class ConfigManager {
+    //update checker
+    private boolean checkForUpdates;
+
     //debug level
     /**
      * Debug level of 3 allows everything
@@ -44,6 +47,16 @@ public final class ConfigManager {
         Plugin plugin = InnovativeItems.getInstance();
         plugin.saveDefaultConfig();
         FileConfiguration config = plugin.getConfig();
+
+        //load up update checker values, set to true if none is present
+        boolean checkForUpdates;
+        if (config.contains("check-for-updates")) {
+            checkForUpdates = config.getBoolean("check-for-updates");
+        } else {
+            checkForUpdates = true;
+            config.set("check-for-updates", true);
+        }
+        this.setCheckForUpdates(checkForUpdates);
 
         //load up debug level, sets to 2 if no value is present
         int debugLevel;
@@ -76,6 +89,24 @@ public final class ConfigManager {
         this.setShouldDelete(shouldDelete);
 
         plugin.saveConfig();
+    }
+
+    /**
+     * A method that returns true when the plugin should check for updates on startup
+     *
+     * @return true when the plugin should check for updates on startup
+     */
+    public boolean shouldCheckForUpdates() {
+        return this.checkForUpdates;
+    }
+
+    /**
+     * A method that is used to set whether the plugin should check for updates on startup
+     *
+     * @param checkForUpdates whether the plugin should check for updates on startup
+     */
+    public void setCheckForUpdates(boolean checkForUpdates) {
+        this.checkForUpdates = checkForUpdates;
     }
 
     /**

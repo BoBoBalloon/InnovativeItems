@@ -12,6 +12,7 @@ import me.boboballoon.innovativeitems.keywords.builtin.*;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.listeners.BlockPlaceableListener;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -31,21 +32,20 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
-    2. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    3. sound keyword (play sound effect)
-    4. teleport keyword
-    5. giveitem keyword (give a normal minecraft item)
-    6. givecustomitem keyword (give a custom item)
-    7. removehelditem keyword (with amount arg)
-    8. durabilitydamage keyword
-    9. durabilityheal keyword
-    10. gamemode keyword (set a players gamemode)
-    11. Add example configs that are generated on reload (put option in main config to disable)
-    12. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
-    13. Build ability conditionals api and make it work dumbass
+    1. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    2. sound keyword (play sound effect)
+    3. teleport keyword
+    4. giveitem keyword (give a normal minecraft item)
+    5. givecustomitem keyword (give a custom item)
+    6. removehelditem keyword (with amount arg)
+    7. durabilitydamage keyword
+    8. durabilityheal keyword
+    9. gamemode keyword (set a players gamemode)
+    10. Add example configs that are generated on reload (put option in main config to disable)
+    11. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
+    12. Build ability conditionals api and make it work dumbass
     (new update at this point 2.0)
-    14. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    13. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
@@ -54,6 +54,7 @@ public final class InnovativeItems extends JavaPlugin {
     2. Added "placeable" field to all items to make a block item, unable to be placed (add to docs)
     3. Added support for banners (add to advanced item docs)
     4. Added support for fireworks (add to advanced item docs)
+    5. Added update checker (add new section to docs explaining what the text sends and how to disable it via the config!)
      */
 
     @Override
@@ -75,7 +76,11 @@ public final class InnovativeItems extends JavaPlugin {
         //config manager init
         this.configManager = new ConfigManager();
 
-        //auto updater run (if value is true)
+        //update checker run (if value is true)
+        if (this.configManager.shouldCheckForUpdates()) {
+            UpdateChecker updateChecker = new UpdateChecker(this);
+            updateChecker.checkForUpdates();
+        }
 
         //load up and parse configs
         this.cache = new InnovativeCache();

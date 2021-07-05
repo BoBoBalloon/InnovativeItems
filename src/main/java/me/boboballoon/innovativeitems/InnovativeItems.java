@@ -31,29 +31,29 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Push new update
-    2. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
-    3. Add support for books (items)
-    4. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    5. sound keyword (play sound effect)
-    6. teleport keyword
-    7. giveitem keyword (give a normal minecraft item)
-    8. givecustomitem keyword (give a custom item)
-    9. removehelditem keyword (with amount arg)
-    10. durabilitydamage keyword
-    11. durabilityheal keyword
-    12. gamemode keyword (set a players gamemode)
-    13. Add example configs that are generated on reload (put option in main config to disable)
-    14. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
-    15. Build ability conditionals api and make it work dumbass
+    1. Build update checker AFTER FIRST PUBLISHED (https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/)
+    2. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    3. sound keyword (play sound effect)
+    4. teleport keyword
+    5. giveitem keyword (give a normal minecraft item)
+    6. givecustomitem keyword (give a custom item)
+    7. removehelditem keyword (with amount arg)
+    8. durabilitydamage keyword
+    9. durabilityheal keyword
+    10. gamemode keyword (set a players gamemode)
+    11. Add example configs that are generated on reload (put option in main config to disable)
+    12. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
+    13. Build ability conditionals api and make it work dumbass
     (new update at this point 2.0)
-    16. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    14. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
-    1. Added support for banners (add to advanced item docs)
-    2. Added support for fireworks (add to advanced item docs)
+    1. Amount arg in the give command can now be omitted
+    2. Added "placeable" field to all items to make a block item, unable to be placed (add to docs)
+    3. Added support for banners (add to advanced item docs)
+    4. Added support for fireworks (add to advanced item docs)
      */
 
     @Override

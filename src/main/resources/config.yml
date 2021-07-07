@@ -1,5 +1,8 @@
 #Innovative Items Config#
 
+#If this value is true, whenever the plugin is enabled it will check if a new update is available#
+check-for-updates: true
+
 #The higher the debug level, the more information displayed in console. Good for bug fixing#
 debug-level: 2
 

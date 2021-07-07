@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 /**
  * A class that represents a custom item that is a player skull
@@ -113,7 +112,7 @@ public class CustomItemSkull implements CustomItem {
 
             setProfile.invoke(meta, profile);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            LogUtil.log(Level.SEVERE, "There was a severe internal reflection error when attempting to set the skin of a player skull via base64!");
+            LogUtil.log(LogUtil.Level.SEVERE, "There was a severe internal reflection error when attempting to set the skin of a player skull via base64!");
             e.printStackTrace();
         }
     }

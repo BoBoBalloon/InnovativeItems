@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 /**
  * A class used to check for possible plugin updates
@@ -30,12 +29,12 @@ public class UpdateChecker {
 
         if (currentVersion.equals(newestVersion)) {
             //if is up to date
-            LogUtil.logUnblocked(Level.INFO, "You are currently running the newest version of the plugin!");
+            LogUtil.logUnblocked(LogUtil.Level.INFO, "You are currently running the newest version of the plugin!");
             return;
         }
 
         //if is out of date
-        LogUtil.logUnblocked(Level.INFO, "You are currently running an outdated version of this plugin. You are currently on version " + currentVersion + ", while the newest version is version " + newestVersion + "!");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "You are currently running an outdated version of this plugin. You are currently on version " + currentVersion + ", while the newest version is version " + newestVersion + "!");
     }
 
     /**
@@ -48,7 +47,7 @@ public class UpdateChecker {
         try {
             input = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + RESOURCE_ID).openStream();
         } catch (IOException e) {
-            LogUtil.log(Level.SEVERE, "There was an issue while trying to make an api call to spigot's version api! Please contact the developer of the plugin!");
+            LogUtil.log(LogUtil.Level.SEVERE, "There was an issue while trying to make an api call to spigot's version api! Please contact the developer of the plugin!");
             e.printStackTrace();
             return null;
         }

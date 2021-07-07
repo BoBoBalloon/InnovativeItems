@@ -1,12 +1,12 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.keywords.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
-import me.boboballoon.innovativeitems.keywords.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Class that represents a keyword in an ability config file that fires a particle at a selected target
@@ -44,7 +43,7 @@ public class ParticleKeyword extends Keyword {
         }
 
         if (location == null) {
-            LogUtil.log(Level.WARNING, "There is not a location currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a location currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
             return;
         }
 
@@ -66,12 +65,12 @@ public class ParticleKeyword extends Keyword {
         KeywordTargeter location = KeywordTargeter.getFromIdentifier(raw[0]);
 
         if (location == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
         if (location != KeywordTargeter.PLAYER && location != KeywordTargeter.ENTITY && location != KeywordTargeter.BLOCK) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -81,7 +80,7 @@ public class ParticleKeyword extends Keyword {
         try {
             particle = Particle.valueOf(raw[1].toUpperCase());
         } catch (IllegalArgumentException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid particle name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -91,7 +90,7 @@ public class ParticleKeyword extends Keyword {
         try {
             amount = Integer.parseInt(raw[2]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid particle amount entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle amount entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -101,7 +100,7 @@ public class ParticleKeyword extends Keyword {
         try {
             xOffset = Double.parseDouble(raw[3]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid x offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid x offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -111,7 +110,7 @@ public class ParticleKeyword extends Keyword {
         try {
             yOffset = Double.parseDouble(raw[4]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid y offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid y offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -121,7 +120,7 @@ public class ParticleKeyword extends Keyword {
         try {
             zOffset = Double.parseDouble(raw[5]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid z offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid z offset entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 

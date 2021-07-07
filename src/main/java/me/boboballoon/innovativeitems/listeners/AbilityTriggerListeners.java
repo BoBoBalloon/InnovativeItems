@@ -5,11 +5,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.keywords.context.ConsumeContext;
-import me.boboballoon.innovativeitems.keywords.context.DamageContext;
-import me.boboballoon.innovativeitems.keywords.context.InteractContext;
-import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.context.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,8 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.logging.Level;
 
 public class AbilityTriggerListeners implements Listener {
     /**
@@ -55,7 +49,7 @@ public class AbilityTriggerListeners implements Listener {
             CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
             if (item == null) {
-                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                 return;
             }
 
@@ -198,7 +192,7 @@ public class AbilityTriggerListeners implements Listener {
                 CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
                 if (item == null) {
-                    LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                    LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                     return;
                 }
 
@@ -263,7 +257,7 @@ public class AbilityTriggerListeners implements Listener {
                 CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
                 if (item == null) {
-                    LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                    LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                     return;
                 }
 
@@ -304,7 +298,7 @@ public class AbilityTriggerListeners implements Listener {
             CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
             if (item == null) {
-                LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                 return;
             }
 

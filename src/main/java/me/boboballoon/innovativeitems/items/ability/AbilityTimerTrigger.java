@@ -15,7 +15,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * A class that represents a timer that will fire a set of abilities on a specified delay
@@ -76,7 +75,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
                 CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
 
                 if (item == null) {
-                    LogUtil.log(Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                    LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                     return;
                 }
 

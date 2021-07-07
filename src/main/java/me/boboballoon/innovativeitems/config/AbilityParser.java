@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * A class built for parsing configuration sections and convert into Ability objects
@@ -39,14 +38,14 @@ public final class AbilityParser {
         if (section.contains("trigger")) {
             triggerName = section.getString("trigger");
         } else {
-            LogUtil.log(Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure the trigger field is present?");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure the trigger field is present?");
             return null;
         }
 
         AbilityTrigger trigger = AbilityTrigger.getFromIdentifier(triggerName);
 
         if (trigger == null) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure " + triggerName + " is a correct trigger?");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure " + triggerName + " is a correct trigger?");
             return null;
         }
 
@@ -54,7 +53,7 @@ public final class AbilityParser {
         if (section.contains("keywords")) {
             raw = section.getStringList("keywords");
         } else {
-            LogUtil.log(Level.WARNING, "There was an error parsing the ability keywords for " + name + ", are you sure the keyword field is present?");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability keywords for " + name + ", are you sure the keyword field is present?");
             return null;
         }
 
@@ -64,7 +63,7 @@ public final class AbilityParser {
             String line = raw.get(i);
 
             if (!line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$ (^ and $ are already put in inside of the match method)
-                LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
                 continue;
             }
 
@@ -73,7 +72,7 @@ public final class AbilityParser {
             Keyword keyword = InnovativeItems.getInstance().getKeywordManager().getKeyword(split[0]);
 
             if (keyword == null) {
-                LogUtil.log(Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you use a valid keyword?");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you use a valid keyword?");
                 continue;
             }
 
@@ -89,7 +88,7 @@ public final class AbilityParser {
             ImmutableList<Boolean> arguments = keyword.getArguments();
 
             if (rawArguments.length != arguments.size()) {
-                LogUtil.log(Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");
+                LogUtil.log(LogUtil.Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");
                 continue;
             }
 
@@ -121,12 +120,12 @@ public final class AbilityParser {
         if (section.contains("trigger")) {
             triggerName = section.getString("trigger");
         } else {
-            LogUtil.log(Level.SEVERE, "(Dev warning) There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
+            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to lack of trigger argument!");
         }
 
         if (!triggerName.matches(AbilityTrigger.TIMER.getRegex())) {
-            LogUtil.log(Level.SEVERE, "(Dev warning) The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
+            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the trigger argument not meeting the syntax requirements!");
         }
 
@@ -134,7 +133,7 @@ public final class AbilityParser {
         try {
             timer = Long.parseLong(triggerName.split(":")[1]);
         } catch (NumberFormatException ignored) {
-            LogUtil.log(Level.SEVERE, "(Dev warning) There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
+            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the delay not matching the long data type!");
         }
 
@@ -164,22 +163,22 @@ public final class AbilityParser {
             String argument = args[i];
 
             if (!argument.startsWith("?")) {
-                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " was expected a targeter but did not receive one!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " was expected a targeter but did not receive one!");
                 return false;
             }
 
             if (KeywordTargeter.getFromIdentifier(argument) == null) {
-                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter because it does not exist!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter because it does not exist!");
                 return false;
             }
 
             if (!trigger.getAllowedTargeters().contains(argument)) {
-                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the trigger of " + trigger.getIdentifier() + "!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the trigger of " + trigger.getIdentifier() + "!");
                 return false;
             }
 
             if (!allowedTargeters.contains(argument)) {
-                LogUtil.log(Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the keyword of " + keywordName + "!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the keyword of " + keywordName + "!");
                 return false;
             }
         }

@@ -92,7 +92,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
 
         //register commands and conditions
-        LogUtil.log(Level.INFO, "Registering commands...");
+        LogUtil.log(LogUtil.Level.INFO, "Registering commands...");
         this.commandManager = new PaperCommandManager(this);
 
         this.commandManager.getCommandConditions().addCondition("is-player", context -> {
@@ -105,14 +105,14 @@ public final class InnovativeItems extends JavaPlugin {
 
         this.commandManager.registerCommand(new InnovativeItemsCommand());
 
-        LogUtil.log(Level.INFO, "Command registration complete!");
+        LogUtil.log(LogUtil.Level.INFO, "Command registration complete!");
 
         //register listeners
-        LogUtil.log(Level.INFO, "Registering event listeners...");
+        LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");
 
         this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new BlockPlaceableListener());
 
-        LogUtil.log(Level.INFO, "Event listener registration complete!");
+        LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }
 
     /**

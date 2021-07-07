@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * A class that is responsible for holding all items and abilities in memory during runtime
@@ -31,7 +30,7 @@ public final class InnovativeCache {
         String name = ability.getName();
 
         if (this.contains(name)) {
-            LogUtil.log(Level.WARNING, "Ability with the name of " + name + ", is already registered! Skipping...");
+            LogUtil.log(LogUtil.Level.WARNING, "Ability with the name of " + name + ", is already registered! Skipping...");
             return;
         }
 
@@ -47,7 +46,7 @@ public final class InnovativeCache {
         String name = item.getName();
 
         if (this.contains(name)) {
-            LogUtil.log(Level.WARNING, "Item with the name of " + name + ", is already registered! Skipping...");
+            LogUtil.log(LogUtil.Level.WARNING, "Item with the name of " + name + ", is already registered! Skipping...");
             return;
         }
 

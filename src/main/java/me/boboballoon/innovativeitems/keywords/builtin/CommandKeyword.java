@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Class that represents a keyword in an ability config file that executes a console command
@@ -28,7 +27,7 @@ public class CommandKeyword extends Keyword {
         try {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), rawCommand.replace("?player", context.getPlayer().getName()));
         } catch (CommandException e) {
-            LogUtil.log(Level.SEVERE, "There was an error trying to execute the command with the name and arguments of " + rawCommand + " on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the command with the name and arguments of " + rawCommand + " on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
         }
     }
 

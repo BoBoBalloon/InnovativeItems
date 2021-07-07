@@ -16,8 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.logging.Level;
-
 /**
  * A class that is responsible for cleaning up "dead" items in game
  */
@@ -36,7 +34,7 @@ public final class GarbageCollector implements Listener {
         this.enabled = true;
         this.shouldUpdate = shouldUpdate;
         this.shouldDelete = shouldDelete;
-        LogUtil.log(Level.INFO, "New garbage collector initialized!");
+        LogUtil.log(LogUtil.Level.INFO, "New garbage collector initialized!");
     }
 
     /**
@@ -100,7 +98,7 @@ public final class GarbageCollector implements Listener {
      */
     public void cleanInventory(Inventory inventory) {
         if (!this.enabled) {
-            LogUtil.log(Level.WARNING, "The garbage collector tried to run while disabled!");
+            LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
         }
 
@@ -151,16 +149,16 @@ public final class GarbageCollector implements Listener {
      */
     public void cleanAllPlayerInventories() {
         if (!this.enabled) {
-            LogUtil.log(Level.WARNING, "The garbage collector tried to run while disabled!");
+            LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
-            LogUtil.log(Level.INFO, "Starting asynchronous player inventory cleanup...");
+            LogUtil.log(LogUtil.Level.INFO, "Starting asynchronous player inventory cleanup...");
             for (Player player : Bukkit.getOnlinePlayers()) {
                 this.cleanInventory(player.getInventory());
             }
-            LogUtil.log(Level.INFO, "Asynchronous player inventory cleanup complete!");
+            LogUtil.log(LogUtil.Level.INFO, "Asynchronous player inventory cleanup complete!");
         });
     }
 
@@ -171,7 +169,7 @@ public final class GarbageCollector implements Listener {
     private void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
+        LogUtil.log(LogUtil.Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(player.getInventory()));
     }
@@ -187,7 +185,7 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        LogUtil.log(Level.INFO, "Cleaning up container inventory that " + event.getPlayer().getName() + " opened!");
+        LogUtil.log(LogUtil.Level.INFO, "Cleaning up container inventory that " + event.getPlayer().getName() + " opened!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(inventory));
     }
@@ -211,7 +209,7 @@ public final class GarbageCollector implements Listener {
 
         Player player = (Player) inventory.getHolder();
 
-        LogUtil.log(Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
+        LogUtil.log(LogUtil.Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanInventory(inventory));
     }

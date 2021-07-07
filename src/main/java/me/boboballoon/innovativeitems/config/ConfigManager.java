@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * A class used to cache and parse config files
@@ -186,46 +185,46 @@ public final class ConfigManager {
      * A method used to clear the cache and reload all elements
      */
     public void reload() {
-        LogUtil.logUnblocked(Level.INFO, "Starting plugin reload in five seconds, some bugs may occur during this time...");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Starting plugin reload in five seconds, some bugs may occur during this time...");
         Bukkit.getScheduler().runTaskLaterAsynchronously(InnovativeItems.getInstance(), () -> {
             InnovativeItems plugin = InnovativeItems.getInstance();
 
-            LogUtil.log(Level.INFO, "Temporarily disabling garbage collector...");
+            LogUtil.log(LogUtil.Level.INFO, "Temporarily disabling garbage collector...");
 
             GarbageCollector garbageCollector = plugin.getGarbageCollector();
             garbageCollector.setEnabled(false);
 
-            LogUtil.log(Level.INFO, "Starting basic config reload...");
+            LogUtil.log(LogUtil.Level.INFO, "Starting basic config reload...");
 
             plugin.reloadConfig();
 
             this.reloadMainConfigValues();
 
-            LogUtil.log(Level.INFO, "Basic config reload complete!");
+            LogUtil.log(LogUtil.Level.INFO, "Basic config reload complete!");
 
-            LogUtil.log(Level.INFO, "Starting cache invalidation...");
+            LogUtil.log(LogUtil.Level.INFO, "Starting cache invalidation...");
 
             plugin.getItemCache().clearCache();
             plugin.getAbilityTimerManager().clearCache();
 
-            LogUtil.log(Level.INFO, "Cache invalidation complete!");
+            LogUtil.log(LogUtil.Level.INFO, "Cache invalidation complete!");
 
             this.init();
 
-            LogUtil.log(Level.INFO, "Setting garbage collector settings to match config...");
+            LogUtil.log(LogUtil.Level.INFO, "Setting garbage collector settings to match config...");
 
             garbageCollector.setShouldUpdate(this.shouldUpdateLocal);
             garbageCollector.setShouldDelete(this.shouldDeleteLocal);
 
-            LogUtil.log(Level.INFO, "Garbage collector settings now match config!");
+            LogUtil.log(LogUtil.Level.INFO, "Garbage collector settings now match config!");
 
-            LogUtil.log(Level.INFO, "Re-enabling garbage collector!");
+            LogUtil.log(LogUtil.Level.INFO, "Re-enabling garbage collector!");
 
             garbageCollector.setEnabled(true);
 
             garbageCollector.cleanAllPlayerInventories();
 
-            LogUtil.logUnblocked(Level.INFO, "Plugin reload complete!");
+            LogUtil.logUnblocked(LogUtil.Level.INFO, "Plugin reload complete!");
         }, 100L);
     }
 
@@ -233,11 +232,11 @@ public final class ConfigManager {
      * A startup method to start parsing all config files
      */
     public void init() {
-        LogUtil.logUnblocked(Level.INFO, "Starting basic plugin initialization...");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Starting basic plugin initialization...");
 
         InnovativeItems plugin = InnovativeItems.getInstance();
 
-        LogUtil.log(Level.INFO, "Starting directory initialization...");
+        LogUtil.log(LogUtil.Level.INFO, "Starting directory initialization...");
 
         File home = plugin.getDataFolder();
         File items = new File(home, "items");
@@ -255,7 +254,7 @@ public final class ConfigManager {
             abilities.mkdir();
         }
 
-        LogUtil.log(Level.INFO, "Directory initialization complete!");
+        LogUtil.log(LogUtil.Level.INFO, "Directory initialization complete!");
 
         InnovativeCache cache = plugin.getItemCache();
 
@@ -263,7 +262,7 @@ public final class ConfigManager {
 
         this.loadItems(items, cache);
 
-        LogUtil.logUnblocked(Level.INFO, "Basic plugin initialization complete!");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Basic plugin initialization complete!");
     }
 
     /**
@@ -273,7 +272,7 @@ public final class ConfigManager {
      * @param cache the cache where loaded abilities will be registered to
      */
     private void loadAbilities(File home, InnovativeCache cache) {
-        LogUtil.log(Level.INFO, "Starting ability initialization and parsing...");
+        LogUtil.log(LogUtil.Level.INFO, "Starting ability initialization and parsing...");
 
         for (File file : home.listFiles()) {
             YamlConfiguration configuration = new YamlConfiguration();
@@ -281,7 +280,7 @@ public final class ConfigManager {
             try {
                 configuration.load(file);
             } catch (IOException e) {
-                LogUtil.log(Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
                 e.printStackTrace();
                 continue;
             } catch (InvalidConfigurationException ignore) {
@@ -290,7 +289,7 @@ public final class ConfigManager {
 
             for (String key : configuration.getKeys(false)) {
                 if (cache.contains(key)) {
-                    LogUtil.log(Level.WARNING, "Element with the name of " + key + ", is already registered! Skipping ability...");
+                    LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + key + ", is already registered! Skipping ability...");
                     continue;
                 }
 
@@ -314,7 +313,7 @@ public final class ConfigManager {
             }
         }
 
-        LogUtil.log(Level.INFO, "Ability initialization and parsing complete!");
+        LogUtil.log(LogUtil.Level.INFO, "Ability initialization and parsing complete!");
     }
 
     /**
@@ -324,7 +323,7 @@ public final class ConfigManager {
      * @param cache the cache where loaded items will be registered to
      */
     private void loadItems(File home, InnovativeCache cache) {
-        LogUtil.log(Level.INFO, "Starting item initialization and parsing...");
+        LogUtil.log(LogUtil.Level.INFO, "Starting item initialization and parsing...");
 
         for (File file : home.listFiles()) {
             YamlConfiguration configuration = new YamlConfiguration();
@@ -332,7 +331,7 @@ public final class ConfigManager {
             try {
                 configuration.load(file);
             } catch (IOException e) {
-                LogUtil.log(Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during item initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during item initialization and parsing stage!");
                 e.printStackTrace();
                 continue;
             } catch (InvalidConfigurationException ignore) {
@@ -345,7 +344,7 @@ public final class ConfigManager {
                 String name = section.getName();
 
                 if (cache.contains(name)) {
-                    LogUtil.log(Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
+                    LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
                     continue;
                 }
 
@@ -353,6 +352,6 @@ public final class ConfigManager {
             }
         }
 
-        LogUtil.log(Level.INFO, "Item initialization and parsing complete!");
+        LogUtil.log(LogUtil.Level.INFO, "Item initialization and parsing complete!");
     }
 }

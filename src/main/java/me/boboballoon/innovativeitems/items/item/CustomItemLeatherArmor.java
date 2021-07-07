@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * A class that represents a custom item that is leather armor
@@ -29,7 +28,7 @@ public class CustomItemLeatherArmor implements CustomItem {
     public CustomItemLeatherArmor(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
         //if not leather armor
         if (!isLeatherArmor(material)) {
-            LogUtil.log(Level.SEVERE, "Error while loading item " + name + " because material is not an instance of leather armor!");
+            LogUtil.log(LogUtil.Level.SEVERE, "Error while loading item " + name + " because material is not an instance of leather armor!");
 
             this.name = null;
             this.ability = null;

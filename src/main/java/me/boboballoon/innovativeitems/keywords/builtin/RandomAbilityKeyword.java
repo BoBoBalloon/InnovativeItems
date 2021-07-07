@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
 
 /**
  * Class that represents a keyword in an ability config file that executes another random ability
@@ -32,17 +31,17 @@ public class RandomAbilityKeyword extends Keyword {
             Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
 
             if (ability == null) {
-                LogUtil.log(Level.WARNING, "There is not a valid ability name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+                LogUtil.log(LogUtil.Level.WARNING, "There is not a valid ability name entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
                 return;
             }
 
             if (ability.getName().equals(context.getAbilityName())) {
-                LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to recursively call the " + context.getAbilityName() + " ability!");
+                LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to recursively call the " + context.getAbilityName() + " ability!");
                 return;
             }
 
             if (context.getAbilityTrigger() != ability.getTrigger()) {
-                LogUtil.log(Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same trigger as the " + context.getAbilityName() + " ability!");
+                LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same trigger as the " + context.getAbilityName() + " ability!");
                 return;
             }
 

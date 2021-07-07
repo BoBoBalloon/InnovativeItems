@@ -23,7 +23,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * A class built for parsing configuration sections and convert into CustomItem objects
@@ -43,7 +42,7 @@ public final class ItemParser {
      */
     public static CustomItem parseItem(ConfigurationSection section, String name) {
         if (!section.isString("material")) {
-            LogUtil.log(Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
+            LogUtil.log(LogUtil.Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
             return null;
         }
 
@@ -51,7 +50,7 @@ public final class ItemParser {
         try {
             material = Material.valueOf(section.getString("material").toUpperCase());
         } catch (IllegalArgumentException e) {
-            LogUtil.log(Level.WARNING, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
+            LogUtil.log(LogUtil.Level.WARNING, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
             return null;
         }
 
@@ -161,7 +160,7 @@ public final class ItemParser {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
 
         if (ability == null) {
-            LogUtil.log(Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+            LogUtil.log(LogUtil.Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
         }
 
         return ability;
@@ -193,7 +192,7 @@ public final class ItemParser {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
 
             if (enchantment == null) {
-                LogUtil.log(Level.WARNING, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.WARNING, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
 
@@ -213,7 +212,7 @@ public final class ItemParser {
             try {
                 itemFlag = ItemFlag.valueOf(flag.toUpperCase());
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "Unknown itemflag provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.WARNING, "Unknown itemflag provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
             flags.add(itemFlag);
@@ -238,7 +237,7 @@ public final class ItemParser {
                     slot = EquipmentSlot.valueOf(slotName.toUpperCase());
                 }
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
 
@@ -248,7 +247,7 @@ public final class ItemParser {
                 try {
                     attribute = Attribute.valueOf(attributeName.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    LogUtil.log(Level.WARNING, "Unknown attribute provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                    LogUtil.log(LogUtil.Level.WARNING, "Unknown attribute provided while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                     continue;
                 }
 
@@ -307,7 +306,7 @@ public final class ItemParser {
             rgb[1] = Integer.parseInt(rgbRaw[1]);
             rgb[2] = Integer.parseInt(rgbRaw[2]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the rgb values of " + itemName + "!");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the rgb values of " + itemName + "!");
             return null;
         }
 
@@ -328,7 +327,7 @@ public final class ItemParser {
         try {
             color = DyeColor.valueOf(rawColor).getColor();
         } catch (IllegalArgumentException ignore) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
             return null;
         }
 
@@ -346,14 +345,14 @@ public final class ItemParser {
             String[] components = rawEffect.split(" ");
 
             if (components.length != 3) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the value you entered followed the potion effect syntax!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the value you entered followed the potion effect syntax!");
                 continue;
             }
 
             PotionEffectType type = PotionEffectType.getByName(components[0]);
 
             if (type == null) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the potion name you entered was correct!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the potion name you entered was correct!");
                 continue;
             }
 
@@ -361,7 +360,7 @@ public final class ItemParser {
             try {
                 duration = Integer.parseInt(components[1]);
             } catch (NumberFormatException e) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the duration you entered was an integer!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the duration you entered was an integer!");
                 continue;
             }
 
@@ -369,7 +368,7 @@ public final class ItemParser {
             try {
                 level = Integer.parseInt(components[2]);
             } catch (NumberFormatException e) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the level you entered was an integer!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the effect strings of " + itemName + "! Please make sure that the level you entered was an integer!");
                 continue;
             }
 
@@ -390,7 +389,7 @@ public final class ItemParser {
             String[] components = rawPattern.split(" ");
 
             if (components.length != 2) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the value you entered followed the banner pattern syntax!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the value you entered followed the banner pattern syntax!");
                 continue;
             }
 
@@ -398,7 +397,7 @@ public final class ItemParser {
             try {
                 type = PatternType.valueOf(components[0]);
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the pattern type name you entered was correct!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the pattern type name you entered was correct!");
                 continue;
             }
 
@@ -406,7 +405,7 @@ public final class ItemParser {
             try {
                 color = DyeColor.valueOf(components[1]);
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the dye color name you entered was correct!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing one of the pattern strings of " + itemName + "! Please make sure that the dye color name you entered was correct!");
                 continue;
             }
 
@@ -470,7 +469,7 @@ public final class ItemParser {
             try {
                 type = FireworkEffect.Type.valueOf(section.getString("type"));
             } catch (IllegalArgumentException e) {
-                LogUtil.log(Level.WARNING, "There was an error parsing the firework type of " + itemName + "! Please make sure that the firework type name you entered was correct!");
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the firework type of " + itemName + "! Please make sure that the firework type name you entered was correct!");
                 return null;
             }
         } else {
@@ -486,7 +485,7 @@ public final class ItemParser {
                     Color color = DyeColor.valueOf(rawColor).getColor();
                     colors.add(color);
                 } catch (IllegalArgumentException ignore) {
-                    LogUtil.log(Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
+                    LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
                     return null;
                 }
             }
@@ -501,7 +500,7 @@ public final class ItemParser {
                     Color color = DyeColor.valueOf(rawColor).getColor();
                     fadeColors.add(color);
                 } catch (IllegalArgumentException ignore) {
-                    LogUtil.log(Level.WARNING, "There was an error parsing the fade color of " + itemName + "! Please make sure that the value you entered was a real color!");
+                    LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the fade color of " + itemName + "! Please make sure that the value you entered was a real color!");
                     return null;
                 }
             }
@@ -529,7 +528,7 @@ public final class ItemParser {
         int power = Math.round((flightTime / 20));
 
         if (power > 128 || power < 0) {
-            LogUtil.log(Level.WARNING, "There was an error parsing the firework flight time of " + itemName + "! Please make sure that the flight time is less than or equal to 1280 and great than or equal to 0!");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the firework flight time of " + itemName + "! Please make sure that the flight time is less than or equal to 1280 and great than or equal to 0!");
             return null;
         }
 

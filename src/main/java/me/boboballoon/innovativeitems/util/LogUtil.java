@@ -2,8 +2,6 @@ package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 
-import java.util.logging.Level;
-
 /**
  * A class used to store util methods regarding logging
  */
@@ -38,7 +36,7 @@ public final class LogUtil {
             return;
         }
 
-        InnovativeItems.getInstance().getLogger().log(level, text);
+        LogUtil.logUnblocked(level, text);
     }
 
     /**
@@ -48,6 +46,30 @@ public final class LogUtil {
      * @param text  text you wish to log
      */
     public static void logUnblocked(Level level, String text) {
-        InnovativeItems.getInstance().getLogger().log(level, text);
+        InnovativeItems.getInstance().getLogger().log(level.getDebugLevel(), text);
+    }
+
+    /**
+     * An internal wrapper class used to ensure all debugs follow the proper debug levels
+     */
+    public enum Level {
+        INFO(java.util.logging.Level.INFO),
+        WARNING(java.util.logging.Level.WARNING),
+        SEVERE(java.util.logging.Level.SEVERE);
+
+        private final java.util.logging.Level debugLevel;
+
+        Level(java.util.logging.Level debugLevel) {
+            this.debugLevel = debugLevel;
+        }
+
+        /**
+         * A method that returns the current internal debug level to be used
+         *
+         * @return the current internal debug level to be used
+         */
+        public java.util.logging.Level getDebugLevel() {
+            return this.debugLevel;
+        }
     }
 }

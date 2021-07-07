@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Class that represents a keyword in an ability config file that damages a selected target
@@ -39,7 +38,7 @@ public class FeedKeyword extends Keyword {
         }
 
         if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
             return;
         }
 
@@ -58,12 +57,12 @@ public class FeedKeyword extends Keyword {
         KeywordTargeter rawTarget = KeywordTargeter.getFromIdentifier(raw[0]);
 
         if (rawTarget == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
         if (rawTarget != KeywordTargeter.PLAYER && rawTarget != KeywordTargeter.ENTITY) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -73,7 +72,7 @@ public class FeedKeyword extends Keyword {
         try {
             amount = Integer.parseInt(raw[1]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid food amount entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid food amount entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 

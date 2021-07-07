@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.logging.Level;
 
 /**
  * A class that is responsible for holding all keywords in memory during runtime
@@ -16,7 +15,7 @@ public final class KeywordManager {
 
     public KeywordManager() {
         this.keywords = new HashMap<>();
-        LogUtil.logUnblocked(Level.INFO, "Keyword manager initialized!");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Keyword manager initialized!");
         //unblocked because debug level is null
     }
 
@@ -30,7 +29,7 @@ public final class KeywordManager {
 
         if (this.contains(identifier)) {
             //unblocked because debug level may be null at this point
-            LogUtil.logUnblocked(Level.WARNING, "Keyword with the identifier of " + keyword.getIdentifier() + " is already registered! Skipping...");
+            LogUtil.logUnblocked(LogUtil.Level.WARNING, "Keyword with the identifier of " + keyword.getIdentifier() + " is already registered! Skipping...");
             return;
         }
 

@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * A class that represents a custom item that is a potion
@@ -30,7 +29,7 @@ public class CustomItemPotion implements CustomItem {
     public CustomItemPotion(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
         //if not potion
         if (!isPotion(material)) {
-            LogUtil.log(Level.SEVERE, "Error while loading item " + name + " because material is not an instance of a potion!");
+            LogUtil.log(LogUtil.Level.SEVERE, "Error while loading item " + name + " because material is not an instance of a potion!");
 
             this.name = null;
             this.ability = null;

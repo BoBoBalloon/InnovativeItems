@@ -1,11 +1,11 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.keywords.context.DamageContext;
+import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
-import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Class that represents a keyword in an ability config file that gives a potion effect to a selected target
@@ -39,7 +38,7 @@ public class EffectKeyword extends Keyword {
         }
 
         if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
             return;
         }
 
@@ -57,12 +56,12 @@ public class EffectKeyword extends Keyword {
         KeywordTargeter target = KeywordTargeter.getFromIdentifier(raw[0]);
 
         if (target == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
         if (target != KeywordTargeter.PLAYER && target != KeywordTargeter.ENTITY) {
-            LogUtil.log(Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid target entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -71,7 +70,7 @@ public class EffectKeyword extends Keyword {
         PotionEffectType effectType = PotionEffectType.getByName(raw[1].toUpperCase());
 
         if (effectType == null) {
-            LogUtil.log(Level.WARNING, "There is not a valid potion effect entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid potion effect entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -79,7 +78,7 @@ public class EffectKeyword extends Keyword {
         try {
             duration = Integer.parseInt(raw[2]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid duration entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid duration entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 
@@ -87,7 +86,7 @@ public class EffectKeyword extends Keyword {
         try {
             level = Integer.parseInt(raw[3]);
         } catch (NumberFormatException e) {
-            LogUtil.log(Level.WARNING, "There is not a valid level entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid level entered on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
             return null;
         }
 

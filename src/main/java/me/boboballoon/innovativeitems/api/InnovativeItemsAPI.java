@@ -58,6 +58,17 @@ public final class InnovativeItemsAPI {
             return;
         }
 
+        InnovativeItemsAPI.log(level, text);
+    }
+
+    /**
+     * A method used to log using the debug level if chosen using the innovative items plugin instance
+     * (Should not be used until the plugin is enabled, will throw a null pointer)
+     *
+     * @param level the level of the debug
+     * @param text the text displayed in the debug
+     */
+    public static void log(LogUtil.Level level, String text) {
         LogUtil.log(level, text);
     }
 }

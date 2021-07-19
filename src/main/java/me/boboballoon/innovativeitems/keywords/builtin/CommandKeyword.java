@@ -27,7 +27,7 @@ public class CommandKeyword extends Keyword {
         try {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), rawCommand.replace("?player", context.getPlayer().getName()));
         } catch (CommandException e) {
-            LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the command with the name and arguments of " + rawCommand + " on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to execute the command with the name and arguments of " + rawCommand + " on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
         }
     }
 

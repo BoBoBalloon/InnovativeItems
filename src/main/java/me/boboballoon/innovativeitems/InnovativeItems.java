@@ -18,8 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Level;
-
 public final class InnovativeItems extends JavaPlugin {
     private static InnovativeItems instance;
 
@@ -32,29 +30,24 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    2. sound keyword (play sound effect)
-    3. teleport keyword
-    4. giveitem keyword (give a normal minecraft item)
-    5. givecustomitem keyword (give a custom item)
-    6. removehelditem keyword (with amount arg)
-    7. durabilitydamage keyword
-    8. durabilityheal keyword
-    9. gamemode keyword (set a players gamemode)
+    1. Refactor KeywordTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
+      a. Make sure to build a targeter type enum to hold values that can be returned from a getValue() method that returns an object (e.g. ENTITY, LOCATION, look at mythicmobs for more)
+      b. Build api system before you make parser (start with the easier stuff)
+    2. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
+    3. sound keyword (play sound effect)
+    4. teleport keyword
+    5. giveitem keyword (give a normal minecraft item)
+    6. givecustomitem keyword (give a custom item)
+    7. removehelditem keyword (with amount arg)
+    8. gamemode keyword (set a players gamemode)
+    9. Build ability conditionals api and make it work dumbass
     10. Add example configs that are generated on reload (put option in main config to disable)
-    11. Refactor AbilityTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
-    12. Build ability conditionals api and make it work dumbass
     (new update at this point 2.0)
-    13. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    11. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
-    1. Amount arg in the give command can now be omitted
-    2. Added "placeable" field to all items to make a block item, unable to be placed (add to docs)
-    3. Added support for banners (add to advanced item docs)
-    4. Added support for fireworks (add to advanced item docs)
-    5. Added update checker (add new section to docs explaining what the text sends and how to disable it via the config!)
      */
 
     @Override

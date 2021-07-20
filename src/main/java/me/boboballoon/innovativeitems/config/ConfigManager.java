@@ -288,28 +288,9 @@ public final class ConfigManager {
             }
 
             for (String key : configuration.getKeys(false)) {
-                if (cache.contains(key)) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + key + ", is already registered! Skipping ability...");
-                    continue;
-                }
-
                 ConfigurationSection section = configuration.getConfigurationSection(key);
 
-                Ability ability = AbilityParser.parseAbility(section, key);
-
-                if (ability == null) {
-                    //error message was already sent from parseAbility method, no need to put in here
-                    continue;
-                }
-
-                cache.registerAbility(ability);
-
-                //if it is not present in the cache something went wrong, do not register an ability timer
-                if (!cache.contains(key)) {
-                    continue;
-                }
-
-                AbilityParser.registerAbilityTimer(ability, section);
+                AbilityParser.buildAbility(section, cache);
             }
         }
 

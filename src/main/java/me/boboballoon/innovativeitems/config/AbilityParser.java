@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
@@ -14,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,82 +28,59 @@ public final class AbilityParser {
     private AbilityParser() {}
 
     /**
+     * A util method used to not only parse an ability but to register it in both the cache and ability timer registry if necessary
+     *
+     * @param section the configuration section of the ability
+     * @param cache the cache to register the ability in
+     */
+    public static void buildAbility(ConfigurationSection section, InnovativeCache cache) {
+        String abilityName = section.getName();
+
+        if (cache.contains(abilityName)) {
+            LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + abilityName + ", is already registered! Skipping ability...");
+            return;
+        }
+
+        Ability ability = AbilityParser.parseAbility(section);
+
+        if (ability == null) {
+            //error message was already sent from parseAbility method, no need to put in here
+            return;
+        }
+
+        cache.registerAbility(ability);
+
+        //if it is not present in the cache something went wrong, do not register an ability timer
+        if (!cache.contains(abilityName)) {
+            return;
+        }
+
+        AbilityParser.registerAbilityTimer(ability, section);
+    }
+
+    /**
      * A util method used to parse a custom ability from a config section
      *
-     * @param section the config section
-     * @param name the name of the ability
+     * @param section the configuration section of the ability
      * @return the ability (null if an error occurred)
      */
     @Nullable
-    public static Ability parseAbility(ConfigurationSection section, String name) {
-        String triggerName;
-        if (section.contains("trigger")) {
-            triggerName = section.getString("trigger");
-        } else {
-            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure the trigger field is present?");
-            return null;
-        }
-
-        AbilityTrigger trigger = AbilityTrigger.getFromIdentifier(triggerName);
+    public static Ability parseAbility(ConfigurationSection section) {
+        AbilityTrigger trigger = AbilityParser.getAbilityTrigger(section);
 
         if (trigger == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + name + ", are you sure " + triggerName + " is a correct trigger?");
+            //errors are already sent via AbilityParser.getAbilityTrigger() no need to send more
             return null;
         }
 
-        List<String> raw;
-        if (section.contains("keywords")) {
-            raw = section.getStringList("keywords");
-        } else {
-            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability keywords for " + name + ", are you sure the keyword field is present?");
+        List<ActiveKeyword> keywords = AbilityParser.getAbilityKeywords(section, trigger);
+
+        if (keywords == null) {
+            //errors are already sent via AbilityParser.getAbilityKeywords() no need to send more
             return null;
         }
 
-        List<ActiveKeyword> keywords = new ArrayList<>();
-
-        for (int i = 0; i < raw.size(); i++) {
-            String line = raw.get(i);
-
-            if (!line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$ (^ and $ are already put in inside of the match method)
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you format it correctly?");
-                continue;
-            }
-
-            String[] split = line.split("\\("); //regex = \(
-
-            Keyword keyword = InnovativeItems.getInstance().getKeywordManager().getKeyword(split[0]);
-
-            if (keyword == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + name + "! Did you use a valid keyword?");
-                continue;
-            }
-
-            String[] rawArguments = split[1].substring(0, split[1].length() - 1).split(",");
-
-            AbilityParser.trimArray(rawArguments);
-
-            //in the case of no arguments provided
-            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
-                rawArguments = new String[]{};
-            }
-
-            ImmutableList<Boolean> arguments = keyword.getArguments();
-
-            if (rawArguments.length != arguments.size()) {
-                LogUtil.log(LogUtil.Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + name + " ability!");
-                continue;
-            }
-
-            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, keyword.getValidTargeters(), keyword.getIdentifier(), trigger, i + 1, name)) {
-                continue;
-            }
-
-            KeywordContext context = new KeywordContext(rawArguments, name, trigger);
-
-            keywords.add(new ActiveKeyword(keyword, context));
-        }
-
-        return new Ability(name, keywords, trigger);
+        return new Ability(section.getName(), keywords, trigger);
     }
 
     /**
@@ -117,7 +96,7 @@ public final class AbilityParser {
         }
 
         String triggerName;
-        if (section.contains("trigger")) {
+        if (section.isString("trigger")) {
             triggerName = section.getString("trigger");
         } else {
             LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
@@ -143,12 +122,88 @@ public final class AbilityParser {
     }
 
     /**
-     * A util method used to trim all elements in an array
+     * A util method used to get the ability trigger from an ability config section
      */
-    private static void trimArray(String[] array) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = array[i].trim();
+    private static AbilityTrigger getAbilityTrigger(ConfigurationSection section) {
+        String abilityName = section.getName();
+
+        String triggerName;
+        if (section.isString("trigger")) {
+            triggerName = section.getString("trigger");
+        } else {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + abilityName + ", are you sure the trigger field is present?");
+            return null;
         }
+
+        AbilityTrigger trigger = AbilityTrigger.getFromIdentifier(triggerName);
+
+        if (trigger == null) {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability trigger for " + abilityName + ", are you sure " + triggerName + " is a correct trigger?");
+            return null;
+        }
+
+        return trigger;
+    }
+
+    /**
+     * A util method used to get the active keywords from an ability config section
+     */
+    private static List<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger trigger) {
+        String abilityName = section.getName();
+
+        List<String> raw;
+        if (section.isList("keywords")) {
+            raw = section.getStringList("keywords");
+        } else {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability keywords for " + abilityName + ", are you sure the keyword field is present?");
+            return null;
+        }
+
+        List<ActiveKeyword> keywords = new ArrayList<>();
+
+        for (int i = 0; i < raw.size(); i++) {
+            String line = raw.get(i);
+
+            if (!line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$ (^ and $ are already put in inside of the match method)
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + abilityName + "! Did you format it correctly?");
+                continue;
+            }
+
+            String[] split = line.split("\\("); //regex = \(
+
+            Keyword keyword = InnovativeItems.getInstance().getKeywordManager().getKeyword(split[0]);
+
+            if (keyword == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + abilityName + "! Did you use a valid keyword?");
+                continue;
+            }
+
+            String[] rawArguments = split[1].substring(0, split[1].length() - 1).split(",");
+
+            rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
+
+            //in the case of no arguments provided
+            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
+                rawArguments = new String[]{};
+            }
+
+            ImmutableList<Boolean> arguments = keyword.getArguments();
+
+            if (rawArguments.length != arguments.size()) {
+                LogUtil.log(LogUtil.Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + abilityName + " ability!");
+                continue;
+            }
+
+            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, keyword.getValidTargeters(), keyword.getIdentifier(), trigger, i + 1, abilityName)) {
+                continue;
+            }
+
+            KeywordContext context = new KeywordContext(rawArguments, abilityName, trigger);
+
+            keywords.add(new ActiveKeyword(keyword, context));
+        }
+
+        return keywords;
     }
 
     /**

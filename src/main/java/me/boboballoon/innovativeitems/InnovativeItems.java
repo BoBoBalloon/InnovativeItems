@@ -44,6 +44,21 @@ public final class InnovativeItems extends JavaPlugin {
     10. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
     11. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    12. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+        a. Make AbilityBase abstract class with everything except name
+        b. Extend AbilityBase in normal ability class and add name field and build new AnonymousAbility class with no changes
+        c. Make separate method in AbilityParser for anonymous abilities like AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item)
+    13. Add support for custom blocks
+        a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
+        b. Listen for all block events to make sure nobody can fuck with locations
+        c. When server stops serialize the map as a json file
+        d. When server starts read from json file and keep everything in memory
+        e. Add block support to garbage collector
+          a. GarbageCollector.checkBlock(CustomBlock block)
+          b. GarbageCollector.checkBlocks(Set<CustomBlock> blocks) call the .checkBlock(CustomBlock block) method
+          d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
+        f. Add support for block abilities (keep chunks loaded maybe???)
+     (new update 3.0)
      */
 
     /*

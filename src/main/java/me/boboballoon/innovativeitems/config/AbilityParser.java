@@ -1,15 +1,12 @@
 package me.boboballoon.innovativeitems.config;
 
-import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
-import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
-import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
+import me.boboballoon.innovativeitems.keywords.keyword.*;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
@@ -187,55 +184,122 @@ public final class AbilityParser {
                 rawArguments = new String[]{};
             }
 
-            ImmutableList<Boolean> arguments = keyword.getArguments();
+            int expectedSize = keyword.getArguments().size();
 
-            if (rawArguments.length != arguments.size()) {
+            if (rawArguments.length != expectedSize) {
                 LogUtil.log(LogUtil.Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + abilityName + " ability!");
                 continue;
             }
 
-            if (!AbilityParser.hasValidTargeters(rawArguments, arguments, keyword.getValidTargeters(), keyword.getIdentifier(), trigger, i + 1, abilityName)) {
+            List<Object> parsedArguments = new ArrayList<>(expectedSize);
+
+            KeywordContext context = new KeywordContext(keyword, rawArguments, abilityName, trigger, (i + 1));
+
+            if (!AbilityParser.parseTargeters(rawArguments, context, parsedArguments)) {
                 continue;
             }
 
-            KeywordContext context = new KeywordContext(rawArguments, abilityName, trigger);
+            if (!AbilityParser.parseArguments(parsedArguments, rawArguments, context)) {
+                continue;
+            }
 
-            keywords.add(new ActiveKeyword(keyword, context));
+            keywords.add(new ActiveKeyword(keyword, parsedArguments));
         }
 
         return keywords;
     }
 
     /**
-     * A util method that checks the positions of targeters inside a keyword
+     * A util method that checks the positions and parses the targeters inside a keyword
      */
-    private static boolean hasValidTargeters(String[] args, ImmutableList<Boolean> arguments, ImmutableList<String> allowedTargeters, String keywordName, AbilityTrigger trigger, int line, String abilityName) {
-        for (int i = 0; i < args.length; i++) {
-            if (!arguments.get(i)) {
+    private static boolean parseTargeters(String[] rawArguments, KeywordContext context, List<Object> parsedArguments) {
+        for (int i = 0; i < rawArguments.length; i++) {
+            ExpectedArguments expectedValue = context.getKeyword().getArguments().get(i);
+
+            if (!(expectedValue instanceof ExpectedTargeters)) {
+                parsedArguments.add(null);
                 continue;
             }
 
-            String argument = args[i];
+            String argument = rawArguments[i];
 
             if (!argument.startsWith("?")) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " was expected a targeter but did not receive one!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " was expected a targeter but did not receive one!");
                 return false;
             }
 
-            if (KeywordTargeter.getFromIdentifier(argument) == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter because it does not exist!");
+            KeywordTargeter targeter = KeywordTargeter.getFromIdentifier(argument);
+
+            if (targeter == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter because it does not exist!");
                 return false;
             }
 
-            if (!trigger.getAllowedTargeters().contains(argument)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the trigger of " + trigger.getIdentifier() + "!");
+            if (!context.getAbilityTrigger().getAllowedTargeters().contains(argument)) {
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter for the trigger of " + context.getAbilityTrigger().getIdentifier() + "!");
                 return false;
             }
 
-            if (!allowedTargeters.contains(argument)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + line + " on ability " + abilityName + " is an invalid targeter for the keyword of " + keywordName + "!");
+            ExpectedTargeters expectedTargeters = (ExpectedTargeters) expectedValue;
+
+            if (!expectedTargeters.contains(targeter)) {
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter for the keyword of " + context.getKeyword().getIdentifier() + "!");
                 return false;
             }
+
+            parsedArguments.add(targeter);
+        }
+
+        return true;
+    }
+
+    /**
+     * A util method that parses and initializes the rest of the arguments
+     */
+    private static boolean parseArguments(List<Object> parsedArguments, String[] rawArguments, KeywordContext context) {
+        for (int i = 0; i < parsedArguments.size(); i++) {
+            Object argument = parsedArguments.get(i);
+
+            if (argument != null) {
+                continue;
+            }
+
+            Object parsedValue = null;
+
+            String rawArgument = rawArguments[i];
+
+            ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
+
+            boolean attempted = false;
+
+            if (expectedArgument instanceof ExpectedValues) {
+                ExpectedValues value = (ExpectedValues) expectedArgument;
+                parsedValue = value.getValue(rawArgument, context);
+                attempted = true;
+            }
+
+            if (expectedArgument instanceof ExpectedManualSophisticated) {
+                ExpectedManualSophisticated value = (ExpectedManualSophisticated) expectedArgument;
+                parsedValue = value.getValue(rawArgument, context);
+                attempted = true;
+            }
+
+            if (expectedArgument instanceof ExpectedManual) {
+                ExpectedManual value = (ExpectedManual) expectedArgument;
+                parsedValue = value.getValue(rawArgument, context);
+                attempted = true;
+            }
+
+            if (!attempted) {
+                throw new IllegalArgumentException("An illegal expected argument was provided for the " + context.getKeyword().getIdentifier() + " keyword!");
+            }
+
+            if (parsedValue == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on keyword " + context.getKeyword().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
+                return false;
+            }
+
+            parsedArguments.set(i, parsedValue);
         }
 
         return true;

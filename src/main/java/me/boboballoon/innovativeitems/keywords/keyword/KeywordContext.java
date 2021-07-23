@@ -6,14 +6,27 @@ import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
  * Represents the context in which a keyword was used in
  */
 public class KeywordContext {
+    private final Keyword keyword;
     private final String[] context;
     private final String abilityName;
     private final AbilityTrigger abilityTrigger;
+    private final int lineNumber;
 
-    public KeywordContext(String[] context, String abilityName, AbilityTrigger abilityTrigger) {
+    public KeywordContext(Keyword keyword, String[] context, String abilityName, AbilityTrigger abilityTrigger, int lineNumber) {
+        this.keyword = keyword;
         this.context = context;
         this.abilityName = abilityName;
         this.abilityTrigger = abilityTrigger;
+        this.lineNumber = lineNumber;
+    }
+
+    /**
+     * A method that returns the type of keyword being used as a base for the active keyword
+     *
+     * @return the type of keyword being used as a base for the active keyword
+     */
+    public Keyword getKeyword() {
+        return this.keyword;
     }
 
     /**
@@ -26,6 +39,15 @@ public class KeywordContext {
     }
 
     /**
+     * A method that returns the name of the ability that contains this keyword
+     *
+     * @return the name of the ability that contains this keyword
+     */
+    public String getAbilityName() {
+        return this.abilityName;
+    }
+
+    /**
      * A method that returns the trigger of the ability that contains this keyword
      *
      * @return the trigger of the ability that contains this keyword
@@ -35,11 +57,11 @@ public class KeywordContext {
     }
 
     /**
-     * A method that returns the name of the ability that contains this keyword
+     * A method that returns the line number of the keyword in the keywords list of the ability
      *
-     * @return the name of the ability that contains this keyword
+     * @return the line number of the keyword in the keywords list of the ability
      */
-    public String getAbilityName() {
-        return this.abilityName;
+    public int getLineNumber() {
+        return this.lineNumber;
     }
 }

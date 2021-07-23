@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class used to store util methods regarding strings
@@ -20,7 +21,7 @@ public final class TextUtil {
      * @param text text you wish to add color codes to
      * @return text with added color codes
      */
-    public static String format(String text) {
+    public static String format(@NotNull String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
@@ -30,7 +31,7 @@ public final class TextUtil {
      * @param sender the entity who the message must be sent to
      * @param message the message you wish to send
      */
-    public static void sendMessage(CommandSender sender, String message) {
+    public static void sendMessage(@NotNull CommandSender sender, @NotNull String message) {
         sender.sendMessage(PREFIX + TextUtil.format(message));
     }
 }

@@ -30,25 +30,26 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Refactor KeywordTargeters so they are allowed to have provided args (learn advanced regex to do this) and can be registered like keywords, these are held in active keywords
-      a. Make sure to build a targeter type enum to hold values that can be returned from a getValue() method that returns an object (e.g. ENTITY, LOCATION, look at mythicmobs for more)
-      b. Build api system before you make parser (start with the easier stuff)
-    2. Deprecate KeywordContext.getContext() method and make a method that returns an array of strings and pre-parsed ability targeters
-    3. sound keyword (play sound effect)
-    4. teleport keyword
-    5. giveitem keyword (give a normal minecraft item)
-    6. givecustomitem keyword (give a custom item)
-    7. removehelditem keyword (with amount arg)
-    8. gamemode keyword (set a players gamemode)
-    9. Build ability conditionals api and make it work dumbass
-    10. Add example configs that are generated on reload (put option in main config to disable)
-    (new update at this point 2.0)
-    11. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    12. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    DO SOME MORE TESTING WITH NEW BULLSHIT
+    (REMEMBER TO ADD EVERYTHING TO DOCS BEFORE UPDATE)
+    1. sound keyword (play sound effect)
+    2. teleport keyword
+    3. giveitem keyword (give a normal minecraft item)
+    4. givecustomitem keyword (give a custom item)
+    5. removehelditem keyword (with amount arg)
+    6. gamemode keyword (set a players gamemode)
+    7. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbilityBase abstract class with everything except name
         b. Extend AbilityBase in normal ability class and add name field and build new AnonymousAbility class with no changes
-        c. Make separate method in AbilityParser for anonymous abilities like AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item)
-    13. Add support for custom blocks
+        c. Make separate method in AbilityParser for anonymous abilities like-
+        AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make sure to replace "abilityName" with-
+        {custom item name}_anonymous-ability
+    8. Build ability conditionals api and make it work dumbass
+    9. Add example configs that are generated on reload (put option in main config to disable)
+    (new update at this point 2.0)
+    10. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    11. Add support for custom blocks
+        (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
         c. When server stops serialize the map as a json file
@@ -63,6 +64,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. Interpreter now knows the placement of expected targeters
      */
 
     @Override

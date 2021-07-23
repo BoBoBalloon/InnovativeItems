@@ -5,23 +5,20 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class that represents a keyword in an ability config file that executes another ability
  */
 public class AbilityKeyword extends Keyword {
     public AbilityKeyword() {
-        super("ability", false);
+        super("ability",
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
     }
 
     @Override
-    protected void call(List<Object> arguments, RuntimeContext context) {
+    protected void call(ImmutableList<Object> arguments, RuntimeContext context) {
         String rawAbility = (String) arguments.get(0);
 
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
@@ -42,24 +39,6 @@ public class AbilityKeyword extends Keyword {
         }
 
         ability.execute(context);
-    }
-
-    @Override
-    @Nullable
-    public List<Object> load(KeywordContext context) {
-        String[] raw = context.getContext();
-        List<Object> args = new ArrayList<>();
-
-        String rawAbility = raw[0];
-
-        args.add(rawAbility);
-
-        return args;
-    }
-
-    @Override
-    public ImmutableList<String> getValidTargeters() {
-        return ImmutableList.of();
     }
 
     @Override

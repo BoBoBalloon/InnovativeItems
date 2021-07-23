@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class used to store util methods regarding logging
@@ -21,7 +22,7 @@ public final class LogUtil {
      * @param level the level of the log
      * @param text  text you wish to log
      */
-    public static void log(Level level, String text) {
+    public static void log(@NotNull Level level, @NotNull String text) {
         int debugLevel = InnovativeItems.getInstance().getConfigManager().getDebugLevel();
 
         if (level == Level.INFO && debugLevel < 3) {
@@ -45,7 +46,7 @@ public final class LogUtil {
      * @param level the level of the log
      * @param text  text you wish to log
      */
-    public static void logUnblocked(Level level, String text) {
+    public static void logUnblocked(@NotNull Level level, @NotNull String text) {
         InnovativeItems.getInstance().getLogger().log(level.getDebugLevel(), text);
     }
 

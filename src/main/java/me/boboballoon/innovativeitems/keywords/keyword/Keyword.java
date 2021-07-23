@@ -3,28 +3,25 @@ package me.boboballoon.innovativeitems.keywords.keyword;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedArguments;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Class that represents a usable keyword in an ability config file
  */
 public abstract class Keyword {
     private final String identifier;
-    private final List<Boolean> isTargeter;
+    private final ImmutableList<ExpectedArguments> arguments;
 
     /**
      * A constructor that builds a keyword
      * @param identifier the reference used to get a keyword and used in config files
-     * @param isTargeters whether the index of the boolean should have a targeter present
+     * @param arguments all the possible targeters in a given argument
      */
-    public Keyword(@NotNull String identifier, Boolean... isTargeters) {
+    public Keyword(@NotNull String identifier, ExpectedArguments... arguments) {
         this.identifier = identifier;
-        this.isTargeter = Arrays.asList(isTargeters);
+        this.arguments = ImmutableList.copyOf(arguments);
     }
 
     /**
@@ -41,8 +38,8 @@ public abstract class Keyword {
      *
      * @return whether each argument is expected to be a targeter
      */
-    public ImmutableList<Boolean> getArguments() {
-        return ImmutableList.copyOf(this.isTargeter);
+    public ImmutableList<ExpectedArguments> getArguments() {
+        return this.arguments;
     }
 
     /**
@@ -51,23 +48,7 @@ public abstract class Keyword {
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    protected abstract void call(List<Object> arguments, RuntimeContext context);
-
-    /**
-     * A method that should be used to parse and initialize arguments
-     *
-     * @param context the context in which the keyword was used in
-     * @return the parsed arguments (null if an error occurred)
-     */
-    @Nullable
-    public abstract List<Object> load(KeywordContext context);
-
-    /**
-     * A method that returns the identifier of each keyword targeter allowed
-     *
-     * @return the identifier of each keyword targeter allowed
-     */
-    public abstract ImmutableList<String> getValidTargeters();
+    protected abstract void call(ImmutableList<Object> arguments, RuntimeContext context);
 
     /**
      * A method that returns a boolean that is true when the keyword will be run async
@@ -82,7 +63,7 @@ public abstract class Keyword {
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    public void execute(List<Object> arguments, RuntimeContext context) {
+    public void execute(ImmutableList<Object> arguments, RuntimeContext context) {
         if (this.isAsync()) {
             this.call(arguments, context);
             return;

@@ -5,12 +5,10 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -19,12 +17,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RandomAbilityKeyword extends Keyword {
     public RandomAbilityKeyword() {
-        super("randomability", false);
+        super("randomability",
+                (ExpectedManual) (rawValue, context) -> rawValue.split(";"));
     }
 
     @Override
-    protected void call(List<Object> arguments, RuntimeContext context) {
-        List<String> rawAbilities = (List<String>) arguments.get(0);
+    protected void call(ImmutableList<Object> arguments, RuntimeContext context) {
+        String[] rawAbilities = (String[]) arguments.get(0);
         List<Ability> abilities = new ArrayList<>();
 
         for (String rawAbility : rawAbilities) {
@@ -53,24 +52,6 @@ public class RandomAbilityKeyword extends Keyword {
         Ability ability = abilities.get(index);
 
         ability.execute(context);
-    }
-
-    @Override
-    @Nullable
-    public List<Object> load(KeywordContext context) {
-        String[] raw = context.getContext();
-        List<Object> args = new ArrayList<>();
-
-        String[] rawAbilities = raw[0].split(";");
-
-        args.add(Arrays.asList(rawAbilities));
-
-        return args;
-    }
-
-    @Override
-    public ImmutableList<String> getValidTargeters() {
-        return ImmutableList.of();
     }
 
     @Override

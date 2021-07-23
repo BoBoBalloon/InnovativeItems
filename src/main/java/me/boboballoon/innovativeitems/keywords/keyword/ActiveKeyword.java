@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 
 import java.util.List;
@@ -9,17 +10,17 @@ import java.util.List;
  */
 public class ActiveKeyword {
     private final Keyword base;
-    private final List<Object> arguments;
+    private final ImmutableList<Object> arguments;
 
     /**
      * A constructor used to build a keyword after being parsed
      *
      * @param base the base keyword being used
-     * @param context the context in which the base keyword was used in
+     * @param arguments the list of arguments with targeters already parsed
      */
-    public ActiveKeyword(Keyword base, KeywordContext context) {
+    public ActiveKeyword(Keyword base, List<Object> arguments) {
         this.base = base;
-        this.arguments = base.load(context);
+        this.arguments = ImmutableList.copyOf(arguments);
     }
 
     /**

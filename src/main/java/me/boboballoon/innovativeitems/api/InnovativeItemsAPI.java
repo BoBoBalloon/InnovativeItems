@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.keywords.KeywordManager;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class used to easily retrieve internal information about the plugin
@@ -52,7 +53,7 @@ public final class InnovativeItemsAPI {
      * @param text the text displayed in the debug
      * @param ignoreDebugLevel whether or not this log should ignore the current debug level
      */
-    public static void log(LogUtil.Level level, String text, boolean ignoreDebugLevel) {
+    public static void log(@NotNull LogUtil.Level level, @NotNull String text, boolean ignoreDebugLevel) {
         if (ignoreDebugLevel) {
             LogUtil.logUnblocked(level, text);
             return;
@@ -68,7 +69,7 @@ public final class InnovativeItemsAPI {
      * @param level the level of the debug
      * @param text the text displayed in the debug
      */
-    public static void log(LogUtil.Level level, String text) {
+    public static void log(@NotNull LogUtil.Level level, @NotNull String text) {
         LogUtil.log(level, text);
     }
 }

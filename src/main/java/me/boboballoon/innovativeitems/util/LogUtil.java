@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,6 +49,39 @@ public final class LogUtil {
      */
     public static void logUnblocked(@NotNull Level level, @NotNull String text) {
         InnovativeItems.getInstance().getLogger().log(level.getDebugLevel(), text);
+    }
+
+    /**
+     * A method wrapper to log a keyword exception to prevent repetitive code
+     *
+     * @param level the log level
+     * @param fieldName the name of field to be initialized
+     * @param keywordName the name of the keyword
+     * @param abilityName the name of the ability the keyword is being initialized on
+     */
+    public static void logKeywordError(@NotNull Level level, @NotNull String fieldName, @NotNull String keywordName, @NotNull String abilityName) {
+        LogUtil.log(level, "There is not a valid " + fieldName + " entered on the " + keywordName + " keyword on the " + abilityName + " ability!");
+    }
+
+    /**
+     * A method wrapper to log a keyword exception to prevent repetitive code
+     *
+     * @param level the log level
+     * @param context the context in which the keyword was parsed
+     * @param fieldName the name of field to be initialized
+     */
+    public static void logKeywordError(@NotNull Level level, @NotNull KeywordContext context, @NotNull String fieldName) {
+        LogUtil.logKeywordError(level, fieldName, context.getKeyword().getIdentifier(), context.getAbilityName());
+    }
+
+    /**
+     * A method wrapper to log a keyword exception to prevent repetitive code
+     *
+     * @param context the context in which the keyword was parsed
+     * @param fieldName the name of field to be initialized
+     */
+    public static void logKeywordError(@NotNull KeywordContext context, @NotNull String fieldName) {
+        LogUtil.logKeywordError(Level.WARNING, context, fieldName);
     }
 
     /**

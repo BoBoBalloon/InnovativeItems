@@ -7,7 +7,6 @@ import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -17,7 +16,7 @@ public class KindleKeyword extends Keyword {
     public KindleKeyword() {
         super("kindle",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid duration entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")));
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "duration"));
     }
 
     @Override
@@ -33,13 +32,6 @@ public class KindleKeyword extends Keyword {
             DamageContext damageContext = (DamageContext) context;
             target = damageContext.getEntity();
         }
-
-        /*
-        if (target == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
-            return;
-        }
-         */
 
         int duration = (Integer) arguments.get(1);
 

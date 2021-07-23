@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
-import me.boboballoon.innovativeitems.util.LogUtil;
 
 /**
  * Class that represents a keyword in an ability config file that delays the rest of the provided keywords
@@ -12,7 +11,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 public class DelayKeyword extends Keyword {
     public DelayKeyword() {
         super("delay",
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid delay entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")));
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "delay"));
     }
 
     @Override

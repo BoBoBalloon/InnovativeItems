@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.keywords.keyword.arguments;
 
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.util.InitializationUtil;
+import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,8 +20,12 @@ public class ExpectedValues implements ExpectedArguments {
         this.onError = onError;
     }
 
+    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @NotNull String fieldName) {
+        this(primitive, context -> LogUtil.logKeywordError(context, fieldName));
+    }
+
     public ExpectedValues(@NotNull ExpectedPrimitives primitive) {
-        this(primitive, null);
+        this(primitive, (Consumer<KeywordContext>) null);
     }
 
     /**

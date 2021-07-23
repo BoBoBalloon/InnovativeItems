@@ -34,13 +34,6 @@ public class MessageKeyword extends Keyword {
             target = damageContext.getEntity();
         }
 
-        /*
-        if (target == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "There is not a valid living entity currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
-            return;
-        }
-         */
-
         String message = (String) arguments.get(1);
 
         target.sendMessage(TextUtil.format(message));

@@ -8,7 +8,6 @@ import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -22,7 +21,7 @@ public class LightningKeyword extends Keyword {
     public LightningKeyword() {
         super("lightning",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY, KeywordTargeter.BLOCK),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid damage amount entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")));
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "damage amount"));
     }
 
     @Override
@@ -43,13 +42,6 @@ public class LightningKeyword extends Keyword {
             InteractContextBlock interactContext = (InteractContextBlock) context;
             location = interactContext.getBlock().getLocation();
         }
-
-        /*
-        if (location == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "There is not a location currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
-            return;
-        }
-         */
 
         location.getWorld().strikeLightningEffect(location);
 

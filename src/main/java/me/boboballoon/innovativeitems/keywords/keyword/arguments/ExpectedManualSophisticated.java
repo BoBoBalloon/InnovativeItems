@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.keywords.keyword.arguments;
 
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -15,6 +16,10 @@ public class ExpectedManualSophisticated implements ExpectedArguments {
     public ExpectedManualSophisticated(@NotNull ExpectedManual manual, @NotNull Consumer<KeywordContext> onError) {
         this.manual = manual;
         this.onError = onError;
+    }
+
+    public ExpectedManualSophisticated(@NotNull ExpectedManual manual, @NotNull String fieldName) {
+        this(manual, context -> LogUtil.logKeywordError(context, fieldName));
     }
 
     /**
@@ -47,7 +52,6 @@ public class ExpectedManualSophisticated implements ExpectedArguments {
         try {
             value = this.manual.getValue(rawValue, context);
         } catch (Throwable e) {
-            e.printStackTrace();
             this.onError.accept(context);
             return null;
         }

@@ -27,11 +27,11 @@ public class ParticleKeyword extends Keyword {
                         LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle name entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
                         return null;
                     }
-                }, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle name entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle amount entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid x offset entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid y offset entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, context -> LogUtil.log(LogUtil.Level.WARNING, "There is not a valid z offset entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!")));
+                }, "particle name"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "particle amount"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x offset"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y offset"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "z offset"));
     }
 
     @Override
@@ -52,13 +52,6 @@ public class ParticleKeyword extends Keyword {
             InteractContextBlock interactContext = (InteractContextBlock) context;
             location = interactContext.getBlock().getLocation();
         }
-
-        /*
-        if (location == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "There is not a location currently present on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability! Are you sure the target and trigger are valid together?");
-            return;
-        }
-         */
 
         Particle particle = (Particle) arguments.get(1);
         int amount = (Integer) arguments.get(2);

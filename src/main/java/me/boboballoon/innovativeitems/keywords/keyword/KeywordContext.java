@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.keywords.keyword;
 
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 
 /**
  * Represents the context in which a keyword was used in

@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.*;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -271,22 +272,27 @@ public final class AbilityParser {
             ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
 
             boolean attempted = false;
+            boolean errorMessageSent = false;
 
             if (expectedArgument instanceof ExpectedValues) {
                 ExpectedValues value = (ExpectedValues) expectedArgument;
                 parsedValue = value.getValue(rawArgument, context);
                 attempted = true;
+                errorMessageSent = (value.getOnError() != null);
             }
 
             if (expectedArgument instanceof ExpectedManualSophisticated) {
                 ExpectedManualSophisticated value = (ExpectedManualSophisticated) expectedArgument;
                 parsedValue = value.getValue(rawArgument, context);
                 attempted = true;
+                errorMessageSent = (value.getOnError() != null);
             }
 
             if (expectedArgument instanceof ExpectedManual) {
                 ExpectedManual value = (ExpectedManual) expectedArgument;
-                parsedValue = value.getValue(rawArgument, context);
+                try {
+                    parsedValue = value.getValue(rawArgument, context);
+                } catch (Exception ignored) {}
                 attempted = true;
             }
 
@@ -294,12 +300,19 @@ public final class AbilityParser {
                 throw new IllegalArgumentException("An illegal expected argument was provided for the " + context.getKeyword().getIdentifier() + " keyword!");
             }
 
-            if (parsedValue == null) {
+            if (parsedValue == null && !errorMessageSent) {
                 LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on keyword " + context.getKeyword().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
                 return false;
             }
 
             parsedArguments.set(i, parsedValue);
+        }
+
+        //final check to make sure no elements are null
+        for (Object argument : parsedArguments) {
+            if (argument == null) {
+                return false;
+            }
         }
 
         return true;

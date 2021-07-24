@@ -14,7 +14,8 @@ public interface ExpectedManual extends ExpectedArguments {
      * @param rawValue the raw value of the argument in the configuration file
      * @param context the context in which the keyword was parsed
      * @return the desired argument to be placed in the list
+     * @throws Exception when parsing fails for any reason
      */
     @Nullable
-    Object getValue(String rawValue, KeywordContext context);
+    Object getValue(String rawValue, KeywordContext context) throws Exception;
 }

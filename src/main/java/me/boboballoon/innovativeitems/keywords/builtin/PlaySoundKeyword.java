@@ -5,18 +5,22 @@ import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 /**
- * Class that represents a keyword in an ability config file that damages a selected target
+ * Class that represents a keyword in an ability config file that plays a sound for a player
  */
-public class FeedKeyword extends Keyword {
-    public FeedKeyword() {
-        super("feed",
+public class PlaySoundKeyword extends Keyword {
+    public PlaySoundKeyword() {
+        super("playsound",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "food amount"));
+                new ExpectedManualSophisticated((rawValue, context) -> Sound.valueOf(rawValue.toUpperCase()), "sound"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "volume"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "pitch"));
     }
 
     @Override
@@ -38,10 +42,11 @@ public class FeedKeyword extends Keyword {
             target = (Player) damageContext.getEntity();
         }
 
-        int rawAmount = (Integer) arguments.get(1);
-        int amount = rawAmount + target.getFoodLevel();
+        Sound sound = (Sound) arguments.get(1);
+        float volume = (Float) arguments.get(2);
+        float pitch = (Float) arguments.get(3);
 
-        target.setFoodLevel(amount);
+        target.playSound(target.getLocation(), sound, volume, pitch);
     }
 
     @Override

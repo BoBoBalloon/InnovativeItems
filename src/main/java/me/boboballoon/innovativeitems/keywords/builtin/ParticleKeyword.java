@@ -9,7 +9,6 @@ import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -20,14 +19,7 @@ public class ParticleKeyword extends Keyword {
     public ParticleKeyword() {
         super("particle",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY, KeywordTargeter.BLOCK),
-                new ExpectedManualSophisticated((rawValue, context) -> {
-                    try {
-                        return Particle.valueOf(rawValue.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        LogUtil.log(LogUtil.Level.WARNING, "There is not a valid particle name entered on the " + context.getKeyword().getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
-                        return null;
-                    }
-                }, "particle name"),
+                new ExpectedManualSophisticated((rawValue, context) -> Particle.valueOf(rawValue.toUpperCase()), "particle name"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "particle amount"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x offset"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y offset"),

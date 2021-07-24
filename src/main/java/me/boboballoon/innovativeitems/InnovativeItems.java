@@ -30,25 +30,22 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    DO SOME MORE TESTING WITH NEW BULLSHIT
-    (REMEMBER TO ADD EVERYTHING TO DOCS BEFORE UPDATE)
-    1. sound keyword (play sound effect)
-    2. teleport keyword
-    3. giveitem keyword (give a normal minecraft item)
-    4. givecustomitem keyword (give a custom item)
-    5. removehelditem keyword (with amount arg)
-    6. gamemode keyword (set a players gamemode)
-    7. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    0. teleport keyword
+    1. giveitem keyword (give a normal minecraft item)
+    2. givecustomitem keyword (give a custom item)
+    3. removehelditem keyword (with amount arg)
+    4. gamemode keyword (set a players gamemode)
+    5. Build ability conditionals api and make it work dumbass
+    6. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbilityBase abstract class with everything except name
         b. Extend AbilityBase in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
         AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make sure to replace "abilityName" with-
         {custom item name}_anonymous-ability
-    8. Build ability conditionals api and make it work dumbass
-    9. Add example configs that are generated on reload (put option in main config to disable)
+    7. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
-    10. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    11. Add support for custom blocks
+    8. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    9. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -64,7 +61,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. Interpreter now knows the placement of expected targeters
      */
 
     @Override
@@ -78,7 +74,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
-                new FeedKeyword(), new LightningKeyword(), new KindleKeyword());
+                new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword());
     }
 
     @Override

@@ -30,11 +30,7 @@ public class AbilityTriggerListeners implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             ItemStack itemStack = event.getItem();
 
-            if (itemStack == null) {
-                return;
-            }
-
-            if (itemStack.getType() == Material.AIR) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
                 return;
             }
 
@@ -72,11 +68,7 @@ public class AbilityTriggerListeners implements Listener {
     private void checkLeftClick(PlayerInteractEvent event, Ability ability) {
         Action action = event.getAction();
 
-        if (action != Action.LEFT_CLICK_AIR && action != Action.LEFT_CLICK_BLOCK) {
-            return;
-        }
-
-        if (ability.getTrigger() != AbilityTrigger.LEFT_CLICK) {
+        if ((action != Action.LEFT_CLICK_AIR && action != Action.LEFT_CLICK_BLOCK) || ability.getTrigger() != AbilityTrigger.LEFT_CLICK) {
             return;
         }
 
@@ -91,11 +83,7 @@ public class AbilityTriggerListeners implements Listener {
     private void checkRightClick(PlayerInteractEvent event, Ability ability) {
         Action action = event.getAction();
 
-        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-
-        if (ability.getTrigger() != AbilityTrigger.RIGHT_CLICK) {
+        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK || ability.getTrigger() != AbilityTrigger.RIGHT_CLICK) {
             return;
         }
 
@@ -114,11 +102,7 @@ public class AbilityTriggerListeners implements Listener {
 
         Action action = event.getAction();
 
-        if (action != Action.LEFT_CLICK_BLOCK) {
-            return;
-        }
-
-        if (ability.getTrigger() != AbilityTrigger.LEFT_CLICK_BLOCK) {
+        if (action != Action.LEFT_CLICK_BLOCK || ability.getTrigger() != AbilityTrigger.LEFT_CLICK_BLOCK) {
             return;
         }
 
@@ -137,11 +121,7 @@ public class AbilityTriggerListeners implements Listener {
 
         Action action = event.getAction();
 
-        if (action != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-
-        if (ability.getTrigger() != AbilityTrigger.RIGHT_CLICK_BLOCK) {
+        if (action != Action.RIGHT_CLICK_BLOCK || ability.getTrigger() != AbilityTrigger.RIGHT_CLICK_BLOCK) {
             return;
         }
 
@@ -173,11 +153,7 @@ public class AbilityTriggerListeners implements Listener {
             items[5] = inventory.getItemInOffHand();
 
             for (ItemStack itemStack : items) {
-                if (itemStack == null) {
-                    continue;
-                }
-
-                if (itemStack.getType() == Material.AIR) {
+                if (itemStack == null || itemStack.getType() == Material.AIR) {
                     continue;
                 }
 
@@ -238,11 +214,7 @@ public class AbilityTriggerListeners implements Listener {
             items[5] = inventory.getItemInOffHand();
 
             for (ItemStack itemStack : items) {
-                if (itemStack == null) {
-                    continue;
-                }
-
-                if (itemStack.getType() == Material.AIR) {
+                if (itemStack == null || itemStack.getType() == Material.AIR) {
                     continue;
                 }
 
@@ -304,11 +276,7 @@ public class AbilityTriggerListeners implements Listener {
 
             Ability ability = item.getAbility();
 
-            if (ability == null) {
-                return;
-            }
-
-            if (ability.getTrigger() != AbilityTrigger.CONSUME_ITEM) {
+            if (ability == null || ability.getTrigger() != AbilityTrigger.CONSUME_ITEM) {
                 return;
             }
 

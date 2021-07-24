@@ -30,7 +30,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    0. teleport keyword
     1. giveitem keyword (give a normal minecraft item)
     2. givecustomitem keyword (give a custom item)
     3. removehelditem keyword (with amount arg)
@@ -61,6 +60,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. playsound keyword
      */
 
     @Override
@@ -74,7 +74,8 @@ public final class InnovativeItems extends JavaPlugin {
         this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
-                new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword());
+                new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
+                new GiveItemKeyword());
     }
 
     @Override

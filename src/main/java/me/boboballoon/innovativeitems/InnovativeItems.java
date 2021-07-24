@@ -61,6 +61,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     CHANGE LIST:
     1. playsound keyword
+    2. giveitem keyword
+    3. givecustomitem keyword
      */
 
     @Override
@@ -75,7 +77,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
-                new GiveItemKeyword());
+                new GiveItemKeyword(), new GiveCustomItemKeyword());
     }
 
     @Override

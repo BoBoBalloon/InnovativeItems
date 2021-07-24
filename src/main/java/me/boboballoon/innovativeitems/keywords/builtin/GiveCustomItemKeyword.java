@@ -1,25 +1,26 @@
 package me.boboballoon.innovativeitems.keywords.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
-import org.bukkit.Material;
+import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Class that represents a keyword in an ability config file that gives a vanilla minecraft item
  */
-public class GiveItemKeyword extends Keyword {
-    public GiveItemKeyword() {
-        super("giveitem",
+public class GiveCustomItemKeyword extends Keyword {
+    public GiveCustomItemKeyword() {
+        super("givecustomitem",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedManualSophisticated((rawValue, context) -> Material.valueOf(rawValue.toUpperCase()), "material"),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "innovative item name"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "item amount"));
     }
 
@@ -42,10 +43,19 @@ public class GiveItemKeyword extends Keyword {
             target = (Player) damageContext.getEntity();
         }
 
-        Material material = (Material) arguments.get(1);
+        String itemName = (String) arguments.get(1);
+
+        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(itemName);
+
+        if (customItem == null) {
+            LogUtil.log(LogUtil.Level.WARNING, "The provided item name on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability cannot resolve a custom item!");
+            return;
+        }
+
         int amount = (Integer) arguments.get(2);
 
-        ItemStack item = new ItemStack(material, amount);
+        ItemStack item = customItem.getItemStack().clone();
+        item.setAmount(amount);
 
         target.getInventory().addItem(item);
     }

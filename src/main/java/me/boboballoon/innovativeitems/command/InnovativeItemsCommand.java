@@ -129,7 +129,7 @@ public class InnovativeItemsCommand extends BaseCommand {
      * A "command" used to set the current debug level
      */
     @Subcommand("debug")
-    @CommandCompletion("@range:0-3 @nothing")
+    @CommandCompletion("@range:0-5 @nothing")
     public void onDebug(CommandSender sender, String[] args) {
         if (args.length < 1) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");

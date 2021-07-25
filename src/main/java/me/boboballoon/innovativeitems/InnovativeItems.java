@@ -58,6 +58,8 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. Added new debug level DEV (for dev errors) and debug level NOISE (for anything really)
+    2. debug levels now range 0-5
      */
 
     @Override

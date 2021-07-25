@@ -11,11 +11,14 @@ public final class LogUtil {
     /**
      * Constructor to prevent people from using this util class in an object oriented way
      */
-    private LogUtil() {}
+    private LogUtil() {
+    }
 
     /**
      * Method wrapper of log method with debug level checks
-     * Debug level of 3 allows everything
+     * Debug level of 5 allows everything
+     * Debug level of 4 allows warnings and severes and info and dev
+     * Debug level of 3 allows warnings and severes and info
      * Debug level of 2 allows warnings and severes
      * Debug level of 1 allows severes
      * Debug level of 0 allows nothing
@@ -25,6 +28,14 @@ public final class LogUtil {
      */
     public static void log(@NotNull Level level, @NotNull String text) {
         int debugLevel = InnovativeItems.getInstance().getConfigManager().getDebugLevel();
+
+        if (level == Level.NOISE && debugLevel < 5) {
+            return;
+        }
+
+        if (level == Level.DEV && debugLevel < 4) {
+            return;
+        }
 
         if (level == Level.INFO && debugLevel < 3) {
             return;
@@ -54,8 +65,8 @@ public final class LogUtil {
     /**
      * A method wrapper to log a keyword exception to prevent repetitive code
      *
-     * @param level the log level
-     * @param fieldName the name of field to be initialized
+     * @param level       the log level
+     * @param fieldName   the name of field to be initialized
      * @param keywordName the name of the keyword
      * @param abilityName the name of the ability the keyword is being initialized on
      */
@@ -66,8 +77,8 @@ public final class LogUtil {
     /**
      * A method wrapper to log a keyword exception to prevent repetitive code
      *
-     * @param level the log level
-     * @param context the context in which the keyword was parsed
+     * @param level     the log level
+     * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
     public static void logKeywordError(@NotNull Level level, @NotNull KeywordContext context, @NotNull String fieldName) {
@@ -77,7 +88,7 @@ public final class LogUtil {
     /**
      * A method wrapper to log a keyword exception to prevent repetitive code
      *
-     * @param context the context in which the keyword was parsed
+     * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
     public static void logKeywordError(@NotNull KeywordContext context, @NotNull String fieldName) {
@@ -88,9 +99,11 @@ public final class LogUtil {
      * An internal wrapper class used to ensure all debugs follow the proper debug levels
      */
     public enum Level {
-        INFO(java.util.logging.Level.INFO),
+        SEVERE(java.util.logging.Level.SEVERE),
         WARNING(java.util.logging.Level.WARNING),
-        SEVERE(java.util.logging.Level.SEVERE);
+        INFO(java.util.logging.Level.INFO),
+        DEV(java.util.logging.Level.FINER),
+        NOISE(java.util.logging.Level.FINEST);
 
         private final java.util.logging.Level debugLevel;
 

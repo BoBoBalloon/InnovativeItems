@@ -97,12 +97,12 @@ public final class AbilityParser {
         if (section.isString("trigger")) {
             triggerName = section.getString("trigger");
         } else {
-            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
+            LogUtil.log(LogUtil.Level.DEV, "There was an error parsing the ability trigger for the provided config section, are you sure the provided section matches the ability?");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to lack of trigger argument!");
         }
 
         if (!triggerName.matches(AbilityTrigger.TIMER.getRegex())) {
-            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
+            LogUtil.log(LogUtil.Level.DEV, "The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the trigger argument not meeting the syntax requirements!");
         }
 
@@ -110,7 +110,7 @@ public final class AbilityParser {
         try {
             timer = Long.parseLong(triggerName.split(":")[1]);
         } catch (NumberFormatException ignored) {
-            LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
+            LogUtil.log(LogUtil.Level.DEV, "There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the delay not matching the long data type!");
         }
 
@@ -268,7 +268,7 @@ public final class AbilityParser {
             ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
 
             if (!expectedArgument.shouldGetValue()) {
-                LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There is an expected argument in the " + context.getKeyword().getIdentifier() + " keyword in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
+                LogUtil.log(LogUtil.Level.DEV, "There is an expected argument in the " + context.getKeyword().getIdentifier() + " keyword in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
                 return false;
             }
 

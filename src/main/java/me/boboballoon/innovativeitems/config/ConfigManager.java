@@ -3,7 +3,6 @@ package me.boboballoon.innovativeitems.config;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +23,9 @@ public final class ConfigManager {
 
     //debug level
     /**
-     * Debug level of 3 allows everything
+     * Debug level of 5 allows everything
+     * Debug level of 4 allows warnings and severes and info and dev
+     * Debug level of 3 allows warnings and severes and info
      * Debug level of 2 allows warnings and severes
      * Debug level of 1 allows severes
      * Debug level of 0 allows nothing
@@ -124,8 +125,8 @@ public final class ConfigManager {
      * @param saveConfig if the config file should be updated to reflect this change
      */
     public void setDebugLevel(int debugLevel, boolean saveConfig) {
-        if (debugLevel > 3) {
-            this.debugLevel = 3;
+        if (debugLevel > 5) {
+            this.debugLevel = 5;
         } else if (debugLevel < 0) {
             this.debugLevel = 0;
         } else {

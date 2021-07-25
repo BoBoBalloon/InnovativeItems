@@ -30,21 +30,16 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. giveitem keyword (give a normal minecraft item)
-    2. givecustomitem keyword (give a custom item)
-    3. removehelditem keyword (with amount arg)
-    4. gamemode keyword (set a players gamemode)
-    5. Build ability conditionals api and make it work dumbass
-    6. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    1. Build ability conditionals api and make it work dumbass
+    2. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbilityBase abstract class with everything except name
         b. Extend AbilityBase in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
-        AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make sure to replace "abilityName" with-
-        {custom item name}_anonymous-ability
-    7. Add example configs that are generated on reload (put option in main config to disable)
+        AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
+    3. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
-    8. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    9. Add support for custom blocks
+    4. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    5. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -60,9 +55,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. playsound keyword
-    2. giveitem keyword
-    3. givecustomitem keyword
      */
 
     @Override
@@ -77,7 +69,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
-                new GiveItemKeyword(), new GiveCustomItemKeyword());
+                new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword());
     }
 
     @Override

@@ -1,6 +1,42 @@
 package me.boboballoon.innovativeitems.keywords.keyword.arguments;
 
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
+
 /**
- * Dummy interface used to mark all classes used to determine whether a class is able to be provided in a keyword constructor
+ * A functional interface used to set the value of an argument in a keyword
  */
-public interface ExpectedArguments {}
+@FunctionalInterface
+public interface ExpectedArguments {
+    /**
+     * A method used to manually set the value of an argument in a keyword
+     *
+     * @param rawValue the raw value of the argument in the configuration file
+     * @param context the context in which the keyword was parsed
+     * @return the desired argument to be placed in the list
+     * @throws Exception when parsing fails for any reason
+     */
+    @Nullable
+    Object getValue(String rawValue, KeywordContext context) throws Exception;
+
+    /**
+     * A method used to determine whether it is safe to execute the getValue method
+     *
+     * @return a boolean that is true when it is safe to execute the getValue method
+     */
+    default boolean shouldGetValue() {
+        return true;
+    }
+
+    /**
+     * A method that returns the method to be called on if the parsing fails for any reason
+     *
+     * @return the method to be called on if the parsing fails for any reason
+     */
+    @Nullable
+    default Consumer<KeywordContext> getOnError() {
+        return null;
+    }
+}

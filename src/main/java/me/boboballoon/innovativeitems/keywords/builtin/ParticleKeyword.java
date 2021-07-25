@@ -6,7 +6,7 @@ import me.boboballoon.innovativeitems.keywords.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
 import org.bukkit.Location;
@@ -19,7 +19,7 @@ public class ParticleKeyword extends Keyword {
     public ParticleKeyword() {
         super("particle",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY, KeywordTargeter.BLOCK),
-                new ExpectedManualSophisticated((rawValue, context) -> Particle.valueOf(rawValue.toUpperCase()), "particle name"),
+                new ExpectedManual((rawValue, context) -> Particle.valueOf(rawValue.toUpperCase()), "particle name"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "particle amount"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x offset"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y offset"),

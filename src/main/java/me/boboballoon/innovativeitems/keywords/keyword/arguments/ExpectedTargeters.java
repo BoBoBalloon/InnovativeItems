@@ -1,7 +1,9 @@
 package me.boboballoon.innovativeitems.keywords.keyword.arguments;
 
 import com.google.common.collect.ImmutableSet;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -40,5 +42,16 @@ public class ExpectedTargeters implements ExpectedArguments {
      */
     public boolean contains(KeywordTargeter targeter) {
         return this.targeters.contains(targeter);
+    }
+
+    @Override
+    @Nullable
+    public Object getValue(String rawValue, KeywordContext context) {
+        throw new UnsupportedOperationException("The ExpectedTargeters class does not support the use of the getValue method!");
+    }
+
+    @Override
+    public boolean shouldGetValue() {
+        return false;
     }
 }

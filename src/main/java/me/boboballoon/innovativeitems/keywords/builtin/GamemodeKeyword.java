@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ public class GamemodeKeyword extends Keyword {
     public GamemodeKeyword() {
         super("gamemode",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedManualSophisticated(((rawValue, context) -> GameMode.valueOf(rawValue.toUpperCase())), "gamemode"));
+                new ExpectedManual(((rawValue, context) -> GameMode.valueOf(rawValue.toUpperCase())), "gamemode"));
     }
 
     @Override

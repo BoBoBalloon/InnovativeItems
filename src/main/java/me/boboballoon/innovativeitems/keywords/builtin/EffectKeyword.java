@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +19,7 @@ public class EffectKeyword extends Keyword {
     public EffectKeyword() {
         super("effect",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedManualSophisticated((rawValue, context) -> PotionEffectType.getByName(rawValue.toUpperCase()), "potion effect"),
+                new ExpectedManual((rawValue, context) -> PotionEffectType.getByName(rawValue.toUpperCase()), "potion effect"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "duration"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "level"));
     }

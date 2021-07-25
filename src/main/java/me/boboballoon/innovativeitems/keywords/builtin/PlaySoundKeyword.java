@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
 import org.bukkit.Sound;
@@ -18,7 +18,7 @@ public class PlaySoundKeyword extends Keyword {
     public PlaySoundKeyword() {
         super("playsound",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedManualSophisticated((rawValue, context) -> Sound.valueOf(rawValue.toUpperCase()), "sound"),
+                new ExpectedManual((rawValue, context) -> Sound.valueOf(rawValue.toUpperCase()), "sound"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "volume"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "pitch"));
     }

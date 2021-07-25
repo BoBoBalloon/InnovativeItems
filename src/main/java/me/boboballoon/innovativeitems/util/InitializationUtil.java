@@ -1,7 +1,6 @@
 package me.boboballoon.innovativeitems.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A class used to store util methods regarding the parsing/casting of variables
@@ -26,29 +25,29 @@ public final class InitializationUtil {
 
         //integers
 
-        if (clazz == Byte.class || clazz == byte.class) {
+        if (clazz == byte.class || clazz == Byte.class) {
             number = Byte.parseByte(text);
         }
 
-        if (clazz == Short.class || clazz == short.class) {
+        if (clazz == short.class || clazz == Short.class) {
             number = Short.parseShort(text);
         }
 
-        if (clazz == Integer.class || clazz == int.class) {
+        if (clazz == int.class || clazz == Integer.class) {
             number = Integer.parseInt(text);
         }
 
-        if (clazz == Long.class || clazz == long.class) {
+        if (clazz == long.class || clazz == Long.class) {
             number = Long.parseLong(text);
         }
 
         //floating points
 
-        if (clazz == Float.class || clazz == float.class) {
+        if (clazz == float.class || clazz == Float.class) {
             number = Float.parseFloat(text);
         }
 
-        if (clazz == Double.class || clazz == double.class) {
+        if (clazz == double.class || clazz == Double.class) {
             number = Double.parseDouble(text);
         }
 
@@ -59,22 +58,6 @@ public final class InitializationUtil {
         }
 
         return number;
-    }
-
-    /**
-     * A util method used to parse a string and convert it into a number, if the operation fails it will return null instead
-     *
-     * @param text the provided text
-     * @param clazz the class of the number
-     * @return the parsed value of the string as the provided number type
-     */
-    @Nullable
-    public static Number initNumberSafe(@NotNull String text, @NotNull Class<? extends Number> clazz) {
-        try {
-            return InitializationUtil.initNumber(text, clazz);
-        } catch (Throwable e) {
-            return null;
-        }
     }
 
     /**

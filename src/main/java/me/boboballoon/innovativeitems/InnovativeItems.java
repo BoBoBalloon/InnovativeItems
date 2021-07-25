@@ -30,16 +30,19 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Build ability conditionals api and make it work dumbass
-    2. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    1. Add vararg support to ExpectedValues
+       a. build a subclass that has vararg support
+       b. once done remember to add it to randomability keyword
+    2. Build ability conditionals api and make it work dumbass
+    3. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbilityBase abstract class with everything except name
         b. Extend AbilityBase in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
         AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
-    3. Add example configs that are generated on reload (put option in main config to disable)
+    4. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
-    4. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    5. Add support for custom blocks
+    5. (check what youtubers have made a video before doing this) Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    6. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations

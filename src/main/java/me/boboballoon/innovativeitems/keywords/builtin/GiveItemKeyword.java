@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.keywords.context.DamageContext;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManualSophisticated;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedValues;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ public class GiveItemKeyword extends Keyword {
     public GiveItemKeyword() {
         super("giveitem",
                 new ExpectedTargeters(KeywordTargeter.PLAYER, KeywordTargeter.ENTITY),
-                new ExpectedManualSophisticated((rawValue, context) -> Material.valueOf(rawValue.toUpperCase()), "material"),
+                new ExpectedManual((rawValue, context) -> Material.valueOf(rawValue.toUpperCase()), "material"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "item amount"));
     }
 

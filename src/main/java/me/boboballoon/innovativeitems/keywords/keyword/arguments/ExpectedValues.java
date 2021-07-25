@@ -58,6 +58,7 @@ public class ExpectedValues implements ExpectedArguments {
      * @return the method to be called on if the parsing fails for any reason
      */
     @Nullable
+    @Override
     public Consumer<KeywordContext> getOnError() {
         return this.onError;
     }
@@ -80,6 +81,7 @@ public class ExpectedValues implements ExpectedArguments {
      * @return the parsed value
      */
     @Nullable
+    @Override
     public Object getValue(String rawValue, KeywordContext context) {
         if (this.primitive == ExpectedPrimitives.STRING) {
             return rawValue;
@@ -189,14 +191,14 @@ public class ExpectedValues implements ExpectedArguments {
      * A class used to list all possible primitive types to be parsed
      */
     public enum ExpectedPrimitives {
-        BYTE(Byte.class),
-        SHORT(Short.class),
-        INTEGER(Integer.class),
-        LONG(Long.class),
-        FLOAT(Float.class),
-        DOUBLE(Double.class),
-        BOOLEAN(Boolean.class),
-        CHAR(Character.class),
+        BYTE(byte.class),
+        SHORT(short.class),
+        INTEGER(int.class),
+        LONG(long.class),
+        FLOAT(float.class),
+        DOUBLE(double.class),
+        BOOLEAN(boolean.class),
+        CHAR(char.class),
         STRING(String.class);
 
         private final Class<?> clazz;

@@ -265,54 +265,31 @@ public final class AbilityParser {
                 continue;
             }
 
+            ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
+
+            if (!expectedArgument.shouldGetValue()) {
+                LogUtil.log(LogUtil.Level.SEVERE, "(Dev warning) There is an expected argument in the " + context.getKeyword().getIdentifier() + " keyword in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
+                return false;
+            }
+
             Object parsedValue = null;
 
             String rawArgument = rawArguments[i];
 
-            ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
+            try {
+                parsedValue = expectedArgument.getValue(rawArgument, context);
+            } catch (Exception ignored) {}
 
-            boolean attempted = false;
-            boolean errorMessageSent = false;
-
-            if (expectedArgument instanceof ExpectedValues) {
-                ExpectedValues value = (ExpectedValues) expectedArgument;
-                parsedValue = value.getValue(rawArgument, context);
-                attempted = true;
-                errorMessageSent = (value.getOnError() != null);
-            }
-
-            if (expectedArgument instanceof ExpectedManualSophisticated) {
-                ExpectedManualSophisticated value = (ExpectedManualSophisticated) expectedArgument;
-                parsedValue = value.getValue(rawArgument, context);
-                attempted = true;
-                errorMessageSent = (value.getOnError() != null);
-            }
-
-            if (expectedArgument instanceof ExpectedManual) {
-                ExpectedManual value = (ExpectedManual) expectedArgument;
-                try {
-                    parsedValue = value.getValue(rawArgument, context);
-                } catch (Exception ignored) {}
-                attempted = true;
-            }
-
-            if (!attempted) {
-                throw new IllegalArgumentException("An illegal expected argument was provided for the " + context.getKeyword().getIdentifier() + " keyword!");
-            }
-
-            if (parsedValue == null && !errorMessageSent) {
+            if (parsedValue == null && expectedArgument.getOnError() == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on keyword " + context.getKeyword().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
                 return false;
             }
 
-            parsedArguments.set(i, parsedValue);
-        }
-
-        //final check to make sure no elements are null
-        for (Object argument : parsedArguments) {
-            if (argument == null) {
+            if (parsedValue == null) {
                 return false;
             }
+
+            parsedArguments.set(i, parsedValue);
         }
 
         return true;

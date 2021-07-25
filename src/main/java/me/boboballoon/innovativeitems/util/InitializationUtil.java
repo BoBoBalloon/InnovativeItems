@@ -17,12 +17,11 @@ public final class InitializationUtil {
      *
      * @param text the provided text
      * @param clazz the class of the number
-     * @param <T> the type of number
      * @return the parsed value of the string as the provided number type
      * @throws UnsupportedClassProvidedException when the provided clazz argument is not a supported number
      * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
      */
-    public static <T extends Number> T initNumber(@NotNull String text, @NotNull Class<T> clazz) throws UnsupportedClassProvidedException, NumberFormatException {
+    public static Number initNumber(@NotNull String text, @NotNull Class<? extends Number> clazz) throws UnsupportedClassProvidedException, NumberFormatException {
         Number number = null;
 
         //integers
@@ -59,22 +58,7 @@ public final class InitializationUtil {
             throw new UnsupportedClassProvidedException(clazz, "InitializationUtil.initNumber()");
         }
 
-        return (T) number;
-    }
-
-    /**
-     * A util method used to parse a string and convert it into a number
-     *
-     * @param text the provided text
-     * @param clazz the class of the number
-     * @param <T> the type of number
-     * @return the parsed value of the string as the provided number type
-     * @throws UnsupportedClassProvidedException when the provided clazz argument is not a supported number
-     * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
-     */
-    public static <T> T initNumberUnsafe(@NotNull String text, @NotNull Class<T> clazz) throws UnsupportedClassProvidedException, NumberFormatException {
-        Class<? extends Number> usedClass = (Class<? extends Number>) clazz;
-        return (T) InitializationUtil.initNumber(text, usedClass);
+        return number;
     }
 
     /**
@@ -82,11 +66,10 @@ public final class InitializationUtil {
      *
      * @param text the provided text
      * @param clazz the class of the number
-     * @param <T> the type of number
      * @return the parsed value of the string as the provided number type
      */
     @Nullable
-    public static <T extends Number> T initNumberSafe(@NotNull String text, @NotNull Class<T> clazz) {
+    public static Number initNumberSafe(@NotNull String text, @NotNull Class<? extends Number> clazz) {
         try {
             return InitializationUtil.initNumber(text, clazz);
         } catch (Throwable e) {

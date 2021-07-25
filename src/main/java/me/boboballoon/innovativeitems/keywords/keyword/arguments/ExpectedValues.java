@@ -114,7 +114,7 @@ public class ExpectedValues implements ExpectedArguments {
      */
     private Number parseNumber(String rawValue, KeywordContext context) {
         try {
-            Number value = (Number) InitializationUtil.initNumberUnsafe(rawValue, this.primitive.getRepresentingClass());
+            Number value = InitializationUtil.initNumber(rawValue, (Class<? extends Number>) this.primitive.getRepresentingClass());
 
             if (this.condition != null && !this.condition.test(value)) {
                 this.throwError(context);
@@ -189,14 +189,14 @@ public class ExpectedValues implements ExpectedArguments {
      * A class used to list all possible primitive types to be parsed
      */
     public enum ExpectedPrimitives {
-        BYTE(byte.class),
-        SHORT(short.class),
-        INTEGER(int.class),
-        LONG(long.class),
-        FLOAT(float.class),
-        DOUBLE(double.class),
-        BOOLEAN(boolean.class),
-        CHAR(char.class),
+        BYTE(Byte.class),
+        SHORT(Short.class),
+        INTEGER(Integer.class),
+        LONG(Long.class),
+        FLOAT(Float.class),
+        DOUBLE(Double.class),
+        BOOLEAN(Boolean.class),
+        CHAR(Character.class),
         STRING(String.class);
 
         private final Class<?> clazz;

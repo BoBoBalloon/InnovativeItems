@@ -53,14 +53,10 @@ public class LightningKeyword extends Keyword {
 
         Collection<Entity> entities = location.getWorld().getNearbyEntities(location, 5, 5, 5, entity -> entity instanceof Damageable);
 
-        if (entities.isEmpty()) {
-            return;
-        }
-
-        entities.forEach(entity -> {
+        for (Entity entity : entities) {
             Damageable damageable = (Damageable) entity;
             damageable.damage(damage);
-        });
+        }
     }
 
     @Override

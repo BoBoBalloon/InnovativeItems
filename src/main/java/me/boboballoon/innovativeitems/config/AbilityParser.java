@@ -5,10 +5,14 @@ import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.*;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.*;
+import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedArguments;
+import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.RegexUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,7 +180,7 @@ public final class AbilityParser {
                 continue;
             }
 
-            String[] rawArguments = split[1].substring(0, split[1].length() - 1).split(",");
+            String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
 
             rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
 
@@ -188,7 +192,7 @@ public final class AbilityParser {
             int expectedSize = keyword.getArguments().size();
 
             if (rawArguments.length != expectedSize) {
-                LogUtil.log(LogUtil.Level.WARNING, "There are currently invalid arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + abilityName + " ability!");
+                LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + abilityName + " ability!");
                 continue;
             }
 

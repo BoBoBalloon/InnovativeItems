@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
 import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.RegexUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomAbilityKeyword extends Keyword {
     public RandomAbilityKeyword() {
         super("randomability",
-                (rawValue, context) -> rawValue.split(";"));
+                (rawValue, context) -> RegexUtil.splitLiteralWithEscape(rawValue, ';'));
     }
 
     @Override

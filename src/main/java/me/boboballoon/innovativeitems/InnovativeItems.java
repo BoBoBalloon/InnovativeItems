@@ -4,11 +4,11 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.functions.FunctionManager;
+import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.keywords.KeywordManager;
-import me.boboballoon.innovativeitems.keywords.builtin.*;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.listeners.BlockPlaceableListener;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -23,27 +23,25 @@ public final class InnovativeItems extends JavaPlugin {
 
     private PaperCommandManager commandManager;
     private ConfigManager configManager;
-    private KeywordManager keywordManager;
+    private FunctionManager functionManager;
     private InnovativeCache cache;
     private AbilityTimerManager timerManager;
     private GarbageCollector garbageCollector;
 
     /*
     TODO LIST:
-    1. Build ability conditionals api and make it work dumbass
-        a. InnovativeFunction abstract class that keyword and condition should extend
-        b. ActiveFunction abstract class that active keyword and active condition should extend
-        c. Refactor keyword parser to return InnovativeFunction bullshit
-        d. Merge apis to make new conditions be supported by keyword api
-    2. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    -2. Test if the \ character works before a ( in the message keyword
+    -1. Build some conditions and test if they work
+    0. Add everything new to the docs (check added list below) and push a new update
+    1. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbstractAbility abstract class with everything except name
         b. Extend AbstractAbility in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
         AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
-    3. Add example configs that are generated on reload (put option in main config to disable)
+    2. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
-    4. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    5. Add support for custom blocks
+    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    4. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -55,10 +53,18 @@ public final class InnovativeItems extends JavaPlugin {
           d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
         f. Add support for block abilities (keep chunks loaded maybe???)
      (new update 3.0)
+     maybe make a new premium plugin that hooks into this one that is an in game GUI to build item and ability config files?
      */
 
     /*
     CHANGE LIST:
+    1. KeywordContext is now known as FunctionContext
+    2. KeywordTargeter is now known as FunctionTargeter
+    3. Keyword call method is now known as calling
+    4. KeywordManager is now known as FunctionManager
+    5. Valid keyword and condition names can only contain (a-z or A-Z or _)
+    6. The escape character can now be used on open parenthesis "("
+    7. Fixed bug where DEV and NOISE level debug would not appear in console
      */
 
     @Override
@@ -67,9 +73,9 @@ public final class InnovativeItems extends JavaPlugin {
         InnovativeItems.instance = this;
 
         //load up and register all keywords
-        this.keywordManager = new KeywordManager();
+        this.functionManager = new FunctionManager();
 
-        this.keywordManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
+        this.functionManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
@@ -170,8 +176,8 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the keyword manager
      */
-    public KeywordManager getKeywordManager() {
-        return this.keywordManager;
+    public FunctionManager getFunctionManager() {
+        return this.functionManager;
     }
 
     /**

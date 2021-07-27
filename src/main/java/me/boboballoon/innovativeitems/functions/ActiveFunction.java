@@ -1,0 +1,69 @@
+package me.boboballoon.innovativeitems.functions;
+
+import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.util.LogUtil;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+/**
+ * A class that represents a function after being parsed
+ */
+public abstract class ActiveFunction<T> {
+    private final InnovativeFunction<T> base;
+    private final ImmutableList<Object> arguments;
+
+    /**
+     * A constructor used to build a function after being parsed
+     *
+     * @param base the base function being used
+     * @param arguments the list of arguments with targeters already parsed
+     */
+    public ActiveFunction(InnovativeFunction<T> base, List<Object> arguments) {
+        this.base = base;
+        this.arguments = ImmutableList.copyOf(arguments);
+    }
+
+    /**
+     * A method that returns the base function being used
+     *
+     * @return the base function being used
+     */
+    public InnovativeFunction<T> getBase() {
+        return this.base;
+    }
+
+    /**
+     * A method that returns all the arguments being used to be passed into the function
+     *
+     * @return all the arguments being used to be passed into the function
+     */
+    public final ImmutableList<Object> getArguments() {
+        return this.arguments;
+    }
+
+    /**
+     * A method that executes the base function given the provided context (will always be fired async)
+     *
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
+     */
+    @Nullable
+    public final T execute(RuntimeContext context) {
+        if (this.arguments == null) {
+            return null;
+        }
+
+        try {
+            return this.base.execute(this.getArguments(), context);
+        } catch (ExecutionException e) {
+            if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= 4) {
+                LogUtil.log(LogUtil.Level.DEV, "There was an error trying to execute the " + this.base.getIdentifier() + " function!");
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+}

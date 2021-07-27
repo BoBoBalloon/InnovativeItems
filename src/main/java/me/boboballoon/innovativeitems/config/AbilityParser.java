@@ -1,16 +1,18 @@
 package me.boboballoon.innovativeitems.config;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.functions.FunctionContext;
+import me.boboballoon.innovativeitems.functions.FunctionTargeter;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedArguments;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
+import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
+import me.boboballoon.innovativeitems.functions.condition.Condition;
+import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
-import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
-import me.boboballoon.innovativeitems.keywords.keyword.Keyword;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordTargeter;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedArguments;
-import me.boboballoon.innovativeitems.keywords.keyword.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
 import org.bukkit.configuration.ConfigurationSection;
@@ -82,7 +84,9 @@ public final class AbilityParser {
             return null;
         }
 
-        return new Ability(section.getName(), keywords, trigger);
+        List<ActiveCondition> conditions = AbilityParser.getAbilityConditions(section, trigger);
+
+        return new Ability(section.getName(), keywords, conditions, trigger);
     }
 
     /**
@@ -171,9 +175,9 @@ public final class AbilityParser {
                 continue;
             }
 
-            String[] split = line.split("\\("); //regex = \(
+            String[] split = RegexUtil.splitLiteralWithEscape(line, '(');
 
-            Keyword keyword = InnovativeItems.getInstance().getKeywordManager().getKeyword(split[0]);
+            Keyword keyword = InnovativeItems.getInstance().getFunctionManager().getKeyword(split[0]);
 
             if (keyword == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + abilityName + "! Did you use a valid keyword?");
@@ -198,7 +202,7 @@ public final class AbilityParser {
 
             List<Object> parsedArguments = new ArrayList<>(expectedSize);
 
-            KeywordContext context = new KeywordContext(keyword, rawArguments, abilityName, trigger, (i + 1));
+            FunctionContext context = new FunctionContext(keyword, rawArguments, abilityName, trigger, (i + 1));
 
             if (!AbilityParser.parseTargeters(rawArguments, context, parsedArguments)) {
                 continue;
@@ -215,11 +219,90 @@ public final class AbilityParser {
     }
 
     /**
+     * A util method used to get the active keywords from an ability config section
+     */
+    private static List<ActiveCondition> getAbilityConditions(ConfigurationSection section, AbilityTrigger trigger) {
+        String abilityName = section.getName();
+
+        List<ActiveCondition> conditions = new ArrayList<>();
+
+        List<String> raw;
+        if (section.isList("conditions")) {
+            raw = section.getStringList("conditions");
+        } else {
+            return conditions;
+        }
+
+        for (int i = 0; i < raw.size(); i++) {
+            String line = raw.get(i);
+
+            boolean inverted;
+
+            if (line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$
+                inverted = false;
+            } else if (line.matches("!\\w+\\(.*\\)")) { //regex = ^!\w+\(.*\)$
+                inverted = true;
+            } else {
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + abilityName + "! Did you format it correctly?");
+                continue;
+            }
+
+            String[] split = RegexUtil.splitLiteralWithEscape(line, '(');
+
+            String conditionName;
+            if (!inverted) {
+                conditionName = split[0];
+            } else {
+                conditionName = split[0].substring(1);
+            }
+
+            Condition condition = InnovativeItems.getInstance().getFunctionManager().getCondition(conditionName);
+
+            if (condition == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on ability " + abilityName + "! Did you use a valid condition?");
+                continue;
+            }
+
+            String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
+
+            rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
+
+            //in the case of no arguments provided
+            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
+                rawArguments = new String[]{};
+            }
+
+            int expectedSize = condition.getArguments().size();
+
+            if (rawArguments.length != expectedSize) {
+                LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + condition.getIdentifier() + " condition on line " + (i + 1) + " of the " + abilityName + " ability!");
+                continue;
+            }
+
+            List<Object> parsedArguments = new ArrayList<>(expectedSize);
+
+            FunctionContext context = new FunctionContext(condition, rawArguments, abilityName, trigger, (i + 1));
+
+            if (!AbilityParser.parseTargeters(rawArguments, context, parsedArguments)) {
+                continue;
+            }
+
+            if (!AbilityParser.parseArguments(parsedArguments, rawArguments, context)) {
+                continue;
+            }
+
+            conditions.add(new ActiveCondition(condition, parsedArguments, inverted));
+        }
+
+        return conditions;
+    }
+
+    /**
      * A util method that checks the positions and parses the targeters inside a keyword
      */
-    private static boolean parseTargeters(String[] rawArguments, KeywordContext context, List<Object> parsedArguments) {
+    private static boolean parseTargeters(String[] rawArguments, FunctionContext context, List<Object> parsedArguments) {
         for (int i = 0; i < rawArguments.length; i++) {
-            ExpectedArguments expectedValue = context.getKeyword().getArguments().get(i);
+            ExpectedArguments expectedValue = context.getFunction().getArguments().get(i);
 
             if (!(expectedValue instanceof ExpectedTargeters)) {
                 parsedArguments.add(null);
@@ -233,7 +316,7 @@ public final class AbilityParser {
                 return false;
             }
 
-            KeywordTargeter targeter = KeywordTargeter.getFromIdentifier(argument);
+            FunctionTargeter targeter = FunctionTargeter.getFromIdentifier(argument);
 
             if (targeter == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter because it does not exist!");
@@ -248,7 +331,7 @@ public final class AbilityParser {
             ExpectedTargeters expectedTargeters = (ExpectedTargeters) expectedValue;
 
             if (!expectedTargeters.contains(targeter)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter for the keyword of " + context.getKeyword().getIdentifier() + "!");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + " on ability " + context.getAbilityName() + " is an invalid targeter for the keyword of " + context.getFunction().getIdentifier() + "!");
                 return false;
             }
 
@@ -261,7 +344,7 @@ public final class AbilityParser {
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static boolean parseArguments(List<Object> parsedArguments, String[] rawArguments, KeywordContext context) {
+    private static boolean parseArguments(List<Object> parsedArguments, String[] rawArguments, FunctionContext context) {
         for (int i = 0; i < parsedArguments.size(); i++) {
             Object argument = parsedArguments.get(i);
 
@@ -269,10 +352,10 @@ public final class AbilityParser {
                 continue;
             }
 
-            ExpectedArguments expectedArgument = context.getKeyword().getArguments().get(i);
+            ExpectedArguments expectedArgument = context.getFunction().getArguments().get(i);
 
             if (!expectedArgument.shouldGetValue()) {
-                LogUtil.log(LogUtil.Level.DEV, "There is an expected argument in the " + context.getKeyword().getIdentifier() + " keyword in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
+                LogUtil.log(LogUtil.Level.DEV, "There is an expected argument in the " + context.getFunction().getIdentifier() + " keyword in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
                 return false;
             }
 
@@ -285,7 +368,7 @@ public final class AbilityParser {
             } catch (Exception ignored) {}
 
             if (parsedValue == null && expectedArgument.getOnError() == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on keyword " + context.getKeyword().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
+                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on keyword " + context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
                 return false;
             }
 

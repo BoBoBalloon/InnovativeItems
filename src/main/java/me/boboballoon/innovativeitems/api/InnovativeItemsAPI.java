@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.api;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
-import me.boboballoon.innovativeitems.keywords.KeywordManager;
+import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +21,8 @@ public final class InnovativeItemsAPI {
      *
      * @return the active instance of the keyword manager
      */
-    public static KeywordManager getKeywordManager() {
-        return InnovativeItems.getInstance().getKeywordManager();
+    public static FunctionManager getFunctionManager() {
+        return InnovativeItems.getInstance().getFunctionManager();
     }
 
     /**

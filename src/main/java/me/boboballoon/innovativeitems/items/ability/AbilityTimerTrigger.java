@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

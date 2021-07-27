@@ -1,8 +1,10 @@
 package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.keywords.keyword.KeywordContext;
+import me.boboballoon.innovativeitems.functions.FunctionContext;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
 
 /**
  * A class used to store util methods regarding logging
@@ -29,23 +31,23 @@ public final class LogUtil {
     public static void log(@NotNull Level level, @NotNull String text) {
         int debugLevel = InnovativeItems.getInstance().getConfigManager().getDebugLevel();
 
-        if (level == Level.NOISE && debugLevel < 5) {
+        if (level == Level.NOISE && debugLevel < Level.NOISE.getDebugLevel()) {
             return;
         }
 
-        if (level == Level.DEV && debugLevel < 4) {
+        if (level == Level.DEV && debugLevel < Level.DEV.getDebugLevel()) {
             return;
         }
 
-        if (level == Level.INFO && debugLevel < 3) {
+        if (level == Level.INFO && debugLevel < Level.INFO.getDebugLevel()) {
             return;
         }
 
-        if (level == Level.WARNING && debugLevel < 2) {
+        if (level == Level.WARNING && debugLevel < Level.WARNING.getDebugLevel()) {
             return;
         }
 
-        if (level == Level.SEVERE && debugLevel < 1) {
+        if (level == Level.SEVERE && debugLevel < Level.SEVERE.getDebugLevel()) {
             return;
         }
 
@@ -59,7 +61,7 @@ public final class LogUtil {
      * @param text  text you wish to log
      */
     public static void logUnblocked(@NotNull Level level, @NotNull String text) {
-        InnovativeItems.getInstance().getLogger().log(level.getDebugLevel(), text);
+        InnovativeItems.getInstance().getLogger().log(level.getLogLevel(), text);
     }
 
     /**
@@ -81,8 +83,8 @@ public final class LogUtil {
      * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
-    public static void logKeywordError(@NotNull Level level, @NotNull KeywordContext context, @NotNull String fieldName) {
-        LogUtil.logKeywordError(level, fieldName, context.getKeyword().getIdentifier(), context.getAbilityName());
+    public static void logKeywordError(@NotNull Level level, @NotNull FunctionContext context, @NotNull String fieldName) {
+        LogUtil.logKeywordError(level, fieldName, context.getFunction().getIdentifier(), context.getAbilityName());
     }
 
     /**
@@ -91,7 +93,7 @@ public final class LogUtil {
      * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
-    public static void logKeywordError(@NotNull KeywordContext context, @NotNull String fieldName) {
+    public static void logKeywordError(@NotNull FunctionContext context, @NotNull String fieldName) {
         LogUtil.logKeywordError(Level.WARNING, context, fieldName);
     }
 
@@ -99,15 +101,18 @@ public final class LogUtil {
      * An internal wrapper class used to ensure all debugs follow the proper debug levels
      */
     public enum Level {
-        SEVERE(java.util.logging.Level.SEVERE),
-        WARNING(java.util.logging.Level.WARNING),
-        INFO(java.util.logging.Level.INFO),
-        DEV(java.util.logging.Level.FINER),
-        NOISE(java.util.logging.Level.FINEST);
+        NOTHING(null, 0),
+        SEVERE(java.util.logging.Level.SEVERE, 1),
+        WARNING(java.util.logging.Level.WARNING, 2),
+        INFO(java.util.logging.Level.INFO, 3),
+        DEV(java.util.logging.Level.INFO, 4),
+        NOISE(java.util.logging.Level.INFO, 5);
 
-        private final java.util.logging.Level debugLevel;
+        private final java.util.logging.Level logLevel;
+        private final int debugLevel;
 
-        Level(java.util.logging.Level debugLevel) {
+        Level(java.util.logging.Level logLevel, int debugLevel) {
+            this.logLevel = logLevel;
             this.debugLevel = debugLevel;
         }
 
@@ -116,7 +121,16 @@ public final class LogUtil {
          *
          * @return the current internal debug level to be used
          */
-        public java.util.logging.Level getDebugLevel() {
+        public java.util.logging.Level getLogLevel() {
+            return this.logLevel;
+        }
+
+        /**
+         * A method that returns the innovative items debug level
+         *
+         * @return the innovative items debug level
+         */
+        public int getDebugLevel() {
             return this.debugLevel;
         }
     }

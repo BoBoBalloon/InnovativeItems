@@ -1,7 +1,10 @@
 package me.boboballoon.innovativeitems.items.ability;
 
-import me.boboballoon.innovativeitems.keywords.keyword.ActiveKeyword;
-import me.boboballoon.innovativeitems.keywords.context.RuntimeContext;
+import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -10,12 +13,14 @@ import java.util.List;
  */
 public class Ability {
     private final String name;
-    private final List<ActiveKeyword> keywords;
+    private final ImmutableList<ActiveKeyword> keywords;
+    private final ImmutableList<ActiveCondition> conditions;
     private final AbilityTrigger trigger;
 
-    public Ability(String name, List<ActiveKeyword> keywords, AbilityTrigger trigger) {
+    public Ability(@NotNull String name, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger) {
         this.name = name;
-        this.keywords = keywords;
+        this.keywords = ImmutableList.copyOf(keywords);
+        this.conditions = ImmutableList.copyOf(conditions);
         this.trigger = trigger;
     }
 
@@ -33,7 +38,7 @@ public class Ability {
      *
      * @return list of all the keywords of this ability in execution order
      */
-    public List<ActiveKeyword> getKeywords() {
+    public ImmutableList<ActiveKeyword> getKeywords() {
         return this.keywords;
     }
 
@@ -47,11 +52,27 @@ public class Ability {
     }
 
     /**
+     * A method that returns the list of all conditions that must be met for this ability to be executed
+     *
+     * @return list of all conditions that must be met for this ability to be executed
+     */
+    public ImmutableList<ActiveCondition> getConditions() {
+        return this.conditions;
+    }
+
+    /**
      * A method used to execute an ability (will always be fired async)
      *
      * @param context the context in which the ability was triggered
      */
     public void execute(RuntimeContext context) {
+        for (ActiveCondition condition : this.conditions) {
+            //both must be opposites (when value is true, inverted must be false)
+            if (condition.execute(context) == condition.isInverted()) {
+                return;
+            }
+        }
+
         for (ActiveKeyword keyword : this.keywords) {
             keyword.execute(context);
         }

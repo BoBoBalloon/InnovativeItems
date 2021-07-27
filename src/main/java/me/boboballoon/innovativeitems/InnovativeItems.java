@@ -5,6 +5,8 @@ import co.aikar.commands.PaperCommandManager;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
+import me.boboballoon.innovativeitems.functions.condition.builtin.IsClearWeatherCondition;
+import me.boboballoon.innovativeitems.functions.condition.builtin.IsInBiome;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
@@ -30,18 +32,21 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    -2. Test if the \ character works before a ( in the message keyword
     -1. Build some conditions and test if they work
     0. Add everything new to the docs (check added list below) and push a new update
-    1. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    1. Make new "ishealthat" condition to check if a target has a set amount of health
+    2. Make new "istime" condition to check the time of day in game
+    2. Make new "holdingitem" condition to check if the target is holding a material with an amount
+    3. Make new "holdingcustomitem" condition to check if the target is holding an innovative item with an amount
+    4. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbstractAbility abstract class with everything except name
         b. Extend AbstractAbility in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
         AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
-    2. Add example configs that are generated on reload (put option in main config to disable)
+    5. Add example configs that are generated on reload (put option in main config to disable)
     (new update at this point 2.0)
-    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    4. Add support for custom blocks
+    6. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    7. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -53,7 +58,10 @@ public final class InnovativeItems extends JavaPlugin {
           d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
         f. Add support for block abilities (keep chunks loaded maybe???)
      (new update 3.0)
-     maybe make a new premium plugin that hooks into this one that is an in game GUI to build item and ability config files?
+     8. maybe add support for deprecated keywords and conditions
+        a. throw a warning in console if a function is deprecated
+        b. use reflection to check if it has the deprecated annotation
+     9. maybe make a new premium plugin that hooks into this one that is an in game GUI to build item and ability config files?
      */
 
     /*
@@ -80,6 +88,8 @@ public final class InnovativeItems extends JavaPlugin {
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword());
+
+        this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiome());
     }
 
     @Override

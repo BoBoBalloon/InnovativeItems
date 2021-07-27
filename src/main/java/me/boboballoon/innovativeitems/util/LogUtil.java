@@ -2,9 +2,8 @@ package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
+import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 /**
  * A class used to store util methods regarding logging
@@ -65,15 +64,16 @@ public final class LogUtil {
     }
 
     /**
-     * A method wrapper to log a keyword exception to prevent repetitive code
+     * A method wrapper to log a function exception to prevent repetitive code
      *
      * @param level       the log level
      * @param fieldName   the name of field to be initialized
-     * @param keywordName the name of the keyword
+     * @param functionName the name of the function
+     * @param functionType whether the function is a keyword or condition
      * @param abilityName the name of the ability the keyword is being initialized on
      */
-    public static void logKeywordError(@NotNull Level level, @NotNull String fieldName, @NotNull String keywordName, @NotNull String abilityName) {
-        LogUtil.log(level, "There is not a valid " + fieldName + " entered on the " + keywordName + " keyword on the " + abilityName + " ability!");
+    public static void logFunctionError(@NotNull Level level, @NotNull String fieldName, @NotNull String functionName, @NotNull String functionType, @NotNull String abilityName) {
+        LogUtil.log(level, "There is not a valid " + fieldName + " entered on the " + functionName + " " + functionType + " on the " + abilityName + " ability!");
     }
 
     /**
@@ -83,8 +83,9 @@ public final class LogUtil {
      * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
-    public static void logKeywordError(@NotNull Level level, @NotNull FunctionContext context, @NotNull String fieldName) {
-        LogUtil.logKeywordError(level, fieldName, context.getFunction().getIdentifier(), context.getAbilityName());
+    public static void logFunctionError(@NotNull Level level, @NotNull FunctionContext context, @NotNull String fieldName) {
+        String functionType = (context.getFunction() instanceof Keyword) ? "keyword" : "condition";
+        LogUtil.logFunctionError(level, fieldName, context.getFunction().getIdentifier(), functionType, context.getAbilityName());
     }
 
     /**
@@ -93,8 +94,8 @@ public final class LogUtil {
      * @param context   the context in which the keyword was parsed
      * @param fieldName the name of field to be initialized
      */
-    public static void logKeywordError(@NotNull FunctionContext context, @NotNull String fieldName) {
-        LogUtil.logKeywordError(Level.WARNING, context, fieldName);
+    public static void logFunctionError(@NotNull FunctionContext context, @NotNull String fieldName) {
+        LogUtil.logFunctionError(Level.WARNING, context, fieldName);
     }
 
     /**

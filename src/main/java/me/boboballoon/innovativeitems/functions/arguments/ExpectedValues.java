@@ -32,7 +32,7 @@ public class ExpectedValues implements ExpectedArguments {
     }
 
     public ExpectedValues(@NotNull ExpectedPrimitives primitive, @NotNull String fieldName, @Nullable Predicate<Object> condition) {
-        this(primitive, context -> LogUtil.logKeywordError(context, fieldName), condition);
+        this(primitive, context -> LogUtil.logFunctionError(context, fieldName), condition);
     }
 
     public ExpectedValues(@NotNull ExpectedPrimitives primitive, @NotNull String fieldName) {

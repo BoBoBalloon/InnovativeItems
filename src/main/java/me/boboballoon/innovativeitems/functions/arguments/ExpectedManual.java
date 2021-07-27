@@ -24,7 +24,7 @@ public class ExpectedManual implements ExpectedArguments {
     }
 
     public ExpectedManual(@NotNull ExpectedArguments manual, @NotNull String fieldName) {
-        this(manual, context -> LogUtil.logKeywordError(context, fieldName));
+        this(manual, context -> LogUtil.logFunctionError(context, fieldName));
     }
 
     /**

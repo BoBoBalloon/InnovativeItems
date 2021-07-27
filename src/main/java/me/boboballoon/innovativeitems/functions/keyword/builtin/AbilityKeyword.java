@@ -24,7 +24,7 @@ public class AbilityKeyword extends Keyword {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
 
         if (ability == null) {
-            LogUtil.logKeywordError(LogUtil.Level.WARNING, "ability name", this.getIdentifier(), context.getAbilityName());
+            LogUtil.logFunctionError(LogUtil.Level.WARNING, "ability name", this.getIdentifier(), "keyword", context.getAbilityName());
             return;
         }
 

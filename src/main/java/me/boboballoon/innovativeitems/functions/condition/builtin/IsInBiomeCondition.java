@@ -14,8 +14,8 @@ import org.bukkit.block.Block;
 /**
  * Class that represents a condition in an ability config file that checks if the target is in the selected biome
  */
-public class IsInBiome extends Condition {
-    public IsInBiome() {
+public class IsInBiomeCondition extends Condition {
+    public IsInBiomeCondition() {
         super("isinbiome",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
                 new ExpectedManual((rawValue, context) -> Biome.valueOf(rawValue.toUpperCase()), "biome"));

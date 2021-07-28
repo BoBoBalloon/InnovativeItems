@@ -6,7 +6,7 @@ import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class VoidInnovativeFunction extends InnovativeFunction<Void> {
-    public VoidInnovativeFunction(@NotNull String identifier, ExpectedArguments... arguments) {
+    public VoidInnovativeFunction(@NotNull String identifier, @NotNull ExpectedArguments... arguments) {
         super(identifier, arguments);
     }
 

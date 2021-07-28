@@ -22,7 +22,7 @@ public abstract class InnovativeFunction<T> {
      * @param identifier the reference used to get a function and used in config files
      * @param arguments all the possible targeters in a given argument
      */
-    public InnovativeFunction(@NotNull String identifier, ExpectedArguments... arguments) {
+    public InnovativeFunction(@NotNull String identifier, @NotNull ExpectedArguments... arguments) {
         this.identifier = identifier;
         this.arguments = ImmutableList.copyOf(arguments);
     }

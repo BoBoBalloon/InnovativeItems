@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -67,6 +68,13 @@ public class Ability {
      */
     public void execute(RuntimeContext context) {
         for (ActiveCondition condition : this.conditions) {
+            Boolean value = condition.execute(context);
+
+            if (value == null) {
+                LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the " + this.name + " ability because the condition " + condition.getBase().getIdentifier() + " returned null!");
+                return;
+            }
+
             //both must be opposites (when value is true, inverted must be false)
             if (condition.execute(context) == condition.isInverted()) {
                 return;

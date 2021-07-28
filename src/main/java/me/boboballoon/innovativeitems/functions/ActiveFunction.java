@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public abstract class ActiveFunction<T> {
      * @param base the base function being used
      * @param arguments the list of arguments with targeters already parsed
      */
-    public ActiveFunction(InnovativeFunction<T> base, List<Object> arguments) {
+    public ActiveFunction(@NotNull InnovativeFunction<T> base, @NotNull List<Object> arguments) {
         this.base = base;
         this.arguments = ImmutableList.copyOf(arguments);
     }
@@ -57,9 +58,9 @@ public abstract class ActiveFunction<T> {
         }
 
         try {
-            return this.base.execute(this.getArguments(), context);
+            return this.base.execute(this.arguments, context);
         } catch (ExecutionException e) {
-            if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= 4) {
+            if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
                 LogUtil.log(LogUtil.Level.DEV, "There was an error trying to execute the " + this.base.getIdentifier() + " function!");
                 e.printStackTrace();
             }

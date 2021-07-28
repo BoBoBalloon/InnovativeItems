@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Class that represents a usable condition in an ability config file
  */
 public abstract class Condition extends InnovativeFunction<Boolean> {
-    public Condition(@NotNull String identifier, ExpectedArguments... arguments) {
+    public Condition(@NotNull String identifier, @NotNull ExpectedArguments... arguments) {
         super(identifier, arguments);
     }
 }

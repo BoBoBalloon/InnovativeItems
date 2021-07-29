@@ -46,10 +46,10 @@ public class ParticleKeyword extends Keyword {
         }
 
         Particle particle = (Particle) arguments.get(1);
-        int amount = (Integer) arguments.get(2);
-        double xOffset = (Double) arguments.get(3);
-        double yOffset = (Double) arguments.get(4);
-        double zOffset = (Double) arguments.get(5);
+        int amount = (int) arguments.get(2);
+        double xOffset = (double) arguments.get(3);
+        double yOffset = (double) arguments.get(4);
+        double zOffset = (double) arguments.get(5);
 
         location.getWorld().spawnParticle(particle, location, amount, xOffset, yOffset, zOffset);
     }

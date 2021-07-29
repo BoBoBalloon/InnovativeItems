@@ -52,7 +52,7 @@ public class GiveCustomItemKeyword extends Keyword {
             return;
         }
 
-        int amount = (Integer) arguments.get(2);
+        int amount = (int) arguments.get(2);
 
         ItemStack item = customItem.getItemStack().clone();
         item.setAmount(amount);

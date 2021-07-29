@@ -43,8 +43,8 @@ public class PlaySoundKeyword extends Keyword {
         }
 
         Sound sound = (Sound) arguments.get(1);
-        float volume = (Float) arguments.get(2);
-        float pitch = (Float) arguments.get(3);
+        float volume = (float) arguments.get(2);
+        float pitch = (float) arguments.get(3);
 
         target.playSound(target.getLocation(), sound, volume, pitch);
     }

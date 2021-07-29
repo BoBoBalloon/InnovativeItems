@@ -33,7 +33,7 @@ public class HealKeyword extends Keyword {
             target = damageContext.getEntity();
         }
 
-        double rawAmount = (Double) arguments.get(1);
+        double rawAmount = (double) arguments.get(1);
 
         double amount = rawAmount + target.getHealth();
 

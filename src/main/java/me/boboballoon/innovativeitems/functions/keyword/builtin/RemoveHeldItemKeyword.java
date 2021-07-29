@@ -39,7 +39,7 @@ public class RemoveHeldItemKeyword extends Keyword {
             target = (Player) damageContext.getEntity();
         }
 
-        int amountToRemove = (Integer) arguments.get(1);
+        int amountToRemove = (int) arguments.get(1);
 
         ItemStack item = target.getInventory().getItemInMainHand();
 

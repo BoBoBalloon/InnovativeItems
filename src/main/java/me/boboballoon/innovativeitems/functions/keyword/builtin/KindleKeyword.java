@@ -33,7 +33,7 @@ public class KindleKeyword extends Keyword {
             target = damageContext.getEntity();
         }
 
-        int duration = (Integer) arguments.get(1);
+        int duration = (int) arguments.get(1);
 
         target.setFireTicks(duration);
     }

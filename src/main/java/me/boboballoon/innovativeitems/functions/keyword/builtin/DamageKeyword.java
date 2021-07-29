@@ -33,7 +33,7 @@ public class DamageKeyword extends Keyword {
             target = damageContext.getEntity();
         }
 
-        double amount = (Double) arguments.get(1);
+        double amount = (double) arguments.get(1);
 
         target.damage(amount);
     }

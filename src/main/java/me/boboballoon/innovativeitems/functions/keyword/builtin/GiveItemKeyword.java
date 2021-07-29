@@ -43,7 +43,7 @@ public class GiveItemKeyword extends Keyword {
         }
 
         Material material = (Material) arguments.get(1);
-        int amount = (Integer) arguments.get(2);
+        int amount = (int) arguments.get(2);
 
         ItemStack item = new ItemStack(material, amount);
 

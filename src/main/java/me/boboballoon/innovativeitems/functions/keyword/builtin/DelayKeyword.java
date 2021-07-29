@@ -16,7 +16,7 @@ public class DelayKeyword extends Keyword {
 
     @Override
     protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
-        int delay = (Integer) arguments.get(0) * 50; //convert to milliseconds (from ticks)
+        int delay = (int) arguments.get(0) * 50; //convert to milliseconds (from ticks)
 
         try {
             Thread.sleep(delay);

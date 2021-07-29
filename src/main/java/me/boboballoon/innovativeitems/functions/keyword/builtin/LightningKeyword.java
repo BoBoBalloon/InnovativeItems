@@ -45,7 +45,7 @@ public class LightningKeyword extends Keyword {
 
         location.getWorld().strikeLightningEffect(location);
 
-        double damage = (Double) arguments.get(1);
+        double damage = (double) arguments.get(1);
 
         if (damage <= 0) {
             return;

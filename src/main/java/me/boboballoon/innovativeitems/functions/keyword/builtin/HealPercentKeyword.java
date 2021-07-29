@@ -33,7 +33,7 @@ public class HealPercentKeyword extends Keyword {
             target = damageContext.getEntity();
         }
 
-        double percent = (Double) arguments.get(1) / 100; //convert to decimal
+        double percent = (double) arguments.get(1) / 100; //convert to decimal
 
         double amount = target.getHealth() + (target.getMaxHealth() * percent);
 

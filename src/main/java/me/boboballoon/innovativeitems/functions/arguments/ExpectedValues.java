@@ -84,7 +84,7 @@ public class ExpectedValues implements ExpectedArguments {
     @Override
     public Object getValue(String rawValue, FunctionContext context) {
         if (this.primitive == ExpectedPrimitives.STRING) {
-            return rawValue;
+            return this.parseString(rawValue, context);
         }
 
         if (this.primitive == ExpectedPrimitives.CHAR) {
@@ -174,6 +174,22 @@ public class ExpectedValues implements ExpectedArguments {
             this.throwError(context);
             return null;
         }
+    }
+
+    /**
+     * A method used to parse the provided string
+     *
+     * @param rawValue the raw value of the string
+     * @param context the context in which the argument is being parsed
+     * @return the string that is represented by the provided rawValue
+     */
+    private String parseString(String rawValue, FunctionContext context) {
+        if (this.condition != null && !this.condition.test(rawValue)) {
+            this.throwError(context);
+            return null;
+        }
+
+        return rawValue;
     }
 
     /**

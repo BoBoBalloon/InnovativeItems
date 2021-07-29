@@ -38,7 +38,7 @@ public class FeedKeyword extends Keyword {
             target = (Player) damageContext.getEntity();
         }
 
-        int rawAmount = (Integer) arguments.get(1);
+        int rawAmount = (int) arguments.get(1);
         int amount = rawAmount + target.getFoodLevel();
 
         target.setFoodLevel(amount);

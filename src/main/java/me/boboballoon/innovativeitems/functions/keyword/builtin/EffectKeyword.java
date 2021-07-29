@@ -39,8 +39,8 @@ public class EffectKeyword extends Keyword {
         }
 
         PotionEffectType type = (PotionEffectType) arguments.get(1);
-        int duration = (Integer) arguments.get(2);
-        int level = (Integer) arguments.get(3);
+        int duration = (int) arguments.get(2);
+        int level = (int) arguments.get(3);
 
         PotionEffect effect = new PotionEffect(type, duration, level);
 

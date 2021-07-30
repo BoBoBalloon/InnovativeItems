@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -229,13 +230,9 @@ public final class ItemParser {
         ConfigurationSection attributeSection = section.getConfigurationSection("attributes");
 
         for (String slotName : attributeSection.getKeys(false)) {
-            EquipmentSlot slot;
+            RevisedEquipmentSlot slot;
             try {
-                if (slotName.equalsIgnoreCase("ALL")) {
-                    slot = null;
-                } else {
-                    slot = EquipmentSlot.valueOf(slotName.toUpperCase());
-                }
+                slot = RevisedEquipmentSlot.valueOf(slotName.toUpperCase());
             } catch (IllegalArgumentException e) {
                 LogUtil.log(LogUtil.Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
@@ -251,8 +248,8 @@ public final class ItemParser {
                     continue;
                 }
 
-                if (slot != null) {
-                    attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot));
+                if (slot != RevisedEquipmentSlot.ANY) {
+                    attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot.getSlot()));
                 } else {
                     for (EquipmentSlot everySlot : EquipmentSlot.values()) {
                         attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, everySlot));

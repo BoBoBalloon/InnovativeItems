@@ -7,26 +7,21 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.DamageContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.permissions.Permissible;
 
 /**
- * Class that represents a condition in an ability config file that checks if the target has a certain amount of health
+ * Class that represents a condition in an ability config file that checks if the target has a permission
  */
-public class IsHeathAtCondition extends Condition {
-    public IsHeathAtCondition() {
-        super("ishealthat",
+public class IsPermissionPresentCondition extends Condition {
+    public IsPermissionPresentCondition() {
+        super("ispermissionpresent",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "health amount"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "operation", object -> {
-                    String value = (String) object;
-
-                    return value.equals(">") || value.equals("<") || value.equals("=");
-                }));
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
     }
 
     @Override
     protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
-        LivingEntity target = null;
+        Permissible target = null;
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
 
         if (targeter == FunctionTargeter.PLAYER) {
@@ -38,25 +33,9 @@ public class IsHeathAtCondition extends Condition {
             target = damageContext.getEntity();
         }
 
-        int amount = (int) arguments.get(1);
-        int activeAmount = (int) target.getHealth();
-        String operation = (String) arguments.get(2);
+        String permission = (String) arguments.get(1);
 
-
-        if (operation.equals(">")) {
-            return activeAmount > amount;
-        }
-
-        if (operation.equals("<")) {
-            return activeAmount < amount;
-        }
-
-        if (operation.equals("=")) {
-            return activeAmount == amount;
-        }
-
-        //this will never fire due to the condition in place for the string in the constructor
-        return null;
+        return target.hasPermission(permission);
     }
 
     @Override

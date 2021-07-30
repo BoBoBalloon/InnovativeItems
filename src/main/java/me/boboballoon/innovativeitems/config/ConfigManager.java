@@ -223,7 +223,7 @@ public final class ConfigManager {
 
             garbageCollector.setEnabled(true);
 
-            garbageCollector.cleanAllPlayerInventories();
+            garbageCollector.cleanAllPlayerInventories(false);
 
             LogUtil.logUnblocked(LogUtil.Level.INFO, "Plugin reload complete!");
         }, 100L);

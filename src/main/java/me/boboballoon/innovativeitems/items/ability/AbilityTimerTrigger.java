@@ -67,7 +67,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
                 NBTItem nbtItem = new NBTItem(itemStack);
 
                 if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                    return;
+                    continue;
                 }
 
                 String key = nbtItem.getString("innovativeplugin-customitem-id");
@@ -76,23 +76,23 @@ public class AbilityTimerTrigger extends BukkitRunnable {
 
                 if (item == null) {
                     LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
-                    return;
+                    continue;
                 }
 
                 Ability ability = item.getAbility();
 
                 if (ability == null) {
-                    return;
+                    continue;
                 }
 
                 if (!this.abilities.contains(ability)) {
-                    return;
+                    continue;
                 }
 
                 AbilityTrigger trigger = ability.getTrigger();
 
                 if (trigger != AbilityTrigger.TIMER) {
-                    return;
+                    continue;
                 }
 
                 RuntimeContext context = new RuntimeContext(player, ability.getName(), ability.getTrigger());

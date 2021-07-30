@@ -145,21 +145,39 @@ public final class GarbageCollector implements Listener {
     }
 
     /**
-     * A method that will clean out all players inventories online, will always run async
+     * A method that will clean out all players inventories online
+     *
+     * @param async whether or not this method should clean up all player inventories on another thread
      */
-    public void cleanAllPlayerInventories() {
+    public void cleanAllPlayerInventories(boolean async) {
         if (!this.enabled) {
             LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
-            LogUtil.log(LogUtil.Level.INFO, "Starting asynchronous player inventory cleanup...");
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                this.cleanInventory(player.getInventory());
-            }
-            LogUtil.log(LogUtil.Level.INFO, "Asynchronous player inventory cleanup complete!");
-        });
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), this::cleanup);
+        } else {
+            this.cleanup();
+        }
+    }
+
+    /**
+     * A method that will clean out all players inventories online, will always run async
+     */
+    public void cleanAllPlayerInventories() {
+        this.cleanAllPlayerInventories(true);
+    }
+
+    /**
+     * A method used to clean all player inventories
+     */
+    private void cleanup() {
+        LogUtil.log(LogUtil.Level.INFO, "Starting asynchronous player inventory cleanup...");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            this.cleanInventory(player.getInventory());
+        }
+        LogUtil.log(LogUtil.Level.INFO, "Asynchronous player inventory cleanup complete!");
     }
 
     /**

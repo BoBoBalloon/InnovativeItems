@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -7,7 +8,7 @@ import org.bukkit.entity.Player;
 /**
  * A class that represents context where an entity was damaged that can assist execution that cannot be cached and must be parsed during runtime separately
  */
-public class DamageContext extends RuntimeContext {
+public class DamageContext extends RuntimeContext implements EntityContext {
     private final LivingEntity entity;
     private final boolean playerDamager;
 
@@ -17,11 +18,7 @@ public class DamageContext extends RuntimeContext {
         this.playerDamager = playerDamager;
     }
 
-    /**
-     * A method that returns the living entity that was involved with this context
-     *
-     * @return the living entity that was involved with this context
-     */
+    @Override
     public LivingEntity getEntity() {
         return this.entity;
     }

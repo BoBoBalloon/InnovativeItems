@@ -5,9 +5,9 @@ import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
-import me.boboballoon.innovativeitems.functions.context.DamageContext;
-import me.boboballoon.innovativeitems.functions.context.InteractContextBlock;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
@@ -30,14 +30,14 @@ public class IsInBiomeCondition extends Condition {
             block = context.getPlayer().getLocation().getBlock();
         }
 
-        if (targeter == FunctionTargeter.ENTITY && context instanceof DamageContext) {
-            DamageContext damageContext = (DamageContext) context;
-            block = damageContext.getEntity().getLocation().getBlock();
+        if (targeter == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
+            block = entityContext.getEntity().getLocation().getBlock();
         }
 
-        if (targeter == FunctionTargeter.BLOCK && context instanceof InteractContextBlock) {
-            InteractContextBlock interactContextBlock = (InteractContextBlock) context;
-            block = interactContextBlock.getBlock();
+        if (targeter == FunctionTargeter.BLOCK && context instanceof BlockContext) {
+            BlockContext blockContext = (BlockContext) context;
+            block = blockContext.getBlock();
         }
 
         Biome biome = (Biome) arguments.get(1);

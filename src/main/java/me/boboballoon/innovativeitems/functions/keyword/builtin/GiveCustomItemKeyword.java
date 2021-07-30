@@ -2,13 +2,13 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.functions.context.DamageContext;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
+import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,14 +33,14 @@ public class GiveCustomItemKeyword extends Keyword {
             target = context.getPlayer();
         }
 
-        if (rawTarget == FunctionTargeter.ENTITY && context instanceof DamageContext) {
-            DamageContext damageContext = (DamageContext) context;
+        if (rawTarget == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
 
-            if (!(damageContext.getEntity() instanceof Player)) {
+            if (!(entityContext.getEntity() instanceof Player)) {
                 return;
             }
 
-            target = (Player) damageContext.getEntity();
+            target = (Player) entityContext.getEntity();
         }
 
         String itemName = (String) arguments.get(1);

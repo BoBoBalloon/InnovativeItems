@@ -31,18 +31,17 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add 'block-break' ability trigger
-    2. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
+    1. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
         a. Make AbstractAbility abstract class with everything except name
         b. Extend AbstractAbility in normal ability class and add name field and build new AnonymousAbility class with no changes
         c. Make separate method in AbilityParser for anonymous abilities like-
         AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
-    3. Add example configs that are generated on reload (put option in main config to disable)
-    4. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    5. Add support for deprecated keywords and conditions
+    2. Add example configs that are generated on reload (put option in main config to disable)
+    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    4. Add support for deprecated keywords and conditions
         a. throw a warning in console if a function is deprecated
         b. use reflection to check if it has the deprecated annotation
-    6. Add support for custom blocks
+    5. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -54,18 +53,11 @@ public final class InnovativeItems extends JavaPlugin {
           d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
         f. Add support for block abilities (keep chunks loaded maybe???)
      (new update 3.0)
-     7. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
+     6. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
      */
 
     /*
     CHANGE LIST:
-    1. New "ispermissionpresent" condition to check if the target has the specified permission
-    2. New "isgamemode" condition to check if the target is the specified gamemode
-    3. New "isholdingitem" condition to check if the target is holding a material with an amount
-    4. New "isholdingcustomitem" condition to check if the target is holding an innovative item with an amount
-    5. New "iswearingitem" condition to check if the target is wearing a material with an equipment slot argument
-    6. Fixed bug with timers when an item was not custom it skipped every other item
-    7. New "iswearingcustomitem" condition to check if the target is wearing an innovative item with an equipment slot argument
      */
 
     @Override

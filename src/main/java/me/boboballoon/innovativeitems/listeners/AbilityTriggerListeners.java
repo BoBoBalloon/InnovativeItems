@@ -2,19 +2,21 @@ package me.boboballoon.innovativeitems.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.functions.context.*;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.functions.context.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -25,8 +27,12 @@ public class AbilityTriggerListeners implements Listener {
     /**
      * Listener used for all item click triggers
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
+        if (event.useItemInHand() == Event.Result.DENY || event.useInteractedBlock() == Event.Result.DENY) {
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             ItemStack itemStack = event.getItem();
 
@@ -133,8 +139,12 @@ public class AbilityTriggerListeners implements Listener {
     /**
      * Listener used for damage dealt ability trigger
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityDealt(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof LivingEntity)) {
                 return;
@@ -194,8 +204,12 @@ public class AbilityTriggerListeners implements Listener {
     /**
      * Listener used for damage taken ability trigger
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityTaken(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             if (!(event.getEntity() instanceof Player) || !(event.getDamager() instanceof LivingEntity)) {
                 return;
@@ -255,8 +269,12 @@ public class AbilityTriggerListeners implements Listener {
     /**
      * Listener used for item eating ability triggers
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerConsumeItem(PlayerItemConsumeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             ItemStack itemStack = event.getItem();
             NBTItem nbtItem = new NBTItem(itemStack);
@@ -280,7 +298,50 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getName(), ability.getTrigger(), itemStack);
+            ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getName(), ability.getTrigger(), item);
+
+            ability.execute(context);
+        });
+    }
+
+    /**
+     * Listener used for item block break ability triggers
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
+                return;
+            }
+
+            NBTItem nbtItem = new NBTItem(itemStack);
+
+            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                return;
+            }
+
+            String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
+
+            if (item == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
+                return;
+            }
+
+            Ability ability = item.getAbility();
+
+            if (ability == null || ability.getTrigger() != AbilityTrigger.BLOCK_BREAK) {
+                return;
+            }
+
+            BlockBreakContext context = new BlockBreakContext(event.getPlayer(), ability.getName(), ability.getTrigger(), event.getBlock(), item);
 
             ability.execute(context);
         });

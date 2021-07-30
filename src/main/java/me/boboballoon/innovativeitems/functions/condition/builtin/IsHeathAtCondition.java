@@ -5,8 +5,8 @@ import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
-import me.boboballoon.innovativeitems.functions.context.DamageContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -33,9 +33,9 @@ public class IsHeathAtCondition extends Condition {
             target = context.getPlayer();
         }
 
-        if (targeter == FunctionTargeter.ENTITY && context instanceof DamageContext) {
-            DamageContext damageContext = (DamageContext) context;
-            target = damageContext.getEntity();
+        if (targeter == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
+            target = entityContext.getEntity();
         }
 
         int amount = (int) arguments.get(1);

@@ -5,8 +5,8 @@ import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
-import me.boboballoon.innovativeitems.functions.context.DamageContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -29,14 +29,14 @@ public class IsGamemodeCondition extends Condition {
             target = context.getPlayer();
         }
 
-        if (targeter == FunctionTargeter.ENTITY && context instanceof DamageContext) {
-            DamageContext damageContext = (DamageContext) context;
+        if (targeter == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
 
-            if (!(damageContext.getEntity() instanceof Player)) {
+            if (!(entityContext.getEntity() instanceof Player)) {
                 return false;
             }
 
-            target = (Player) damageContext.getEntity();
+            target = (Player) entityContext.getEntity();
         }
 
         GameMode gameMode = (GameMode) arguments.get(1);

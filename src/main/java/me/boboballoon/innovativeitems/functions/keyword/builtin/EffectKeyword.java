@@ -1,13 +1,13 @@
 package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
-import me.boboballoon.innovativeitems.functions.context.DamageContext;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
+import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,9 +33,9 @@ public class EffectKeyword extends Keyword {
             target = context.getPlayer();
         }
 
-        if (rawTarget == FunctionTargeter.ENTITY && context instanceof DamageContext) {
-            DamageContext damageContext = (DamageContext) context;
-            target = damageContext.getEntity();
+        if (rawTarget == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
+            target = entityContext.getEntity();
         }
 
         PotionEffectType type = (PotionEffectType) arguments.get(1);

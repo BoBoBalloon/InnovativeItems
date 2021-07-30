@@ -49,7 +49,12 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the RuntimeContext.java
      */
-    TIMER("timer", "timer:\\d+");
+    TIMER("timer", "timer:\\d+"),
+
+    /**
+     * An ability trigger that will always fire the BlockBreakContext.java
+     */
+    BLOCK_BREAK("block-break", null, "?block");
 
     private final String identifier;
     private final String regex;

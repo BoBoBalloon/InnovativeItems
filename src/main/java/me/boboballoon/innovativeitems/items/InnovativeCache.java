@@ -27,7 +27,7 @@ public final class InnovativeCache {
      * @param ability the ability
      */
     public void registerAbility(@NotNull Ability ability) {
-        String name = ability.getName();
+        String name = ability.getIdentifier();
 
         if (this.contains(name)) {
             LogUtil.log(LogUtil.Level.WARNING, "Ability with the name of " + name + ", is already registered! Skipping...");

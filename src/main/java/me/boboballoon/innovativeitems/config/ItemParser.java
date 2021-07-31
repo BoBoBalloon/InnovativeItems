@@ -57,7 +57,7 @@ public final class ItemParser {
 
 
         Ability ability;
-        if (section.isString("ability")) {
+        if (section.isString("ability") || section.isConfigurationSection("ability")) {
             ability = ItemParser.getAbility(section, name);
         } else {
             ability = null;
@@ -157,11 +157,24 @@ public final class ItemParser {
      * Get the ability field from an item config section
      */
     private static Ability getAbility(ConfigurationSection section, String itemName) {
-        String rawAbility = section.getString("ability");
-        Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
+        Ability ability = null;
+        String abilityName = null;
+
+        if (section.isString("ability")) {
+            String rawAbility = section.getString("ability");
+            abilityName = rawAbility;
+            ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
+        }
+
+        if (section.isConfigurationSection("ability")) {
+            ConfigurationSection abilitySection = section.getConfigurationSection("ability");
+            abilityName = itemName + "-anonymous-ability";
+            ability = AbilityParser.parseAbility(abilitySection, abilityName);
+            AbilityParser.registerAbilityTimer(ability, abilitySection);
+        }
 
         if (ability == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "Could not find ability with the name " + rawAbility + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+            LogUtil.log(LogUtil.Level.WARNING, "Could not find or parse ability with the name " + abilityName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
         }
 
         return ability;

@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +26,9 @@ public class InnovativeItemsCommand extends BaseCommand {
             TextUtil.format("&r&e&l- /innovativeitems get <item> <amount>"),
             TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <amount> <silent>"),
             TextUtil.format("&r&e&l- /innovativeitems debug <level>"),
-            TextUtil.format("&r&e&l- /innovativeitems reload"));
+            TextUtil.format("&r&e&l- /innovativeitems reload"),
+            TextUtil.format("&r&e&l- /innovativeitems execute <ability>"),
+            TextUtil.format("&r&e&l- /innovativeitems garbagecollector clean <player>"));
 
     /**
      * A "command" that gives a player all the possible commands they can execute
@@ -91,7 +95,7 @@ public class InnovativeItemsCommand extends BaseCommand {
         Player target = Bukkit.getPlayerExact(args[0]);
 
         if (target == null) {
-            TextUtil.sendMessage(sender, "&r&cYou have entered a player that is not online!");
+            TextUtil.sendMessage(sender, "&r&cYou have entered the name of a player that is not online!");
             return;
         }
 
@@ -131,7 +135,7 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Subcommand("debug")
     @CommandCompletion("@range:0-5 @nothing")
     public void onDebug(CommandSender sender, String[] args) {
-        if (args.length < 1) {
+        if (args.length != 1) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");
             this.onHelp(sender);
             return;
@@ -162,5 +166,61 @@ public class InnovativeItemsCommand extends BaseCommand {
             TextUtil.sendMessage(sender, "&r&aStarting asynchronous reload in five seconds!");
         }
         InnovativeItems.getInstance().getConfigManager().reload();
+    }
+
+    /**
+     * A "command" used to execute an ability
+     */
+    @Subcommand("execute")
+    @Conditions("is-player")
+    @CommandCompletion("@valid-abilities @nothing")
+    public void onExecute(Player player, String[] args) {
+        if (args.length != 1) {
+            TextUtil.sendMessage(player, "&r&cYou have entered improper arguments to execute this command!");
+            this.onHelp(player);
+            return;
+        }
+
+        Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(args[0]);
+
+        if (ability == null) {
+            TextUtil.sendMessage(player, "&r&cYou have entered an ability that does not exist!");
+            return;
+        }
+
+        RuntimeContext context = new RuntimeContext(player, ability.getIdentifier(), ability.getTrigger());
+
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
+
+        TextUtil.sendMessage(player, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
+    }
+
+    /**
+     * A "command" used to clean players inventories
+     */
+    @Subcommand("clean")
+    @CommandCompletion("@players @nothing")
+    public void onClean(CommandSender sender, String[] args) {
+        if (args.length == 1) {
+            this.cleanPlayer(sender, args[0]);
+        } else {
+            TextUtil.sendMessage(sender, "&r&aCleaning up all players inventories!");
+            InnovativeItems.getInstance().getGarbageCollector().cleanAllPlayerInventories(true);
+        }
+    }
+
+    /**
+     * A method that cleans a players inventory
+     */
+    private void cleanPlayer(CommandSender sender, String playerName) {
+        Player target = Bukkit.getPlayerExact(playerName);
+
+        if (target == null) {
+            TextUtil.sendMessage(sender, "&r&cYou have entered the name of a player that is not online!");
+            return;
+        }
+
+        TextUtil.sendMessage(sender, "&r&aCleaning up the inventory of a player by the name of " + target.getName() + "!");
+        InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true);
     }
 }

@@ -31,17 +31,12 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add support for anonymous abilities (ability that are in the item config section with no name and not stored in cache)
-        a. Make AbstractAbility abstract class with everything except name
-        b. Extend AbstractAbility in normal ability class and add name field and build new AnonymousAbility class with no changes
-        c. Make separate method in AbilityParser for anonymous abilities like-
-        AbilityParser.parseAnonymousAbility(ConfigurationSection section, CustomItem item), make ability superclass have replacement for name
-    2. Add example configs that are generated on reload (put option in main config to disable)
-    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    4. Add support for deprecated keywords and conditions
+    1. Add example configs that are generated on startup (put option in main config to disable)
+    2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    3. Add support for deprecated keywords and conditions
         a. throw a warning in console if a function is deprecated
         b. use reflection to check if it has the deprecated annotation
-    5. Add support for custom blocks
+    4. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -53,7 +48,7 @@ public final class InnovativeItems extends JavaPlugin {
           d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
         f. Add support for block abilities (keep chunks loaded maybe???)
      (new update 3.0)
-     6. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
+     5. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
      */
 
     /*
@@ -90,15 +85,6 @@ public final class InnovativeItems extends JavaPlugin {
             updateChecker.checkForUpdates();
         }
 
-        //load up and parse configs
-        this.cache = new InnovativeCache();
-        this.timerManager = new AbilityTimerManager();
-
-        this.configManager.init();
-
-        //init garbage collector
-        this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
-
         //register commands and conditions
         LogUtil.log(LogUtil.Level.INFO, "Registering commands...");
         this.commandManager = new PaperCommandManager(this);
@@ -110,10 +96,20 @@ public final class InnovativeItems extends JavaPlugin {
         });
 
         this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-items", context -> this.cache.getItemIdentifiers());
+        this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-abilities", context -> this.cache.getAbilityIdentifiers());
 
         this.commandManager.registerCommand(new InnovativeItemsCommand());
 
         LogUtil.log(LogUtil.Level.INFO, "Command registration complete!");
+
+        //load up and parse configs
+        this.cache = new InnovativeCache();
+        this.timerManager = new AbilityTimerManager();
+
+        this.configManager.init();
+
+        //init garbage collector
+        this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
 
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");

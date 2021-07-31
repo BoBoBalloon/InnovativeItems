@@ -280,11 +280,11 @@ public final class ConfigManager {
 
             try {
                 configuration.load(file);
-            } catch (IOException e) {
-                LogUtil.log(LogUtil.Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
-                e.printStackTrace();
-                continue;
-            } catch (InvalidConfigurationException ignore) {
+            } catch (IOException | InvalidConfigurationException e) {
+                LogUtil.log(LogUtil.Level.SEVERE, "A " + e.getClass().getSimpleName() + " occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
+                if (this.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                    e.printStackTrace();
+                }
                 continue;
             }
 
@@ -312,11 +312,11 @@ public final class ConfigManager {
 
             try {
                 configuration.load(file);
-            } catch (IOException e) {
-                LogUtil.log(LogUtil.Level.SEVERE, "An IO exception occurred while loading " + file.getName() + " during item initialization and parsing stage!");
-                e.printStackTrace();
-                continue;
-            } catch (InvalidConfigurationException ignore) {
+            } catch (IOException | InvalidConfigurationException e) {
+                LogUtil.log(LogUtil.Level.WARNING, "A " + e.getClass().getSimpleName() + " occurred while loading " + file.getName() + " during item initialization and parsing stage!");
+                if (this.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                    e.printStackTrace();
+                }
                 continue;
             }
 

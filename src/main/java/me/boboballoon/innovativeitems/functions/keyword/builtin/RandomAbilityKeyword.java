@@ -34,7 +34,7 @@ public class RandomAbilityKeyword extends Keyword {
                 return;
             }
 
-            if (ability.getName().equals(context.getAbilityName())) {
+            if (ability.getIdentifier().equals(context.getAbilityName())) {
                 LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to recursively call the " + context.getAbilityName() + " ability!");
                 return;
             }

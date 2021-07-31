@@ -13,13 +13,13 @@ import java.util.List;
  * A class used to show an ability tied to an item
  */
 public class Ability {
-    private final String name;
+    private final String identifier;
     private final ImmutableList<ActiveKeyword> keywords;
     private final ImmutableList<ActiveCondition> conditions;
     private final AbilityTrigger trigger;
 
-    public Ability(@NotNull String name, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger) {
-        this.name = name;
+    public Ability(@NotNull String identifier, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger) {
+        this.identifier = identifier;
         this.keywords = ImmutableList.copyOf(keywords);
         this.conditions = ImmutableList.copyOf(conditions);
         this.trigger = trigger;
@@ -30,8 +30,8 @@ public class Ability {
      *
      * @return the name of the ability
      */
-    public String getName() {
-        return this.name;
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     /**
@@ -71,7 +71,7 @@ public class Ability {
             Boolean value = condition.execute(context);
 
             if (value == null) {
-                LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the " + this.name + " ability because the condition " + condition.getBase().getIdentifier() + " returned null!");
+                LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the " + this.identifier + " ability because the condition " + condition.getBase().getIdentifier() + " returned null!");
                 return;
             }
 

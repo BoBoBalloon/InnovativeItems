@@ -16,6 +16,7 @@ import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -66,10 +67,11 @@ public final class AbilityParser {
      * A util method used to parse a custom ability from a config section
      *
      * @param section the configuration section of the ability
+     * @param name the name of the ability
      * @return the ability (null if an error occurred)
      */
     @Nullable
-    public static Ability parseAbility(ConfigurationSection section) {
+    public static Ability parseAbility(ConfigurationSection section, String name) {
         AbilityTrigger trigger = AbilityParser.getAbilityTrigger(section);
 
         if (trigger == null) {
@@ -77,16 +79,27 @@ public final class AbilityParser {
             return null;
         }
 
-        List<ActiveKeyword> keywords = AbilityParser.getAbilityKeywords(section, trigger);
+        List<ActiveKeyword> keywords = AbilityParser.getAbilityKeywords(section, trigger, name);
 
         if (keywords == null) {
             //errors are already sent via AbilityParser.getAbilityKeywords() no need to send more
             return null;
         }
 
-        List<ActiveCondition> conditions = AbilityParser.getAbilityConditions(section, trigger);
+        List<ActiveCondition> conditions = AbilityParser.getAbilityConditions(section, trigger, name);
 
-        return new Ability(section.getName(), keywords, conditions, trigger);
+        return new Ability(name, keywords, conditions, trigger);
+    }
+
+    /**
+     * A util method used to parse a custom ability from a config section
+     *
+     * @param section the configuration section of the ability
+     * @return the ability (null if an error occurred)
+     */
+    @Nullable
+    public static Ability parseAbility(ConfigurationSection section) {
+        return AbilityParser.parseAbility(section, section.getName());
     }
 
     /**
@@ -96,8 +109,8 @@ public final class AbilityParser {
      * @param section the ability's config section
      * @throws IllegalArgumentException when the section argument cannot possibility match the provided ability
      */
-    public static void registerAbilityTimer(Ability ability, ConfigurationSection section) {
-        if (ability.getTrigger() != AbilityTrigger.TIMER) {
+    public static void registerAbilityTimer(@Nullable Ability ability, @NotNull ConfigurationSection section) {
+        if (ability == null || (ability.getTrigger() != AbilityTrigger.TIMER)) {
             return;
         }
 
@@ -110,7 +123,7 @@ public final class AbilityParser {
         }
 
         if (!triggerName.matches(AbilityTrigger.TIMER.getRegex())) {
-            LogUtil.log(LogUtil.Level.DEV, "The ability trigger provided for " + ability.getName() + " was timer but the trigger name in the config section does not match the required syntax!");
+            LogUtil.log(LogUtil.Level.DEV, "The ability trigger provided for " + ability.getIdentifier() + " was timer but the trigger name in the config section does not match the required syntax!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the trigger argument not meeting the syntax requirements!");
         }
 
@@ -118,7 +131,7 @@ public final class AbilityParser {
         try {
             timer = Long.parseLong(triggerName.split(":")[1]);
         } catch (NumberFormatException ignored) {
-            LogUtil.log(LogUtil.Level.DEV, "There was an error trying to parse the trigger delay for the " + ability.getName() + " ability!");
+            LogUtil.log(LogUtil.Level.DEV, "There was an error trying to parse the trigger delay for the " + ability.getIdentifier() + " ability!");
             throw new IllegalArgumentException("The provided config section cannot reasonably match the provided ability due to the delay not matching the long data type!");
         }
 
@@ -154,9 +167,7 @@ public final class AbilityParser {
     /**
      * A util method used to get the active keywords from an ability config section
      */
-    private static List<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger trigger) {
-        String abilityName = section.getName();
-
+    private static List<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger trigger, String abilityName) {
         List<String> raw;
         if (section.isList("keywords")) {
             raw = section.getStringList("keywords");
@@ -226,9 +237,7 @@ public final class AbilityParser {
     /**
      * A util method used to get the active keywords from an ability config section
      */
-    private static List<ActiveCondition> getAbilityConditions(ConfigurationSection section, AbilityTrigger trigger) {
-        String abilityName = section.getName();
-
+    private static List<ActiveCondition> getAbilityConditions(ConfigurationSection section, AbilityTrigger trigger, String abilityName) {
         List<ActiveCondition> conditions = new ArrayList<>();
 
         List<String> raw;

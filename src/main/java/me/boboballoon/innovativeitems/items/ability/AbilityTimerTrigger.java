@@ -95,7 +95,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
                     continue;
                 }
 
-                RuntimeContext context = new RuntimeContext(player, ability.getName(), ability.getTrigger());
+                RuntimeContext context = new RuntimeContext(player, ability.getIdentifier(), ability.getTrigger());
 
                 ability.execute(context);
             }
@@ -117,6 +117,10 @@ public class AbilityTimerTrigger extends BukkitRunnable {
      * @param ability the ability you wish to add
      */
     public void addAbility(Ability ability) {
+        if (this.abilities.contains(ability)) {
+            return;
+        }
+
         this.abilities.add(ability);
     }
 }

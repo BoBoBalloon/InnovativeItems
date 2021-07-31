@@ -78,7 +78,7 @@ public class AbilityTriggerListeners implements Listener {
             return;
         }
 
-        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), ability.getTrigger(), action, event.getHand());
+        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), action, event.getHand());
 
         ability.execute(context);
     }
@@ -93,7 +93,7 @@ public class AbilityTriggerListeners implements Listener {
             return;
         }
 
-        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getName(), ability.getTrigger(), action, event.getHand());
+        RuntimeContext context = new InteractContext(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), action, event.getHand());
 
         ability.execute(context);
     }
@@ -112,7 +112,7 @@ public class AbilityTriggerListeners implements Listener {
             return;
         }
 
-        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), ability.getTrigger(), action, event.getHand(), event.getClickedBlock());
+        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), action, event.getHand(), event.getClickedBlock());
 
         ability.execute(context);
     }
@@ -131,7 +131,7 @@ public class AbilityTriggerListeners implements Listener {
             return;
         }
 
-        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getName(), ability.getTrigger(), action, event.getHand(), event.getClickedBlock());
+        RuntimeContext context = new InteractContextBlock(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), action, event.getHand(), event.getClickedBlock());
 
         ability.execute(context);
     }
@@ -194,7 +194,7 @@ public class AbilityTriggerListeners implements Listener {
                     return;
                 }
 
-                DamageContext context = new DamageContext(player, ability.getName(), ability.getTrigger(), entity, true);
+                DamageContext context = new DamageContext(player, ability.getIdentifier(), ability.getTrigger(), entity, true);
 
                 ability.execute(context);
             }
@@ -259,7 +259,7 @@ public class AbilityTriggerListeners implements Listener {
                     return;
                 }
 
-                DamageContext context = new DamageContext(player, ability.getName(), ability.getTrigger(), entity, false);
+                DamageContext context = new DamageContext(player, ability.getIdentifier(), ability.getTrigger(), entity, false);
 
                 ability.execute(context);
             }
@@ -298,7 +298,7 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getName(), ability.getTrigger(), item);
+            ConsumeContext context = new ConsumeContext(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), item);
 
             ability.execute(context);
         });
@@ -341,7 +341,7 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            BlockBreakContext context = new BlockBreakContext(event.getPlayer(), ability.getName(), ability.getTrigger(), event.getBlock(), item);
+            BlockBreakContext context = new BlockBreakContext(event.getPlayer(), ability.getIdentifier(), ability.getTrigger(), event.getBlock(), item);
 
             ability.execute(context);
         });

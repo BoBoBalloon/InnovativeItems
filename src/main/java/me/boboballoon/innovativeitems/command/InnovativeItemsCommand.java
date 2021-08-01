@@ -27,7 +27,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <amount> <silent>"),
             TextUtil.format("&r&e&l- /innovativeitems debug <level>"),
             TextUtil.format("&r&e&l- /innovativeitems reload"),
-            TextUtil.format("&r&e&l- /innovativeitems execute <ability>"),
+            TextUtil.format("&r&e&l- /innovativeitems execute <ability> <player>"),
             TextUtil.format("&r&e&l- /innovativeitems garbagecollector clean <player>"));
 
     /**
@@ -172,27 +172,44 @@ public class InnovativeItemsCommand extends BaseCommand {
      * A "command" used to execute an ability
      */
     @Subcommand("execute")
-    @Conditions("is-player")
-    @CommandCompletion("@valid-abilities @nothing")
-    public void onExecute(Player player, String[] args) {
-        if (args.length != 1) {
-            TextUtil.sendMessage(player, "&r&cYou have entered improper arguments to execute this command!");
-            this.onHelp(player);
+    @CommandCompletion("@valid-abilities @players @nothing")
+    public void onExecute(CommandSender sender, String[] args) {
+        if (args.length < 1 || args.length > 2) {
+            TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");
+            this.onHelp(sender);
+            return;
+        }
+
+        if (args.length != 2 && !(sender instanceof Player)) {
+            TextUtil.sendMessage(sender, "&r&cYou must be a player to execute this command without a target!");
+            this.onHelp(sender);
             return;
         }
 
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(args[0]);
 
         if (ability == null) {
-            TextUtil.sendMessage(player, "&r&cYou have entered an ability that does not exist!");
+            TextUtil.sendMessage(sender, "&r&cYou have entered an ability that does not exist!");
             return;
         }
 
-        RuntimeContext context = new RuntimeContext(player, ability.getIdentifier(), ability.getTrigger());
+        Player target;
+        if (args.length == 2) {
+            target = Bukkit.getPlayerExact(args[1]);
+        } else {
+            target = (Player) sender;
+        }
+
+        if (target == null) {
+            TextUtil.sendMessage(sender, "&r&cYou have entered the name of a player that is not online!");
+            return;
+        }
+
+        RuntimeContext context = new RuntimeContext(target, ability.getIdentifier(), ability.getTrigger());
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
 
-        TextUtil.sendMessage(player, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
+        TextUtil.sendMessage(sender, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
     }
 
     /**

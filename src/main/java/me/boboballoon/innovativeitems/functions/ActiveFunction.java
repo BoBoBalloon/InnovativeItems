@@ -60,8 +60,8 @@ public abstract class ActiveFunction<T> {
         try {
             return this.base.execute(this.arguments, context);
         } catch (ExecutionException e) {
+            LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the " + this.base.getIdentifier() + " function!");
             if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
-                LogUtil.log(LogUtil.Level.DEV, "There was an error trying to execute the " + this.base.getIdentifier() + " function!");
                 e.printStackTrace();
             }
             return null;

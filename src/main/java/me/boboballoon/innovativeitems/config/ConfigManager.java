@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,6 +14,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * A class used to cache and parse config files
@@ -20,6 +23,9 @@ import java.io.IOException;
 public final class ConfigManager {
     //update checker
     private boolean checkForUpdates;
+
+    //default configs
+    private boolean generateDefaultConfigs;
 
     //debug level
     /**
@@ -57,6 +63,16 @@ public final class ConfigManager {
             config.set("check-for-updates", true);
         }
         this.setCheckForUpdates(checkForUpdates);
+
+        //load up default config values, set to true if none is present
+        boolean generateDefaultConfigs;
+        if (config.contains("generate-default-configs")) {
+            generateDefaultConfigs = config.getBoolean("generate-default-configs");
+        } else {
+            generateDefaultConfigs = true;
+            config.set("generate-default-configs", true);
+        }
+        this.setGenerateDefaultConfigs(generateDefaultConfigs);
 
         //load up debug level, sets to 2 if no value is present
         int debugLevel;
@@ -107,6 +123,24 @@ public final class ConfigManager {
      */
     public void setCheckForUpdates(boolean checkForUpdates) {
         this.checkForUpdates = checkForUpdates;
+    }
+
+    /**
+     * A method that returns true when the plugin should generate default configs on reload
+     *
+     * @return true when the plugin should generate default configs on reload
+     */
+    public boolean shouldGenerateDefaultConfigs() {
+        return this.generateDefaultConfigs;
+    }
+
+    /**
+     * A method that is used to set whether the plugin should generate default configs on reload
+     *
+     * @param generateDefaultConfigs whether the plugin should generate default configs on reload
+     */
+    public void setGenerateDefaultConfigs(boolean generateDefaultConfigs) {
+        this.generateDefaultConfigs = generateDefaultConfigs;
     }
 
     /**
@@ -257,6 +291,10 @@ public final class ConfigManager {
 
         LogUtil.log(LogUtil.Level.INFO, "Directory initialization complete!");
 
+        if (this.generateDefaultConfigs) {
+            this.generateDefaultConfigs(plugin, abilities, items);
+        }
+
         InnovativeCache cache = plugin.getItemCache();
 
         this.loadAbilities(abilities, cache);
@@ -267,9 +305,39 @@ public final class ConfigManager {
     }
 
     /**
+     * A method used to generate the default configuration files
+     */
+    private void generateDefaultConfigs(InnovativeItems plugin, File abilities, File items) {
+        LogUtil.log(LogUtil.Level.INFO, "Starting default configuration generation...");
+        File defaultAbilities = new File(abilities, "default-abilities.yml");
+        File defaultItems = new File(items, "default-items.yml");
+
+        try {
+            if (!defaultAbilities.exists()) {
+                defaultAbilities.createNewFile();
+                Files.copy(plugin.getResource("default-abilities.yml"), defaultAbilities.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            if (!defaultItems.exists()) {
+                defaultItems.createNewFile();
+                Files.copy(plugin.getResource("default-items.yml"), defaultItems.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to write a new file to disk...");
+            if (this.debugLevel >= LogUtil.Level.DEV.getDebugLevel()) {
+                e.printStackTrace();
+            }
+            LogUtil.log(LogUtil.Level.INFO, "Configuration generation failed...");
+            return;
+        }
+
+        LogUtil.log(LogUtil.Level.INFO, "Configuration generation complete!");
+    }
+
+    /**
      * A method used to parse and cache abilities from yml files
      *
-     * @param home the home directory of all ability yml files
+     * @param home  the home directory of all ability yml files
      * @param cache the cache where loaded abilities will be registered to
      */
     private void loadAbilities(File home, InnovativeCache cache) {
@@ -301,7 +369,7 @@ public final class ConfigManager {
     /**
      * A method used to parse and cache items from yml files
      *
-     * @param home the home directory of all item yml files
+     * @param home  the home directory of all item yml files
      * @param cache the cache where loaded items will be registered to
      */
     private void loadItems(File home, InnovativeCache cache) {
@@ -330,7 +398,14 @@ public final class ConfigManager {
                     continue;
                 }
 
-                cache.registerItem(ItemParser.parseItem(section, name));
+                CustomItem item = ItemParser.parseItem(section, name);
+
+                if (item == null) {
+                    //error message was already sent from parseItem method, no need to put in here
+                    continue;
+                }
+
+                cache.registerItem(item);
             }
         }
 

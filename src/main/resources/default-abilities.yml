@@ -1,0 +1,6 @@
+fairy-healing:
+  trigger: 'timer:100'
+  keywords:
+    - 'particle(?player, VILLAGER_HAPPY, 10, 1.5, 1.5, 1.5)'
+    - 'heal(?player, 2)'
+    - 'feed(?player, 2)'

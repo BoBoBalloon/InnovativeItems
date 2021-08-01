@@ -20,62 +20,15 @@ import java.util.Map;
 /**
  * A class that represents a custom item that is leather armor
  */
-public class CustomItemLeatherArmor implements CustomItem {
-    private final String name;
-    private final Ability ability;
-    private final ItemStack itemStack;
-
-    public CustomItemLeatherArmor(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
-        //if not leather armor
-        if (!isLeatherArmor(material)) {
-            LogUtil.log(LogUtil.Level.SEVERE, "Error while loading item " + name + " because material is not an instance of leather armor!");
-
-            this.name = null;
-            this.ability = null;
-            this.itemStack = null;
-
-            return;
-        }
-
-        this.name = name;
-        this.ability = ability;
-        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, rgb, color);
-    }
-
-    /**
-     * A method used to get the internal name of the custom item
-     *
-     * @return the internal name of the custom item
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * A method used to get the ability associated with this custom item (can be null if nothing is present)
-     *
-     * @return the ability associated with this custom item (can be null if nothing is present)
-     */
-    @Nullable
-    @Override
-    public Ability getAbility() {
-        return this.ability;
-    }
-
-    /**
-     * A method used to get the itemstack that represents this custom item
-     *
-     * @return an itemstack that represents this custom item
-     */
-    @Override
-    public ItemStack getItemStack() {
-        return this.itemStack;
+public class CustomItemLeatherArmor extends CustomItem {
+    public CustomItemLeatherArmor(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
+        super(identifier, ability, CustomItemLeatherArmor.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, rgb, color));
     }
 
     /**
      * A method used to generate an itemstack based on this items internal values
      *
+     * @param identifier      the internal name of the custom item
      * @param material        the material of the itemstack
      * @param itemName        the display name of the itemstack
      * @param lore            the lore of the itemstack
@@ -88,8 +41,14 @@ public class CustomItemLeatherArmor implements CustomItem {
      * @param color           color of the leather armor via color name
      * @return the itemstack
      */
-    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
-        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, true);
+    private static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, @Nullable Color rgb, @Nullable Color color) {
+        //if not leather armor
+        if (!CustomItemLeatherArmor.isLeatherArmor(material)) {
+            LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of leather armor!");
+            throw new IllegalArgumentException("Illegal material provided in CustomItemLeatherArmor constructor");
+        }
+
+        ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, true);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
 
         if (rgb != null) {

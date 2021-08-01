@@ -43,7 +43,7 @@ public final class InnovativeCache {
      * @param item the item
      */
     public void registerItem(@NotNull CustomItem item) {
-        String name = item.getName();
+        String name = item.getIdentifier();
 
         if (this.contains(name)) {
             LogUtil.log(LogUtil.Level.WARNING, "Item with the name of " + name + ", is already registered! Skipping...");

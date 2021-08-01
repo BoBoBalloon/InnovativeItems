@@ -31,12 +31,11 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Add example configs that are generated on startup (put option in main config to disable)
-    2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    3. Add support for deprecated keywords and conditions
+    1. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    2. Add support for deprecated keywords and conditions
         a. throw a warning in console if a function is deprecated
         b. use reflection to check if it has the deprecated annotation
-    4. Add support for custom blocks
+    3. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
         b. Listen for all block events to make sure nobody can fuck with locations
@@ -48,7 +47,7 @@ public final class InnovativeItems extends JavaPlugin {
           d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
         f. Add support for block abilities (keep chunks loaded maybe???)
      (new update 3.0)
-     5. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
+     4. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
      */
 
     /*
@@ -67,11 +66,12 @@ public final class InnovativeItems extends JavaPlugin {
                 new MessageKeyword(), new EffectKeyword(), new AbilityKeyword(), new CommandKeyword(),
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
-                new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword());
+                new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
+                new VelocityKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),
-                new IsWearingItemCondition(), new IsWearingCustomItemCondition());
+                new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition());
     }
 
     @Override

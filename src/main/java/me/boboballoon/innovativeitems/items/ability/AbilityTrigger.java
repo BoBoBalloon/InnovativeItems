@@ -54,7 +54,12 @@ public enum AbilityTrigger {
     /**
      * An ability trigger that will always fire the BlockBreakContext.java
      */
-    BLOCK_BREAK("block-break", null, "?block");
+    BLOCK_BREAK("block-break", null, "?block"),
+
+    /**
+     * An ability trigger that will always fire the RuntimeContext.java
+     */
+    NONE("none", null);
 
     private final String identifier;
     private final String regex;

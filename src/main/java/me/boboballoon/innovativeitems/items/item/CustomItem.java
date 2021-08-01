@@ -17,15 +17,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An interface to be implemented by all custom items
+ * A class that is the superclass of all custom items
  */
-public interface CustomItem {
+public abstract class CustomItem {
+    private final String identifier;
+    private final Ability ability;
+    private final ItemStack item;
+
+    public CustomItem(String identifier, Ability ability, ItemStack item) {
+        this.identifier = identifier;
+        this.ability = ability;
+        this.item = item;
+    }
+
     /**
      * A method used to get the internal name of the custom item
      *
      * @return the internal name of the custom item
      */
-    String getName();
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
     /**
      * A method used to get the ability associated with this custom item (can be null if nothing is present)
@@ -33,37 +45,42 @@ public interface CustomItem {
      * @return the ability associated with this custom item (can be null if nothing is present)
      */
     @Nullable
-    Ability getAbility();
+    public Ability getAbility() {
+        return this.ability;
+    }
 
     /**
      * A method used to get the itemstack that represents this custom item
      *
      * @return an itemstack that represents this custom item
      */
-    ItemStack getItemStack();
+    public ItemStack getItemStack() {
+        return this.item;
+    }
 
 
     /**
      * A method used to generate an itemstack based on this items internal values
      *
-     * @param material the material of the itemstack
-     * @param itemName the display name of the itemstack
-     * @param lore the lore of the itemstack
-     * @param enchantments the enchantments on the itemstack
-     * @param flags the item flags on the itemstack
-     * @param attributes all attributes for this item
+     * @param identifier      the internal name of the custom item
+     * @param material        the material of the itemstack
+     * @param itemName        the display name of the itemstack
+     * @param lore            the lore of the itemstack
+     * @param enchantments    the enchantments on the itemstack
+     * @param flags           the item flags on the itemstack
+     * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
-     * @param unbreakable if the custom item is unbreakable
+     * @param unbreakable     if the custom item is unbreakable
      * @return the itemstack
      */
-    static ItemStack generateItem(@NotNull String name, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable) {
+    public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
         if (itemName != null) {
             meta.setDisplayName(itemName);
         } else {
-            meta.setDisplayName(name);
+            meta.setDisplayName(identifier);
         }
 
         if (lore != null) {
@@ -98,7 +115,7 @@ public interface CustomItem {
 
         NBTItem nbtItem = new NBTItem(item, true);
         nbtItem.setBoolean("innovativeplugin-customitem", true);
-        nbtItem.setString("innovativeplugin-customitem-id", name);
+        nbtItem.setString("innovativeplugin-customitem-id", identifier);
         nbtItem.setBoolean("innovativeplugin-customitem-placeable", placeable);
 
         return item;

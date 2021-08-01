@@ -20,62 +20,15 @@ import java.util.Map;
 /**
  * A class that represents a custom item that is a banner
  */
-public class CustomItemBanner implements CustomItem {
-    private final String name;
-    private final Ability ability;
-    private final ItemStack itemStack;
-
-    public CustomItemBanner(@NotNull String name, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
-        //if not banner
-        if (!isBanner(material)) {
-            LogUtil.log(LogUtil.Level.SEVERE, "Error while loading item " + name + " because material is not an instance of a banner!");
-
-            this.name = null;
-            this.ability = null;
-            this.itemStack = null;
-
-            return;
-        }
-
-        this.name = name;
-        this.ability = ability;
-        this.itemStack = this.generateItem(material, itemName, lore, enchantments, flags, attributes, customModelData, placeable, patterns);
-    }
-
-    /**
-     * A method used to get the internal name of the custom item
-     *
-     * @return the internal name of the custom item
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * A method used to get the ability associated with this custom item (can be null if nothing is present)
-     *
-     * @return the ability associated with this custom item (can be null if nothing is present)
-     */
-    @Nullable
-    @Override
-    public Ability getAbility() {
-        return this.ability;
-    }
-
-    /**
-     * A method used to get the itemstack that represents this custom item
-     *
-     * @return an itemstack that represents this custom item
-     */
-    @Override
-    public ItemStack getItemStack() {
-        return this.itemStack;
+public class CustomItemBanner extends CustomItem {
+    public CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
+        super(identifier, ability, CustomItemBanner.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, placeable, patterns));
     }
 
     /**
      * A method used to generate an itemstack based on this items internal values
      *
+     * @param identifier      the internal name of the custom item
      * @param material        the material of the itemstack
      * @param itemName        the display name of the itemstack
      * @param lore            the lore of the itemstack
@@ -87,8 +40,14 @@ public class CustomItemBanner implements CustomItem {
      * @param patterns        the patterns to be applied on the banner itemstack
      * @return the itemstack
      */
-    private ItemStack generateItem(@NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
-        ItemStack item = CustomItem.generateItem(this.name, material, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
+    private static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable List<Pattern> patterns) {
+        //if not banner
+        if (!CustomItemBanner.isBanner(material)) {
+            LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a banner!");
+            throw new IllegalArgumentException("Illegal material provided in CustomItemBanner constructor");
+        }
+
+        ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
         BannerMeta meta = (BannerMeta) item.getItemMeta();
 
         if (patterns != null) {

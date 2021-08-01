@@ -22,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -41,6 +42,7 @@ public final class ItemParser {
      * @param name the name of the item
      * @return the custom item (null if an error occurred)
      */
+    @Nullable
     public static CustomItem parseItem(ConfigurationSection section, String name) {
         if (!section.isString("material")) {
             LogUtil.log(LogUtil.Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");

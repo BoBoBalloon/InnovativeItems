@@ -3,6 +3,9 @@
 #If this value is true, whenever the plugin is enabled it will check if a new update is available#
 check-for-updates: true
 
+#If this value is true, whenever the plugin is reloaded it will generate default config files if they do not exist
+generate-default-configs: true
+
 #The higher the debug level, the more information displayed in console. Good for bug fixing#
 debug-level: 2
 

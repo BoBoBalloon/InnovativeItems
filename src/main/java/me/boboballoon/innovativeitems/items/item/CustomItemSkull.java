@@ -24,51 +24,15 @@ import java.util.UUID;
 /**
  * A class that represents a custom item that is a player skull
  */
-public class CustomItemSkull implements CustomItem {
-    private final String name;
-    private final Ability ability;
-    private final ItemStack itemStack;
-
-    public CustomItemSkull(@NotNull String name, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
-        this.name = name;
-        this.ability = ability;
-        this.itemStack = this.generateItem(itemName, lore, enchantments, flags, attributes, customModelData, placeable, skullName, base64);
-    }
-
-    /**
-     * A method used to get the internal name of the custom item
-     *
-     * @return the internal name of the custom item
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * A method used to get the ability associated with this custom item (can be null if nothing is present)
-     *
-     * @return the ability associated with this custom item (can be null if nothing is present)
-     */
-    @Nullable
-    @Override
-    public Ability getAbility() {
-        return this.ability;
-    }
-
-    /**
-     * A method used to get the itemstack that represents this custom item
-     *
-     * @return an itemstack that represents this custom item
-     */
-    @Override
-    public ItemStack getItemStack() {
-        return this.itemStack;
+public class CustomItemSkull extends CustomItem {
+    public CustomItemSkull(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
+        super(identifier, ability, CustomItemSkull.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, placeable, skullName, base64));
     }
 
     /**
      * A method used to generate an itemstack based on this items internal values
      *
+     * @param identifier      the internal name of the custom item
      * @param itemName        the display name of the itemstack
      * @param lore            the lore of the itemstack
      * @param enchantments    the enchantments on the itemstack
@@ -80,12 +44,12 @@ public class CustomItemSkull implements CustomItem {
      * @param base64          a base64 encoded string of the skin you wish to place on a player skull (if applicable)
      * @return the itemstack
      */
-    private ItemStack generateItem(@Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
-        ItemStack item = CustomItem.generateItem(this.name, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
+    private static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, @Nullable String skullName, @Nullable String base64) {
+        ItemStack item = CustomItem.generateItem(identifier, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         if (base64 != null) {
-            this.setSkinViaBase64(meta, base64);
+            CustomItemSkull.setSkinViaBase64(meta, base64);
         }
 
         if (skullName != null && base64 == null) {
@@ -102,7 +66,7 @@ public class CustomItemSkull implements CustomItem {
      * @param meta   the skull meta to modify
      * @param base64 the base64 encoded string
      */
-    private void setSkinViaBase64(SkullMeta meta, String base64) {
+    private static void setSkinViaBase64(SkullMeta meta, String base64) {
         try {
             Method setProfile = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
             setProfile.setAccessible(true);

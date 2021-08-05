@@ -31,10 +31,8 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    1. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    2. Add support for deprecated keywords and conditions
-        a. throw a warning in console if a function is deprecated
-        b. use reflection to check if it has the deprecated annotation
+    1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
+    2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
     3. Add support for custom blocks
         (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
         a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
@@ -52,6 +50,9 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. Garbage collector logs are now debug level noise (level 5), changed from debug level info (level 3)
+    2. The item placeable field is now false by default
+    3. Developers using the api can now annotate keyword and condition classes with the deprecated annotation to throw a usage warning in console for server admins
      */
 
     @Override

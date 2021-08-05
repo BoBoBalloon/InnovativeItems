@@ -194,7 +194,7 @@ public final class GarbageCollector implements Listener {
     private void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        LogUtil.log(LogUtil.Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
+        LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
 
         this.cleanInventory(player.getInventory(), true);
     }
@@ -210,7 +210,7 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        LogUtil.log(LogUtil.Level.INFO, "Cleaning up container inventory that " + event.getPlayer().getName() + " opened!");
+        LogUtil.log(LogUtil.Level.NOISE, "Cleaning up container inventory that " + event.getPlayer().getName() + " opened!");
 
         this.cleanInventory(inventory, true);
     }
@@ -234,7 +234,7 @@ public final class GarbageCollector implements Listener {
 
         Player player = (Player) inventory.getHolder();
 
-        LogUtil.log(LogUtil.Level.INFO, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
+        LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
         this.cleanInventory(inventory, true);
     }

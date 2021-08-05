@@ -118,7 +118,7 @@ public final class ItemParser {
         if (section.isBoolean("placeable")) {
             placeable = section.getBoolean("placeable");
         } else {
-            placeable = true;
+            placeable = false;
         }
 
         //skull item

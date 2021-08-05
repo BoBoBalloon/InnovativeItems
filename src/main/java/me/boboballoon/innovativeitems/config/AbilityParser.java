@@ -200,6 +200,10 @@ public final class AbilityParser {
                 continue;
             }
 
+            if (keyword.getClass().isAnnotationPresent(Deprecated.class)) {
+                LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the keyword by the name of " + keyword.getIdentifier() + " was detected... It is not recommended to use this keyword and should be removed as soon as possible!");
+            }
+
             String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
 
             rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
@@ -280,6 +284,10 @@ public final class AbilityParser {
             if (condition == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on conditions on ability " + abilityName + "! Did you use a valid condition?");
                 continue;
+            }
+
+            if (condition.getClass().isAnnotationPresent(Deprecated.class)) {
+                LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the condition by the name of " + condition.getIdentifier() + " was detected... It is not recommended to use this condition and should be removed as soon as possible!");
             }
 
             String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');

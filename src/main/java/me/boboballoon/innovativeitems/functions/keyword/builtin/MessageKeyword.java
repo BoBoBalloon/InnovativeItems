@@ -1,12 +1,11 @@
 package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.functions.FunctionTargeter;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.DamageContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
-import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.entity.LivingEntity;
 
@@ -17,7 +16,7 @@ public class MessageKeyword extends Keyword {
     public MessageKeyword() {
         super("message",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
+                ((rawValue, context) -> TextUtil.format(rawValue)));
     }
 
     @Override
@@ -36,7 +35,7 @@ public class MessageKeyword extends Keyword {
 
         String message = (String) arguments.get(1);
 
-        target.sendMessage(TextUtil.format(message));
+        target.sendMessage(message);
     }
 
     @Override

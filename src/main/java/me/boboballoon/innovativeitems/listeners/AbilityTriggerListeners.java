@@ -23,6 +23,9 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+/**
+ * A class that contains all listeners for ability triggers
+ */
 public class AbilityTriggerListeners implements Listener {
     /**
      * Listener used for all item click triggers

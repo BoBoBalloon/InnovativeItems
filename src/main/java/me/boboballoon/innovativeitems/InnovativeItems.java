@@ -31,28 +31,14 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
+    -1. Add teleport keyword which teleports an entity to a location specified with an x, y, z and world value
+    0. Add a teleportto keyword which teleports one targeter to another targeter (can be player, entity or block)
     1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
-    3. Add support for custom blocks
-        (LOOK INTO NBTBlock OBJECT BEFORE MAKING CACHE AND ALL THAT BULLSHIT)
-        a. Cache all custom blocks in a map "Map<Location, CustomBlock>"
-        b. Listen for all block events to make sure nobody can fuck with locations
-        c. When server stops serialize the map as a json file
-        d. When server starts read from json file and keep everything in memory
-        e. Add block support to garbage collector
-          a. GarbageCollector.checkBlock(CustomBlock block)
-          b. GarbageCollector.checkBlocks(Set<CustomBlock> blocks) call the .checkBlock(CustomBlock block) method
-          d. GarbageCollector.checkAllBlocks() make sure to grab all blocks in cache and call the .checkBlocks(Set<CustomBlock> blocks) method
-        f. Add support for block abilities (keep chunks loaded maybe???)
-     (new update 3.0)
-     4. Make a system that provides a server admin with a gui so that they can build custom item and ability config files in game
      */
 
     /*
     CHANGE LIST:
-    1. Garbage collector logs are now debug level noise (level 5), changed from debug level info (level 3)
-    2. The item placeable field is now false by default
-    3. Developers using the api can now annotate keyword and condition classes with the deprecated annotation to throw a usage warning in console for server admins
      */
 
     @Override
@@ -68,7 +54,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
-                new VelocityKeyword());
+                new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

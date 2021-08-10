@@ -8,6 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * A class that contains all listeners for the block placeable field
+ */
 public class BlockPlaceableListener implements Listener {
     /**
      * Listener used to check when a custom block is placed

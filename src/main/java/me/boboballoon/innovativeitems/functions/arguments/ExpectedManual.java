@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.functions.arguments;
 
-
 import me.boboballoon.innovativeitems.functions.FunctionContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +14,6 @@ public class ExpectedManual implements ExpectedArguments {
     private final Consumer<FunctionContext> onError;
 
     public ExpectedManual(@NotNull ExpectedArguments manual, @NotNull Consumer<FunctionContext> onError) {
-        if (!manual.shouldGetValue()) {
-            throw new IllegalArgumentException("The getValue method on the provided manual field must be accessible!");
-        }
-
         this.manual = manual;
         this.onError = onError;
     }
@@ -54,7 +49,7 @@ public class ExpectedManual implements ExpectedArguments {
      * @return the object called by the current manual method stored in this object
      */
     @Override
-    public Object getValue(String rawValue, FunctionContext context) {
+    public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
         Object value;
         try {
             value = this.manual.getValue(rawValue, context);

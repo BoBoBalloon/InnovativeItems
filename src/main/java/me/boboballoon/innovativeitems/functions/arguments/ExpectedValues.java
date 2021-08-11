@@ -82,7 +82,7 @@ public class ExpectedValues implements ExpectedArguments {
      */
     @Nullable
     @Override
-    public Object getValue(String rawValue, FunctionContext context) {
+    public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
         if (this.primitive == ExpectedPrimitives.STRING) {
             return this.parseString(rawValue, context);
         }

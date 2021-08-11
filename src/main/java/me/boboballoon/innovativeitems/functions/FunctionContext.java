@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 
 /**
- * Represents the context in which a keyword was used in
+ * Represents the context in which a function was used in
  */
 public class FunctionContext {
     private final InnovativeFunction<?> function;

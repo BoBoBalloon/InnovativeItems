@@ -31,8 +31,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    -1. Add teleport keyword which teleports an entity to a location specified with an x, y, z and world value
-    0. Add a teleportto keyword which teleports one targeter to another targeter (can be player, entity or block)
     1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
@@ -54,7 +52,8 @@ public final class InnovativeItems extends JavaPlugin {
                 new RandomAbilityKeyword(), new DamagePercentKeyword(), new HealPercentKeyword(), new SetHealthKeyword(),
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
-                new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword());
+                new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
+                new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

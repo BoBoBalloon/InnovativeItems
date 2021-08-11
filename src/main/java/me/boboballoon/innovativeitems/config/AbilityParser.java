@@ -2,9 +2,7 @@ package me.boboballoon.innovativeitems.config;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
-import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedArguments;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
@@ -220,15 +218,12 @@ public final class AbilityParser {
                 continue;
             }
 
-            List<Object> parsedArguments = new ArrayList<>(expectedSize);
-
             FunctionContext context = new FunctionContext(keyword, rawArguments, abilityName, trigger, (i + 1));
 
-            if (!AbilityParser.parseTargeters(rawArguments, context, parsedArguments, true)) {
-                continue;
-            }
+            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context, true);
 
-            if (!AbilityParser.parseArguments(parsedArguments, rawArguments, context, true)) {
+            if (parsedArguments == null) {
+                //already sent error message in the parseArguments() method
                 continue;
             }
 
@@ -306,15 +301,12 @@ public final class AbilityParser {
                 continue;
             }
 
-            List<Object> parsedArguments = new ArrayList<>(expectedSize);
-
             FunctionContext context = new FunctionContext(condition, rawArguments, abilityName, trigger, (i + 1));
 
-            if (!AbilityParser.parseTargeters(rawArguments, context, parsedArguments, false)) {
-                continue;
-            }
+            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context, false);
 
-            if (!AbilityParser.parseArguments(parsedArguments, rawArguments, context, false)) {
+            if (parsedArguments == null) {
+                //already sent error message in the parseArguments() method
                 continue;
             }
 
@@ -325,74 +317,17 @@ public final class AbilityParser {
     }
 
     /**
-     * A util method that checks the positions and parses the targeters inside a keyword
-     */
-    private static boolean parseTargeters(String[] rawArguments, FunctionContext context, List<Object> parsedArguments, boolean onKeyword) {
-        String section = (onKeyword) ? " on keywords" : " on conditions";
-
-        for (int i = 0; i < rawArguments.length; i++) {
-            ExpectedArguments expectedValue = context.getFunction().getArguments().get(i);
-
-            if (!(expectedValue instanceof ExpectedTargeters)) {
-                parsedArguments.add(null);
-                continue;
-            }
-
-            String argument = rawArguments[i];
-
-            if (!argument.startsWith("?")) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + section + " on ability " + context.getAbilityName() + " was expected a targeter but did not receive one!");
-                return false;
-            }
-
-            FunctionTargeter targeter = FunctionTargeter.getFromIdentifier(argument);
-
-            if (targeter == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + section +  " on ability " + context.getAbilityName() + " is an invalid targeter because it does not exist!");
-                return false;
-            }
-
-            if (!context.getAbilityTrigger().getAllowedTargeters().contains(argument)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + section +  " on ability " + context.getAbilityName() + " is an invalid targeter for the trigger of " + context.getAbilityTrigger().getIdentifier() + "!");
-                return false;
-            }
-
-            ExpectedTargeters expectedTargeters = (ExpectedTargeters) expectedValue;
-
-            if (!expectedTargeters.contains(targeter)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on line " + context.getLineNumber() + section +  " on ability " + context.getAbilityName() + " is an invalid targeter for the keyword of " + context.getFunction().getIdentifier() + "!");
-                return false;
-            }
-
-            parsedArguments.add(targeter);
-        }
-
-        return true;
-    }
-
-    /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static boolean parseArguments(List<Object> parsedArguments, String[] rawArguments, FunctionContext context, boolean isKeyword) {
+    private static List<Object> parseArguments(String[] rawArguments, FunctionContext context, boolean isKeyword) {
+        List<Object> parsedArguments = new ArrayList<>();
         String argumentType = (isKeyword) ? "keyword" : "condition";
 
-        for (int i = 0; i < parsedArguments.size(); i++) {
-            Object argument = parsedArguments.get(i);
-
-            if (argument != null) {
-                continue;
-            }
+        for (int i = 0; i < rawArguments.length; i++) {
+            Object parsedValue = null;
+            String rawArgument = rawArguments[i];
 
             ExpectedArguments expectedArgument = context.getFunction().getArguments().get(i);
-
-            if (!expectedArgument.shouldGetValue()) {
-                LogUtil.log(LogUtil.Level.DEV, "There is an expected argument in the " + context.getFunction().getIdentifier() + argumentType + " in which the getValue() method was attempted to be called on, but the shouldGetValue() method returned false!");
-                return false;
-            }
-
-            Object parsedValue = null;
-
-            String rawArgument = rawArguments[i];
 
             try {
                 parsedValue = expectedArgument.getValue(rawArgument, context);
@@ -400,16 +335,16 @@ public final class AbilityParser {
 
             if (parsedValue == null && expectedArgument.getOnError() == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on " + argumentType + context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
-                return false;
+                return null;
             }
 
             if (parsedValue == null) {
-                return false;
+                return null;
             }
 
-            parsedArguments.set(i, parsedValue);
+            parsedArguments.add(parsedValue);
         }
 
-        return true;
+        return parsedArguments;
     }
 }

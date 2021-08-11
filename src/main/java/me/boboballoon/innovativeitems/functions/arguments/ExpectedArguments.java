@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.arguments;
 
 import me.boboballoon.innovativeitems.functions.FunctionContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -15,20 +16,11 @@ public interface ExpectedArguments {
      *
      * @param rawValue the raw value of the argument in the configuration file
      * @param context the context in which the keyword was parsed
-     * @return the desired argument to be placed in the list
+     * @return the desired argument to be placed in the list, null if an error should be thrown
      * @throws Exception when parsing fails for any reason
      */
     @Nullable
-    Object getValue(String rawValue, FunctionContext context) throws Exception;
-
-    /**
-     * A method used to determine whether it is safe to execute the getValue method
-     *
-     * @return a boolean that is true when it is safe to execute the getValue method
-     */
-    default boolean shouldGetValue() {
-        return true;
-    }
+    Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) throws Exception;
 
     /**
      * A method that returns the method to be called on if the parsing fails for any reason

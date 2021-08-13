@@ -38,7 +38,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. More flexible usage of the ability and randomability keywords via new compatible trigger checks
      */
 
     @Override
@@ -55,7 +54,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
-                new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword());
+                new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

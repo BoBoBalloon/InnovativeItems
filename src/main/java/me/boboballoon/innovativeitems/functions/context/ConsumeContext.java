@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.context;
 
 import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.entity.Player;
@@ -11,8 +12,8 @@ import org.bukkit.entity.Player;
 public class ConsumeContext extends RuntimeContext implements ItemContext {
     private final CustomItem item;
 
-    public ConsumeContext(Player player, String abilityName, AbilityTrigger abilityTrigger, CustomItem item) {
-        super(player, abilityName, abilityTrigger);
+    public ConsumeContext(Player player, Ability ability, CustomItem item) {
+        super(player, ability);
         this.item = item;
     }
 

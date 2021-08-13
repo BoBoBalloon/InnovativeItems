@@ -205,7 +205,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        RuntimeContext context = new RuntimeContext(target, ability.getIdentifier(), ability.getTrigger());
+        RuntimeContext context = new RuntimeContext(target, ability);
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
 

@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
 
@@ -8,24 +9,21 @@ import org.bukkit.entity.Player;
  */
 public class RuntimeContext {
     private final Player player;
-    private final String abilityName;
-    private final AbilityTrigger abilityTrigger;
+    private final Ability ability;
 
     /**
      * A constructor that builds the runtime context
      *
      * @param player the player involved with the execution
-     * @param abilityName the name of the ability involved with the execution
-     * @param abilityTrigger the trigger of the ability involved with the execution
+     * @param ability the ability involved with the execution
      */
-    public RuntimeContext(Player player, String abilityName, AbilityTrigger abilityTrigger) {
+    public RuntimeContext(Player player, Ability ability) {
         this.player = player;
-        this.abilityName = abilityName;
-        this.abilityTrigger = abilityTrigger;
+        this.ability = ability;
     }
 
     /**
-     * A method that returns the player responsible with the execution of the keyword
+     * A method that returns the player responsible with the execution of the function
      *
      * @return the player responsible with the execution of the keyword
      */
@@ -34,20 +32,29 @@ public class RuntimeContext {
     }
 
     /**
-     * A method that returns the name of the ability that fired this keyword
+     * A method that returns the ability involved with execution of the function
+     *
+     * @return the ability involved with execution of the function
+     */
+    public Ability getAbility() {
+        return this.ability;
+    }
+
+    /**
+     * A method that returns the name of the ability that fired this function
      *
      * @return the name of the ability that fired this keyword
      */
     public String getAbilityName() {
-        return this.abilityName;
+        return this.ability.getIdentifier();
     }
 
     /**
-     * A method that returns the trigger of the ability that fired this keyword
+     * A method that returns the trigger of the ability that fired this function
      *
      * @return the trigger of the ability that fired this keyword
      */
     public AbilityTrigger getAbilityTrigger() {
-        return this.abilityTrigger;
+        return this.ability.getTrigger();
     }
 }

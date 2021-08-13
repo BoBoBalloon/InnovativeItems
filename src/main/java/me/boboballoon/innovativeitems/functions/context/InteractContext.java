@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -12,8 +13,8 @@ public class InteractContext extends RuntimeContext {
     private final Action action;
     private final EquipmentSlot hand;
 
-    public InteractContext(Player player, String abilityName, AbilityTrigger abilityTrigger, Action action, EquipmentSlot hand) {
-        super(player, abilityName, abilityTrigger);
+    public InteractContext(Player player, Ability ability, Action action, EquipmentSlot hand) {
+        super(player, ability);
         this.action = action;
         this.hand = hand;
     }

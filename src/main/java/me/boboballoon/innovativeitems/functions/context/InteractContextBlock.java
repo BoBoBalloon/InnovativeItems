@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.context;
 
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,8 +14,8 @@ import org.bukkit.inventory.EquipmentSlot;
 public class InteractContextBlock extends InteractContext implements BlockContext {
     private final Block block;
 
-    public InteractContextBlock(Player player, String abilityName, AbilityTrigger abilityTrigger, Action action, EquipmentSlot hand, Block block) {
-        super(player, abilityName, abilityTrigger, action, hand);
+    public InteractContextBlock(Player player, Ability ability, Action action, EquipmentSlot hand, Block block) {
+        super(player, ability, action, hand);
         this.block = block;
     }
 

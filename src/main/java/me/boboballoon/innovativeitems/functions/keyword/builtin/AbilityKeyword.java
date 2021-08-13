@@ -33,8 +33,8 @@ public class AbilityKeyword extends Keyword {
             return;
         }
 
-        if (context.getAbilityTrigger() != ability.getTrigger()) {
-            LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same trigger as the " + context.getAbilityName() + " ability!");
+        if (!context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
+            LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same targeters as the " + context.getAbilityName() + " ability!");
             return;
         }
 

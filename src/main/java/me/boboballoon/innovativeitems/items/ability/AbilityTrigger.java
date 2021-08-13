@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -63,12 +64,12 @@ public enum AbilityTrigger {
 
     private final String identifier;
     private final String regex;
-    private final ImmutableList<String> allowedTargeters;
+    private final ImmutableSet<String> allowedTargeters;
 
     AbilityTrigger(String identifier, @Nullable String regex, String... allowedTargeters) {
         this.identifier = identifier;
         this.regex = regex;
-        this.allowedTargeters = this.toImmutableList(allowedTargeters);
+        this.allowedTargeters = this.toImmutableSet(allowedTargeters);
     }
 
     /**
@@ -95,8 +96,25 @@ public enum AbilityTrigger {
      *
      * @return all allowed targeters used for this trigger
      */
-    public ImmutableList<String> getAllowedTargeters() {
+    public ImmutableSet<String> getAllowedTargeters() {
         return this.allowedTargeters;
+    }
+
+
+    /**
+     * A method used to check if the current ability trigger is compatible with the specified ability trigger
+     *
+     * @param trigger the specified ability trigger
+     * @return a boolean that is true when the current ability trigger is compatible with the specified ability trigger
+     */
+    public boolean isCompatible(@NotNull AbilityTrigger trigger) {
+        for (String allowedTargeter : trigger.getAllowedTargeters()) {
+            if (!this.getAllowedTargeters().contains(allowedTargeter)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -106,7 +124,7 @@ public enum AbilityTrigger {
      * @return the corresponding ability trigger (null if nothing matches)
      */
     @Nullable
-    public static AbilityTrigger getFromIdentifier(String provided) {
+    public static AbilityTrigger getFromIdentifier(@NotNull String provided) {
         for (AbilityTrigger trigger : AbilityTrigger.values()) {
             if (trigger.getRegex() != null && provided.matches(trigger.getRegex())) {
                 return trigger;
@@ -126,12 +144,12 @@ public enum AbilityTrigger {
      * @param strings the var arg
      * @return the list
      */
-    private ImmutableList<String> toImmutableList(String... strings) {
+    private ImmutableSet<String> toImmutableSet(String... strings) {
         List<String> list = new ArrayList<>();
 
         Collections.addAll(list, strings);
         list.add("?player"); //player is valid on all triggers
 
-        return ImmutableList.copyOf(list);
+        return ImmutableSet.copyOf(list);
     }
 }

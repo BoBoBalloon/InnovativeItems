@@ -31,12 +31,14 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
+    0. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
     1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
+    1. More flexible usage of the ability and randomability keywords via new compatible trigger checks
      */
 
     @Override

@@ -31,6 +31,8 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
+    -1. Add dropitem and dropcustomiteem keywords
+        a. arguments should be location(player, block or entity targeter) material or item name, amount, boolean for natural drop
     0. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
     1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
@@ -54,7 +56,8 @@ public final class InnovativeItems extends JavaPlugin {
                 new FeedKeyword(), new LightningKeyword(), new KindleKeyword(), new PlaySoundKeyword(),
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
-                new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword());
+                new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
+                new DropItemKeyword(), new DropCustomItemKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

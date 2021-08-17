@@ -6,21 +6,22 @@ import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Class that represents a keyword in an ability config file that gives a vanilla minecraft item
+ * Class that represents a keyword in an ability config file that drops a custom minecraft item on the ground
  */
-public class GiveCustomItemKeyword extends Keyword {
-    public GiveCustomItemKeyword() {
-        super("givecustomitem",
-                new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "innovative item name"),
+public class DropCustomItemKeyword extends Keyword {
+    public DropCustomItemKeyword() {
+        super("dropcustomitem",
+                new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "item amount", object -> {
                     int integer = (int) object;
                     return integer > 0;
@@ -29,21 +30,21 @@ public class GiveCustomItemKeyword extends Keyword {
 
     @Override
     protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
-        Player target = null;
+        Location target = null;
         FunctionTargeter rawTarget = (FunctionTargeter) arguments.get(0);
 
         if (rawTarget == FunctionTargeter.PLAYER) {
-            target = context.getPlayer();
+            target = context.getPlayer().getLocation();
         }
 
         if (rawTarget == FunctionTargeter.ENTITY && context instanceof EntityContext) {
             EntityContext entityContext = (EntityContext) context;
+            target = entityContext.getEntity().getLocation();
+        }
 
-            if (!(entityContext.getEntity() instanceof Player)) {
-                return;
-            }
-
-            target = (Player) entityContext.getEntity();
+        if (rawTarget == FunctionTargeter.BLOCK && context instanceof BlockContext) {
+            BlockContext blockContext = (BlockContext) context;
+            target = blockContext.getBlock().getLocation();
         }
 
         String itemName = (String) arguments.get(1);
@@ -60,11 +61,11 @@ public class GiveCustomItemKeyword extends Keyword {
         ItemStack item = customItem.getItemStack().clone();
         item.setAmount(amount);
 
-        target.getInventory().addItem(item);
+        target.getWorld().dropItemNaturally(target, item);
     }
 
     @Override
     public boolean isAsync() {
-        return true;
+        return false;
     }
 }

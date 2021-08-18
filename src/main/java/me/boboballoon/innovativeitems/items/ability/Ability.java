@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,24 +66,35 @@ public class Ability {
      * A method used to execute an ability (will always be fired async)
      *
      * @param context the context in which the ability was triggered
+     * @return a boolean that is true when the ability executed successfully
      */
-    public void execute(RuntimeContext context) {
+    public boolean execute(RuntimeContext context) {
+        if (!this.trigger.getExpectedContext().isInstance(context)) {
+            //silently fail
+            return false;
+        }
+
+        if (Bukkit.getServer().isPrimaryThread()) {
+            throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
+        }
+
         for (ActiveCondition condition : this.conditions) {
             Boolean value = condition.execute(context);
 
             if (value == null) {
                 LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to execute the " + this.identifier + " ability because the condition " + condition.getBase().getIdentifier() + " returned null!");
-                return;
+                return false;
             }
 
             //both must be opposites (when value is true, inverted must be false)
             if (condition.execute(context) == condition.isInverted()) {
-                return;
+                return false;
             }
         }
 
         for (ActiveKeyword keyword : this.keywords) {
             keyword.execute(context);
         }
+        return true;
     }
 }

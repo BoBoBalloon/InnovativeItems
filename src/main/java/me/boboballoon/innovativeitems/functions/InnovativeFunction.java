@@ -67,6 +67,10 @@ public abstract class InnovativeFunction<T> {
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
     public final T execute(ImmutableList<Object> arguments, RuntimeContext context) throws ExecutionException {
+        if (Bukkit.getServer().isPrimaryThread()) {
+            throw new IllegalStateException("The function execute method cannot be called from the main thread!");
+        }
+
         if (this.isAsync()) {
             return this.call(arguments, context);
         }

@@ -207,9 +207,13 @@ public class InnovativeItemsCommand extends BaseCommand {
 
         RuntimeContext context = new RuntimeContext(target, ability);
 
-        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
-
-        TextUtil.sendMessage(sender, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+            if (ability.execute(context)) {
+                TextUtil.sendMessage(sender, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
+            } else {
+                TextUtil.sendMessage(sender, "&r&aThere was an issue trying to execute the " + ability.getIdentifier() + " ability! This could be due to a condition not being met to incompatible triggers...");
+            }
+        });
     }
 
     /**

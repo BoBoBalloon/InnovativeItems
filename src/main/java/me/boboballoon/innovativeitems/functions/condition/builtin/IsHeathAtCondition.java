@@ -17,10 +17,9 @@ public class IsHeathAtCondition extends Condition {
         super("ishealthat",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "health amount"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "operation", object -> {
-                    String value = (String) object;
-
-                    return value.equals(">") || value.equals("<") || value.equals("=");
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.CHAR, "operation", object -> {
+                    char value = (char) object;
+                    return value == '>' || value == '<' || value == '=';
                 }));
     }
 
@@ -40,18 +39,18 @@ public class IsHeathAtCondition extends Condition {
 
         int amount = (int) arguments.get(1);
         int activeAmount = (int) target.getHealth();
-        String operation = (String) arguments.get(2);
+        char operation = (char) arguments.get(2);
 
 
-        if (operation.equals(">")) {
+        if (operation == '>') {
             return activeAmount > amount;
         }
 
-        if (operation.equals("<")) {
+        if (operation == '<') {
             return activeAmount < amount;
         }
 
-        if (operation.equals("=")) {
+        if (operation == '=') {
             return activeAmount == amount;
         }
 

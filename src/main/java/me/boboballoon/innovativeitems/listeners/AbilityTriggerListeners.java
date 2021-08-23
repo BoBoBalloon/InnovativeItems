@@ -32,7 +32,7 @@ public class AbilityTriggerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.useItemInHand() == Event.Result.DENY || event.useInteractedBlock() == Event.Result.DENY) {
+        if (event.useItemInHand() == Event.Result.DENY) {
             return;
         }
 

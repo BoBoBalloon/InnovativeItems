@@ -21,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class InnovativeItems extends JavaPlugin {
     private static InnovativeItems instance;
-
     private PaperCommandManager commandManager;
     private ConfigManager configManager;
     private FunctionManager functionManager;
@@ -38,6 +37,11 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. Added new explode keyword
+    2. Added new isblocking condition
+    3. Added new isgliding condition
+    4. Added new isentitytype condition
+    5. Fixed bug where both right-click and left-click ability triggers would not work
      */
 
     @Override
@@ -55,11 +59,12 @@ public final class InnovativeItems extends JavaPlugin {
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
                 new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
-                new DropItemKeyword(), new DropCustomItemKeyword());
+                new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),
-                new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition());
+                new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
+                new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition());
     }
 
     @Override

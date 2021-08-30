@@ -2,12 +2,12 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,7 +24,7 @@ public class TeleportKeyword extends Keyword {
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x coordinate"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y coordinate"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "z coordinate"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
+                new ExpectedManual((rawValue, context) -> Bukkit.getWorld(rawValue), "world name"));
     }
 
     @Override
@@ -44,15 +44,7 @@ public class TeleportKeyword extends Keyword {
         double x = (double) arguments.get(1);
         double y = (double) arguments.get(2);
         double z = (double) arguments.get(3);
-
-        String worldName = (String) arguments.get(4);
-
-        World world = Bukkit.getWorld(worldName);
-
-        if (world == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "The provided world name does not have a corresponding world loaded that exists!");
-            return;
-        }
+        World world = (World) arguments.get(4);
 
         Location current = target.getLocation();
         Location location = new Location(world, x, y, z, current.getYaw(), current.getPitch());

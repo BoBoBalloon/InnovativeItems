@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
 import me.boboballoon.innovativeitems.listeners.BlockPlaceableListener;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -19,6 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * The main class of the innovative items plugin
+ */
 public final class InnovativeItems extends JavaPlugin {
     private static InnovativeItems instance;
     private PaperCommandManager commandManager;
@@ -27,16 +31,19 @@ public final class InnovativeItems extends JavaPlugin {
     private InnovativeCache cache;
     private AbilityTimerManager timerManager;
     private GarbageCollector garbageCollector;
+    private ItemDefender itemDefender;
 
     /*
     TODO LIST:
-    0. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
-    1. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
-    2. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    0. Add item defender bullshit to docs and push update to spigot
+    1. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
+    2. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
+    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
     CHANGE LIST:
+    1. Item Defender
      */
 
     @Override
@@ -100,10 +107,13 @@ public final class InnovativeItems extends JavaPlugin {
         //init garbage collector
         this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
 
+        //init item defender
+        this.itemDefender = new ItemDefender(this.configManager.shouldAllowCrafting(), this.configManager.shouldAllowSmelting(), this.configManager.shouldAllowBrewing());
+
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");
 
-        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new BlockPlaceableListener());
+        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new BlockPlaceableListener(), this.itemDefender);
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }
@@ -169,6 +179,15 @@ public final class InnovativeItems extends JavaPlugin {
      */
     public AbilityTimerManager getAbilityTimerManager() {
         return this.timerManager;
+    }
+
+    /**
+     * A method used to return the active instance of the item defender
+     *
+     * @return the active instance of the item defender
+     */
+    public ItemDefender getItemDefender() {
+        return this.itemDefender;
     }
 
     /**

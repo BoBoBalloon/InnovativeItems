@@ -13,3 +13,9 @@ debug-level: 2
 garbage-collector:
   should-update: true #if true, when a custom item does not match the values in the config, will update the item to match config
   should-delete: true #if true, when a custom item is not present in the cache, the garbage collector will delete the item
+
+#The item defender will make sure players can't use custom items on vanilla interactions#
+item-defender:
+  allow-crafting: false #if true, when a custom item is used in a crafting recipe, the item defender will not prevent it
+  allow-smelting: false #if true, when a custom item is used in a furnace recipe, the item defender will not prevent it
+  allow-brewing: false #if true, when a custom item is used in a brewing recipe, the item defender will not prevent it

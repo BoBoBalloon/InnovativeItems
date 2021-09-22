@@ -7,14 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * A class that is responsible for holding all items and abilities in memory during runtime
  */
 public final class InnovativeCache {
-    private final HashMap<String, Ability> abilities;
-    private final HashMap<String, CustomItem> items;
+    private final Map<String, Ability> abilities;
+    private final Map<String, CustomItem> items;
 
     public InnovativeCache() {
         this.abilities = new HashMap<>();

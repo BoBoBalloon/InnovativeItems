@@ -1,11 +1,13 @@
 package me.boboballoon.innovativeitems.items.ability;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.api.AbilityExecuteEvent;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -78,6 +80,13 @@ public class Ability {
             throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
         }
 
+        AbilityExecuteEvent event = new AbilityExecuteEvent(context);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
         for (ActiveCondition condition : this.conditions) {
             Boolean value = condition.execute(context);
 
@@ -96,5 +105,17 @@ public class Ability {
             keyword.execute(context);
         }
         return true;
+    }
+
+    /**
+     * A method used to execute an ability (will always be fired async)
+     *
+     * @param player the player to execute the ability
+     * @return a boolean that is true when the ability executed successfully
+     */
+    public boolean execute(Player player) {
+        RuntimeContext context = new RuntimeContext(player, this);
+
+        return this.execute(context);
     }
 }

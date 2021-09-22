@@ -2,10 +2,15 @@ package me.boboballoon.innovativeitems.api;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
+import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
+import me.boboballoon.innovativeitems.items.ability.Ability;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class used to easily retrieve internal information about the plugin
@@ -71,5 +76,45 @@ public final class InnovativeItemsAPI {
      */
     public static void log(@NotNull LogUtil.Level level, @NotNull String text) {
         LogUtil.log(level, text);
+    }
+
+    /**
+     * A method used to execute an ability based on its identifier
+     *
+     * @param identifier the provided identifier
+     * @param player the player executing the ability
+     * @throws IllegalArgumentException when the provided identifier does not correlate to a currently loaded ability
+     * @return a boolean that is true when the ability was successfully executed
+     */
+    public static boolean executeAbility(@NotNull String identifier, @NotNull Player player) throws IllegalArgumentException {
+        Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(identifier);
+
+        if (ability == null) {
+            throw new IllegalArgumentException("The provided identifier: " + identifier + ", does not belong to any currently loaded ability!");
+        }
+
+        return ability.execute(player);
+    }
+
+    /**
+     * A method used to get a custom item object from the cache
+     *
+     * @param identifier the name of the custom item
+     * @return the object that represents the custom item (null if it does not exist)
+     */
+    @Nullable
+    public static CustomItem getCustomItem(@NotNull String identifier) {
+        return InnovativeItems.getInstance().getItemCache().getItem(identifier);
+    }
+
+    /**
+     * A method used to get an ability object from the cache
+     *
+     * @param identifier the name of the ability
+     * @return the object that represents the ability (null if it does not exist)
+     */
+    @Nullable
+    public static Ability getAbility(@NotNull String identifier) {
+        return InnovativeItems.getInstance().getItemCache().getAbility(identifier);
     }
 }

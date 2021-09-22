@@ -2,7 +2,6 @@ package me.boboballoon.innovativeitems.items.ability;
 
 import com.google.common.collect.ImmutableSet;
 import me.boboballoon.innovativeitems.functions.context.*;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +15,8 @@ import java.util.List;
 public enum AbilityTrigger {
     RIGHT_CLICK("right-click", InteractContext.class, null),
     LEFT_CLICK("left-click", InteractContext.class, null),
-    RIGHT_CLICK_BLOCK("right-click-block", InteractContext.class, null, "?block"),
-    LEFT_CLICK_BLOCK("left-click-block", InteractContext.class, null, "?block"),
+    RIGHT_CLICK_BLOCK("right-click-block", InteractContextBlock.class, null, "?block"),
+    LEFT_CLICK_BLOCK("left-click-block", InteractContextBlock.class, null, "?block"),
     DAMAGE_DEALT("damage-dealt", DamageContext.class, null,"?entity"),
     DAMAGE_TAKEN("damage-taken", DamageContext.class, null, "?entity"),
     CONSUME_ITEM("item-consume", ConsumeContext.class, null),

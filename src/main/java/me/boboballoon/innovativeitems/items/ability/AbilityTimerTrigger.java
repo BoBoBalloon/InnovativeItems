@@ -56,11 +56,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
             items[5] = inventory.getItemInOffHand();
 
             for (ItemStack itemStack : items) {
-                if (itemStack == null) {
-                    continue;
-                }
-
-                if (itemStack.getType() == Material.AIR) {
+                if (itemStack == null || itemStack.getType() == Material.AIR) {
                     continue;
                 }
 
@@ -81,11 +77,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
 
                 Ability ability = item.getAbility();
 
-                if (ability == null) {
-                    continue;
-                }
-
-                if (!this.abilities.contains(ability)) {
+                if (ability == null || !this.abilities.contains(ability)) {
                     continue;
                 }
 

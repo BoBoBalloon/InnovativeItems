@@ -2,7 +2,6 @@ package me.boboballoon.innovativeitems.functions.context;
 
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 

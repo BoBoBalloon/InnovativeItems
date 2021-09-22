@@ -19,12 +19,16 @@ import java.util.Map;
 /**
  * A class that is the superclass of all custom items
  */
-public abstract class CustomItem {
+public class CustomItem {
     private final String identifier;
     private final Ability ability;
     private final ItemStack item;
 
-    public CustomItem(String identifier, Ability ability, ItemStack item) {
+    public CustomItem(String identifier, Ability ability, Material material, String itemName, List<String> lore, Map<Enchantment, Integer> enchantments, List<ItemFlag> flags, Multimap<Attribute, AttributeModifier> attributes, Integer customModelData, boolean unbreakable, boolean placeable) {
+        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable));
+    }
+
+    protected CustomItem(String identifier, Ability ability, ItemStack item) {
         this.identifier = identifier;
         this.ability = ability;
         this.item = item;

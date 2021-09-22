@@ -152,7 +152,7 @@ public final class ItemParser {
         }
         
         //generic item
-        return new CustomItemGeneric(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
+        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
     }
 
     /**

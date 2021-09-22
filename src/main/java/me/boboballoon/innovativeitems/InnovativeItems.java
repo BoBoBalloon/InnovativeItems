@@ -35,7 +35,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
-    0. Add item defender bullshit to docs and push update to spigot
     1. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
     2. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
@@ -43,7 +42,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. Item Defender
      */
 
     @Override
@@ -61,7 +59,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new GiveItemKeyword(), new GiveCustomItemKeyword(), new RemoveHeldItemKeyword(), new GamemodeKeyword(),
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
                 new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
-                new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword());
+                new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

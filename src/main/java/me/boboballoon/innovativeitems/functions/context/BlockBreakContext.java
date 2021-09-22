@@ -3,7 +3,6 @@ package me.boboballoon.innovativeitems.functions.context;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

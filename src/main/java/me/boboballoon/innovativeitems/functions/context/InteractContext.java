@@ -1,7 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;

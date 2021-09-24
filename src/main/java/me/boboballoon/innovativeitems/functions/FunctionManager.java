@@ -7,13 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A class that is responsible for holding all functions in memory during runtime
  */
 public final class FunctionManager {
-    private final HashMap<String, Keyword> keywords;
-    private final HashMap<String, Condition> conditions;
+    private final Map<String, Keyword> keywords;
+    private final Map<String, Condition> conditions;
 
     public FunctionManager() {
         this.keywords = new HashMap<>();

@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
+import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
@@ -14,7 +15,6 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 /**
  * Class that represents a condition in an ability config file that checks if the target is wearing a custom item
@@ -26,7 +26,6 @@ public class IsWearingCustomItemCondition extends Condition {
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
                 new ExpectedManual((rawValue, context) -> {
                     RevisedEquipmentSlot slot = RevisedEquipmentSlot.valueOf(rawValue.toUpperCase());
-
                     if (slot != RevisedEquipmentSlot.HAND && slot != RevisedEquipmentSlot.OFF_HAND) {
                         return slot;
                     } else {
@@ -65,26 +64,58 @@ public class IsWearingCustomItemCondition extends Condition {
 
         RevisedEquipmentSlot slot = (RevisedEquipmentSlot) arguments.get(2);
 
-        PlayerInventory inventory = target.getInventory();
-
-        if (slot != RevisedEquipmentSlot.ANY) {
-            ItemStack item = inventory.getItem(slot.getSlot());
-            return customItem.getItemStack().isSimilar(item);
+        if (slot == RevisedEquipmentSlot.ANY) {
+            return this.isWearingCustomArmor(target, customItem);
         }
 
-        boolean value = false;
-        for (ItemStack item : inventory.getArmorContents()) {
-            if (customItem.getItemStack().isSimilar(item)) {
-                value = true;
-                break;
-            }
+        ItemStack item = target.getInventory().getItem(slot.getSlot());
+
+        if (item == null) {
+            return false;
         }
 
-        return value;
+        NBTItem nbtItem = new NBTItem(item);
+
+        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+            return false;
+        }
+
+        String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+        return customItem.getIdentifier().equals(key);
     }
 
     @Override
     public boolean isAsync() {
         return true;
+    }
+
+    /**
+     * A method used to check if the player is wearing the provided custom item in any slot
+     *
+     * @param player the player
+     * @param customItem the provided custom item
+     * @return a boolean that is true when the player is wearing the provided custom item in any slot
+     */
+    private boolean isWearingCustomArmor(Player player, CustomItem customItem) {
+        for (ItemStack item : player.getInventory().getArmorContents()) {
+            if (item == null) {
+                continue;
+            }
+
+            NBTItem nbtItem = new NBTItem(item);
+
+            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                continue;
+            }
+
+            String key = nbtItem.getString("innovativeplugin-customitem-id");
+
+            if (customItem.getIdentifier().equals(key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

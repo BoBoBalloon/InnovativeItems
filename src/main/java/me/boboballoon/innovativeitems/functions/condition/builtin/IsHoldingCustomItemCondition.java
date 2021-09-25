@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
+import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
@@ -10,6 +11,7 @@ import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,11 +54,22 @@ public class IsHoldingCustomItemCondition extends Condition {
             return false;
         }
 
-        int amount = (int) arguments.get(2);
-
         ItemStack item = target.getInventory().getItemInMainHand();
 
-        return customItem.getItemStack().isSimilar(item) && item.getAmount() >= amount;
+        if (item.getType() == Material.AIR) {
+            return false;
+        }
+
+        NBTItem nbtItem = new NBTItem(item);
+
+        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+            return false;
+        }
+
+        String key = nbtItem.getString("innovativeplugin-customitem-id");
+        int amount = (int) arguments.get(2);
+
+        return customItem.getIdentifier().equals(key) && item.getAmount() >= amount;
     }
 
     @Override

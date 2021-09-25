@@ -87,9 +87,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
                     continue;
                 }
 
-                RuntimeContext context = new RuntimeContext(player, ability);
-
-                ability.execute(context);
+                ability.execute(player);
             }
         }
     }

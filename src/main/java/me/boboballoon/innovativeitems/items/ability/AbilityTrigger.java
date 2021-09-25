@@ -22,7 +22,8 @@ public enum AbilityTrigger {
     CONSUME_ITEM("item-consume", ConsumeContext.class, null),
     TIMER("timer", RuntimeContext.class, "timer:\\d+"),
     BLOCK_BREAK("block-break", BlockBreakContext.class, null, "?block"),
-    NONE("none", RuntimeContext.class, null);
+    NONE("none", RuntimeContext.class, null),
+    CROUCH("crouch", RuntimeContext.class, null);
 
     private final String identifier;
     private final Class<? extends RuntimeContext> expectedContext;

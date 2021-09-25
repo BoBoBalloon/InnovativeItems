@@ -81,7 +81,9 @@ public abstract class InnovativeFunction<T> {
             return value;
         });
 
-        this.pause(); //fires before unpause due to time it takes to go through bukkit scheduler
+        while (!future.isDone()) {
+            this.pause(); //fires before unpause due to time it takes to go through bukkit scheduler
+        }
 
         try {
             return future.get();

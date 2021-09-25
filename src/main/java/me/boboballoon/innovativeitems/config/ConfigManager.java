@@ -451,7 +451,14 @@ public final class ConfigManager {
                 continue;
             }
 
+
+            int maxCount = (this.generateDefaultConfigs) ? 4 : 3;
             for (String key : configuration.getKeys(false)) {
+                if (!InnovativeItems.isPluginPremium() && cache.getAbilitiesAmount() >= maxCount) {
+                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of abilities for the free version of the plugin! Skipping the ability identified as: " + key);
+                    continue;
+                }
+
                 ConfigurationSection section = configuration.getConfigurationSection(key);
 
                 AbilityParser.buildAbility(section, cache);
@@ -483,6 +490,7 @@ public final class ConfigManager {
                 continue;
             }
 
+            int maxCount = (this.generateDefaultConfigs) ? 16 : 10;
             for (String key : configuration.getKeys(false)) {
                 ConfigurationSection section = configuration.getConfigurationSection(key);
 
@@ -490,6 +498,11 @@ public final class ConfigManager {
 
                 if (cache.contains(name)) {
                     LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
+                    continue;
+                }
+
+                if (!InnovativeItems.isPluginPremium() && cache.getItemAmount() >= maxCount) {
+                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the item identified as: " + key);
                     continue;
                 }
 

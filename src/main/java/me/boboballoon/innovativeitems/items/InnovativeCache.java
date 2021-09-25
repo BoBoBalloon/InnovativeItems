@@ -111,4 +111,22 @@ public final class InnovativeCache {
     public Set<String> getItemIdentifiers() {
         return this.items.keySet();
     }
+
+    /**
+     * A method used to return the amount of items registered in the item cache
+     *
+     * @return the amount of items registered in the item cache
+     */
+    public int getItemAmount() {
+        return this.items.size();
+    }
+
+    /**
+     * A method used to return the amount of abilities registered in the item cache
+     *
+     * @return the amount of abilities registered in the item cache
+     */
+    public int getAbilitiesAmount() {
+        return this.abilities.size();
+    }
 }

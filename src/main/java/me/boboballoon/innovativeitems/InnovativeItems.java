@@ -35,6 +35,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     TODO LIST:
+    REMEMBER TO CHANGE THE PREMIUM_VERSION BOOLEAN
     0. Make a "strict" option in the general config
         a. that is default to true
         b. if false will replace context with not enough info with placeholders and lift restrictions on all 3rd party ability execution
@@ -46,6 +47,15 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     CHANGE LIST:
      */
+
+    /**
+     * A quick method used to check if the plugin is the free or premium version
+     *
+     * @return a boolean that is true if the plugin is the premium version
+     */
+    public static boolean isPluginPremium() {
+        return true;
+    }
 
     @Override
     public void onLoad() {
@@ -74,6 +84,9 @@ public final class InnovativeItems extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        String word = (InnovativeItems.isPluginPremium()) ? "premium" : "free";
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Loading up the " + word + " version of the plugin...");
+
         //config manager init
         this.configManager = new ConfigManager();
 

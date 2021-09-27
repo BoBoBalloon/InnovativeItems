@@ -96,7 +96,7 @@ public class Ability {
             }
 
             //both must be opposites (when value is true, inverted must be false)
-            if (condition.execute(context) == condition.isInverted()) {
+            if (value == condition.isInverted()) {
                 return false;
             }
         }

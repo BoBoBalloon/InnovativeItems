@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.util;
 
+import me.boboballoon.innovativeitems.InnovativeItems;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -14,7 +15,7 @@ import java.util.Scanner;
 public class UpdateChecker {
     private final PluginDescriptionFile description;
 
-    private static final String RESOURCE_ID = "93570";
+    private static final String RESOURCE_ID = InnovativeItems.isPluginPremium() ? "93570" : "96456";
 
     public UpdateChecker(Plugin plugin) {
         this.description = plugin.getDescription();

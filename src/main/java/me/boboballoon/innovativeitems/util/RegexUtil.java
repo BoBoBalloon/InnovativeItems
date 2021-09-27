@@ -30,9 +30,10 @@ public final class RegexUtil {
         String regex = RegexUtil.literalWithEscape(literal);
 
         String[] split = text.split(regex);
+        String literalAsString = "" + literal;
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].replace("\\" + literal, "" + literal);
+            split[i] = split[i].replace("\\" + literal, literalAsString);
         }
 
         return split;

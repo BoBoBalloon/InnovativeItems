@@ -1,3 +1,22 @@
+fairy-fullset:
+  trigger: 'timer:5'
+  conditions:
+    - '!istime(NIGHT)'
+    - 'issneaking(?player)'
+    - 'iswearingcustomitem(?player, fairy-helmet, HEAD)'
+    - 'iswearingcustomitem(?player, fairy-chestplate, CHEST)'
+    - 'iswearingcustomitem(?player, fairy-leggings, LEGS)'
+    - 'iswearingcustomitem(?player, fairy-boots, FEET)'
+  keywords:
+    - 'velocity(?player, 0, .75, 0)'
+    - 'effect(?player, JUMP, 10, 99)'
+    - 'effect(?player, SLOW_FALLING, 40, 99)'
+
+fairy-attack:
+  trigger: 'damage-dealt'
+  keywords:
+    - 'particle(?player, CRIT_MAGIC, 50, 1.5, 1.5, 1.5)'
+
 fairy-healing:
   trigger: 'timer:100'
   keywords:

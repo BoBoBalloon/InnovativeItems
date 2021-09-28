@@ -1,10 +1,7 @@
 fairy-wand:
   material: 'STICK'
   display-name: '&r&d&lThe Fairy Wand'
-  ability:
-    trigger: 'damage-dealt'
-    keywords:
-      - 'particle(?player, CRIT_MAGIC, 50, 1.5, 1.5, 1.5)'
+  ability: 'fairy-attack'
   lore:
     - ''
     - '&r&dA wand bestowed to the fairy queen'
@@ -18,19 +15,7 @@ fairy-wand:
 fairy-helmet:
   material: 'PLAYER_HEAD'
   display-name: '&r&d&lFairy Helmet'
-  ability:
-    trigger: 'timer:5'
-    conditions:
-      - '!istime(NIGHT)'
-      - 'issneaking(?player)'
-      - 'iswearingcustomitem(?player, fairy-helmet, HEAD)'
-      - 'iswearingcustomitem(?player, fairy-chestplate, CHEST)'
-      - 'iswearingcustomitem(?player, fairy-leggings, LEGS)'
-      - 'iswearingcustomitem(?player, fairy-boots, FEET)'
-    keywords:
-      - 'velocity(?player, 0, .75, 0)'
-      - 'effect(?player, JUMP, 10, 99)'
-      - 'effect(?player, SLOW_FALLING, 40, 99)'
+  ability: 'fairy-fullset'
   skull:
     base64: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzA3NTI2Y2E2ZmVkZmIzZDZkYmM1NmM1YjgyNmZmNjg5NmQwZGFjZThiYmFmYjJjNjVlZWQ0YTYzZWVmZjdjZCJ9fX0='
   lore:

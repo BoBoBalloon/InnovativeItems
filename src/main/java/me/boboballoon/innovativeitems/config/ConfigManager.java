@@ -452,7 +452,7 @@ public final class ConfigManager {
             }
 
 
-            int maxCount = (this.generateDefaultConfigs) ? 4 : 3;
+            int maxCount = (this.generateDefaultConfigs) ? 6 : 3;
             for (String key : configuration.getKeys(false)) {
                 if (!InnovativeItems.isPluginPremium() && cache.getAbilitiesAmount() >= maxCount) {
                     LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of abilities for the free version of the plugin! Skipping the ability identified as: " + key);

@@ -36,7 +36,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    -1. Make ability cooldowns using the new subclass, add it to parser
     0. Make a "strict" option in the general config
         a. that is default to true
         b. if false will replace context with not enough info with placeholders and lift restrictions on all 3rd party ability execution
@@ -47,7 +46,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. Ability cooldowns
      */
 
     /**

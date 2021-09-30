@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
+import me.boboballoon.innovativeitems.items.ability.AbilityCooldown;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
@@ -85,6 +86,11 @@ public final class AbilityParser {
         }
 
         List<ActiveCondition> conditions = AbilityParser.getAbilityConditions(section, trigger, name);
+
+        if (section.isInt("cooldown")) {
+            int cooldown = section.getInt("cooldown");
+            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown);
+        }
 
         return new Ability(name, keywords, conditions, trigger);
     }

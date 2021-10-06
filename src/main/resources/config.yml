@@ -6,6 +6,9 @@ check-for-updates: true
 #If this value is true, whenever the plugin is reloaded it will generate default config files if they do not exist
 generate-default-configs: true
 
+#If this value is true, if an ability is executed without proper context, it will fail to load, if false, the plugin will infer and use potentially unsafe fallback values instead#
+strict: true
+
 #The higher the debug level, the more information displayed in console. Good for bug fixing#
 debug-level: 2
 

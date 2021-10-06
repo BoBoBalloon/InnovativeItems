@@ -1,9 +1,14 @@
 package me.boboballoon.innovativeitems.items.ability;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.api.AbilityExecuteEvent;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
+import me.boboballoon.innovativeitems.functions.context.FlexibleContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
@@ -71,7 +76,9 @@ public class Ability {
      * @return a boolean that is true when the ability executed successfully
      */
     public boolean execute(RuntimeContext context) {
-        if (!this.trigger.getExpectedContext().isInstance(context)) {
+        if (this.shouldWrapContext(context)) {
+            context = new FlexibleContext(context);
+        } else if (!this.trigger.getExpectedContext().isInstance(context)) {
             //silently fail
             return false;
         }
@@ -104,6 +111,7 @@ public class Ability {
         for (ActiveKeyword keyword : this.keywords) {
             keyword.execute(context);
         }
+
         return true;
     }
 
@@ -117,5 +125,19 @@ public class Ability {
         RuntimeContext context = new RuntimeContext(player, this);
 
         return this.execute(context);
+    }
+
+    /**
+     * A method that is used to check if the runtime context should be wrapped in a flexible context object
+     *
+     * @param context the current runtime context
+     * @return if the current runtime context should be wrapped
+     */
+    private boolean shouldWrapContext(RuntimeContext context) {
+        if (InnovativeItems.getInstance().getConfigManager().isStrict()) {
+            return false;
+        }
+
+        return !((context instanceof EntityContext && context instanceof BlockContext && context instanceof ItemContext) || context instanceof FlexibleContext);
     }
 }

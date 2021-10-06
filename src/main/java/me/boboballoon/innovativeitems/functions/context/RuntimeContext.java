@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.functions.context;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents context that can assist execution that cannot be cached and must be parsed during runtime separately
@@ -17,7 +18,7 @@ public class RuntimeContext {
      * @param player the player involved with the execution
      * @param ability the ability involved with the execution
      */
-    public RuntimeContext(Player player, Ability ability) {
+    public RuntimeContext(@NotNull Player player, @NotNull Ability ability) {
         this.player = player;
         this.ability = ability;
     }
@@ -27,7 +28,7 @@ public class RuntimeContext {
      *
      * @return the player responsible with the execution of the keyword
      */
-    public Player getPlayer() {
+    public final Player getPlayer() {
         return this.player;
     }
 
@@ -36,7 +37,7 @@ public class RuntimeContext {
      *
      * @return the ability involved with execution of the function
      */
-    public Ability getAbility() {
+    public final Ability getAbility() {
         return this.ability;
     }
 
@@ -45,7 +46,7 @@ public class RuntimeContext {
      *
      * @return the name of the ability that fired this keyword
      */
-    public String getAbilityName() {
+    public final String getAbilityName() {
         return this.ability.getIdentifier();
     }
 
@@ -54,7 +55,7 @@ public class RuntimeContext {
      *
      * @return the trigger of the ability that fired this keyword
      */
-    public AbilityTrigger getAbilityTrigger() {
+    public final AbilityTrigger getAbilityTrigger() {
         return this.ability.getTrigger();
     }
 }

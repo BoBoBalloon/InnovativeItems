@@ -39,7 +39,7 @@ public class RandomAbilityKeyword extends Keyword {
                 return;
             }
 
-            if (!context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
+            if (InnovativeItems.getInstance().getConfigManager().isStrict() && !context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
                 LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same targeters as the " + context.getAbilityName() + " ability!");
                 return;
             }

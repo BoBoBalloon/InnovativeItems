@@ -27,6 +27,9 @@ public final class ConfigManager {
     //default configs
     private boolean generateDefaultConfigs;
 
+    //strict mode
+    private boolean strict;
+
     //debug level
     /**
      * Debug level of 5 allows everything
@@ -78,6 +81,16 @@ public final class ConfigManager {
             config.set("generate-default-configs", true);
         }
         this.setGenerateDefaultConfigs(generateDefaultConfigs);
+
+        //strict mode
+        boolean strict;
+        if (config.contains("strict")) {
+            strict = config.getBoolean("strict");
+        } else {
+            strict = true;
+            config.set("strict", true);
+        }
+        this.setStrict(strict);
 
         //load up debug level, sets to 2 if no value is present
         int debugLevel;
@@ -176,6 +189,24 @@ public final class ConfigManager {
      */
     public void setGenerateDefaultConfigs(boolean generateDefaultConfigs) {
         this.generateDefaultConfigs = generateDefaultConfigs;
+    }
+
+    /**
+     * A method used to get whether the plugin should be strict with ability execution context
+     *
+     * @return whether the plugin should be strict with ability execution context
+     */
+    public boolean isStrict() {
+        return this.strict;
+    }
+
+    /**
+     * A method used to set whether the plugin should be strict with ability execution context
+     *
+     * @param strict whether the plugin should be strict with ability execution context
+     */
+    public void setStrict(boolean strict) {
+        this.strict = strict;
     }
 
     /**

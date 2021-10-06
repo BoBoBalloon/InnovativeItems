@@ -2,6 +2,10 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.functions.context.FlexibleContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -33,7 +37,7 @@ public class AbilityKeyword extends Keyword {
             return;
         }
 
-        if (!context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
+        if (InnovativeItems.getInstance().getConfigManager().isStrict() && !context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
             LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same targeters as the " + context.getAbilityName() + " ability!");
             return;
         }

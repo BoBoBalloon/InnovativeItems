@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.util;
 
+import org.apache.commons.lang.IllegalClassException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,10 +18,10 @@ public final class InitializationUtil {
      * @param text the provided text
      * @param clazz the class of the number
      * @return the parsed value of the string as the provided number type
-     * @throws UnsupportedClassProvidedException when the provided clazz argument is not a supported number
+     * @throws IllegalClassException when the provided clazz argument is not a supported number
      * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
      */
-    public static Number initNumber(@NotNull String text, @NotNull Class<? extends Number> clazz) throws UnsupportedClassProvidedException, NumberFormatException {
+    public static Number initNumber(@NotNull String text, @NotNull Class<? extends Number> clazz) throws IllegalClassException, NumberFormatException {
         Number number = null;
 
         //integers
@@ -54,7 +55,7 @@ public final class InitializationUtil {
         //return or throw errors
 
         if (number == null) {
-            throw new UnsupportedClassProvidedException(clazz, "InitializationUtil.initNumber()");
+            throw new IllegalClassException("Was expecting a class that extends number and was a primitive data type wrapper!");
         }
 
         return number;
@@ -92,14 +93,5 @@ public final class InitializationUtil {
         }
 
         return text.charAt(0);
-    }
-
-    /**
-     * Inner util class used to tell the developer when a provided class is not supported
-     */
-    private static class UnsupportedClassProvidedException extends IllegalArgumentException {
-        public UnsupportedClassProvidedException(Class<?> providedClass, String methodName) {
-            super("The class " + providedClass.getName() + " is not supported in the " + methodName + " method!");
-        }
     }
 }

@@ -81,7 +81,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String word = (InnovativeItems.isPluginPremium()) ? "premium" : "free";
+        String word = InnovativeItems.isPluginPremium() ? "premium" : "free";
         LogUtil.logUnblocked(LogUtil.Level.INFO, "Loading up the " + word + " version of the plugin...");
 
         //config manager init

@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.util;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
+import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +85,7 @@ public final class LogUtil {
      * @param fieldName the name of field to be initialized
      */
     public static void logFunctionError(@NotNull Level level, @NotNull FunctionContext context, @NotNull String fieldName) {
-        String functionType = (context.getFunction() instanceof Keyword) ? "keyword" : "condition";
+        String functionType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";
         LogUtil.logFunctionError(level, fieldName, context.getFunction().getIdentifier(), functionType, context.getAbilityName());
     }
 

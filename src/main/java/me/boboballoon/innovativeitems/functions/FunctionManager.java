@@ -3,6 +3,8 @@ package me.boboballoon.innovativeitems.functions;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +43,21 @@ public final class FunctionManager {
     }
 
     /**
+     * A method used to register a new keyword in the cache
+     *
+     * @param depend the name of the plugin this keyword depends on
+     * @param keyword the keyword you wish to register
+     */
+    public void registerKeyword(@NotNull String depend, @NotNull Keyword keyword) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerKeyword(keyword);
+    }
+
+    /**
      * A method used to register a new condition in the cache
      *
      * @param condition the condition you wish to register
@@ -55,6 +72,21 @@ public final class FunctionManager {
         }
 
         this.conditions.put(identifier, condition);
+    }
+
+    /**
+     * A method used to register a new keyword in the cache
+     *
+     * @param depend the name of the plugin this keyword depends on
+     * @param condition the condition you wish to register
+     */
+    public void registerCondition(@NotNull String depend, @NotNull Condition condition) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerCondition(condition);
     }
 
     /**

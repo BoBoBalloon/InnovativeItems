@@ -226,7 +226,7 @@ public final class AbilityParser {
 
             FunctionContext context = new FunctionContext(keyword, rawArguments, abilityName, trigger, (i + 1));
 
-            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context, true);
+            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context);
 
             if (parsedArguments == null) {
                 //already sent error message in the parseArguments() method
@@ -309,7 +309,7 @@ public final class AbilityParser {
 
             FunctionContext context = new FunctionContext(condition, rawArguments, abilityName, trigger, (i + 1));
 
-            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context, false);
+            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context);
 
             if (parsedArguments == null) {
                 //already sent error message in the parseArguments() method
@@ -325,9 +325,9 @@ public final class AbilityParser {
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static List<Object> parseArguments(String[] rawArguments, FunctionContext context, boolean isKeyword) {
+    private static List<Object> parseArguments(String[] rawArguments, FunctionContext context) {
         List<Object> parsedArguments = new ArrayList<>();
-        String argumentType = (isKeyword) ? "keyword" : "condition";
+        String argumentType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";;
 
         for (int i = 0; i < rawArguments.length; i++) {
             Object parsedValue = null;

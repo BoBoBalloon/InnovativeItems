@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.functions.condition.builtin.*;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
+import me.boboballoon.innovativeitems.functions.keyword.builtin.dependent.MythicMobSkillKeyword;
 import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
@@ -77,6 +78,10 @@ public final class InnovativeItems extends JavaPlugin {
                 new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
                 new IsBlockAtCondition(), new IsFacingCondition());
+
+        //dependent functions
+
+        this.functionManager.registerKeyword("MythicMobs", new MythicMobSkillKeyword());
     }
 
     @Override

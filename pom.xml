@@ -6,7 +6,7 @@
 
     <groupId>me.boboballoon</groupId>
     <artifactId>InnovativeItems</artifactId>
-    <version>3.1</version>
+    <version>3.2</version>
     <packaging>jar</packaging>
     <name>InnovativeItems</name>
 
@@ -98,6 +98,11 @@
             <id>authlib</id>
             <url>https://papermc.io/repo/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Releases</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -132,6 +137,13 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.25</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- MythicMobs -->
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>MythicMobs</artifactId>
+            <version>4.9.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

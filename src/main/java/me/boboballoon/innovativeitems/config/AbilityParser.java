@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.config;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
+import me.boboballoon.innovativeitems.functions.InnovativeFunction;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedArguments;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
@@ -172,13 +173,7 @@ public final class AbilityParser {
      * A util method used to get the active keywords from an ability config section
      */
     private static List<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger trigger, String abilityName) {
-        List<String> raw;
-        if (section.isList("keywords")) {
-            raw = section.getStringList("keywords");
-        } else {
-            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability keywords for " + abilityName + ", are you sure the keyword field is present?");
-            return null;
-        }
+        List<String> raw = AbilityParser.getLines(section, abilityName, true);
 
         List<ActiveKeyword> keywords = new ArrayList<>();
 
@@ -199,37 +194,10 @@ public final class AbilityParser {
 
             Keyword keyword = InnovativeItems.getInstance().getFunctionManager().getKeyword(split[0]);
 
-            if (keyword == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on keywords on ability " + abilityName + "! Did you use a valid keyword?");
-                continue;
-            }
-
-            if (keyword.getClass().isAnnotationPresent(Deprecated.class)) {
-                LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the keyword by the name of " + keyword.getIdentifier() + " was detected... It is not recommended to use this keyword and should be removed as soon as possible!");
-            }
-
-            String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
-
-            rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
-
-            //in the case of no arguments provided
-            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
-                rawArguments = new String[]{};
-            }
-
-            int expectedSize = keyword.getArguments().size();
-
-            if (rawArguments.length != expectedSize) {
-                LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + keyword.getIdentifier() + " keyword on line " + (i + 1) + " of the " + abilityName + " ability!");
-                continue;
-            }
-
-            FunctionContext context = new FunctionContext(keyword, rawArguments, abilityName, trigger, (i + 1));
-
-            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context);
+            List<Object> parsedArguments = AbilityParser.checkAndParse(keyword, i, abilityName, split, trigger, true);
 
             if (parsedArguments == null) {
-                //already sent error message in the parseArguments() method
+                //already sent error message in the checkAndParse() method
                 continue;
             }
 
@@ -282,37 +250,10 @@ public final class AbilityParser {
 
             Condition condition = InnovativeItems.getInstance().getFunctionManager().getCondition(conditionName);
 
-            if (condition == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on conditions on ability " + abilityName + "! Did you use a valid condition?");
-                continue;
-            }
-
-            if (condition.getClass().isAnnotationPresent(Deprecated.class)) {
-                LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the condition by the name of " + condition.getIdentifier() + " was detected... It is not recommended to use this condition and should be removed as soon as possible!");
-            }
-
-            String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
-
-            rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
-
-            //in the case of no arguments provided
-            if (rawArguments.length == 1 && rawArguments[0].equals("")) {
-                rawArguments = new String[]{};
-            }
-
-            int expectedSize = condition.getArguments().size();
-
-            if (rawArguments.length != expectedSize) {
-                LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on conditions on the " + condition.getIdentifier() + " condition on line " + (i + 1) + " of the " + abilityName + " ability!");
-                continue;
-            }
-
-            FunctionContext context = new FunctionContext(condition, rawArguments, abilityName, trigger, (i + 1));
-
-            List<Object> parsedArguments = AbilityParser.parseArguments(rawArguments, context);
+            List<Object> parsedArguments = AbilityParser.checkAndParse(condition, i, abilityName, split, trigger, false);
 
             if (parsedArguments == null) {
-                //already sent error message in the parseArguments() method
+                //already sent error message in the checkAndParse() method
                 continue;
             }
 
@@ -320,6 +261,58 @@ public final class AbilityParser {
         }
 
         return conditions;
+    }
+
+    /**
+     * A utility method used to get the raw string lines of an ability
+     */
+    private static List<String> getLines(ConfigurationSection section, String abilityName, boolean keyword) {
+        String type = keyword ? "keyword" : "condition";
+        String types = type + "s";
+
+        if (section.isList(types)) {
+            return section.getStringList(types);
+        }
+
+        LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability " + types + " for " + abilityName + ", are you sure the " + type + " field is present?");
+        return null;
+    }
+
+    /**
+     * A utility method used to clean up and centralize the parsing process
+     */
+    private static List<Object> checkAndParse(InnovativeFunction<?> function, int i, String abilityName, String[] split, AbilityTrigger trigger, boolean keyword) {
+        String type = keyword ? "keyword" : "condition";
+        String types = type + "s";
+
+        if (function == null) {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on " + types + " on ability " + abilityName + "! Did you use a valid " + type + "?");
+            return null;
+        }
+
+        if (function.getClass().isAnnotationPresent(Deprecated.class)) {
+            LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the keyword by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
+        }
+
+        String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
+
+        rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
+
+        //in the case of no arguments provided
+        if (rawArguments.length == 1 && rawArguments[0].equals("")) {
+            rawArguments = new String[]{};
+        }
+
+        int expectedSize = function.getArguments().size();
+
+        if (rawArguments.length != expectedSize) {
+            LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + function.getIdentifier() + " " + type + " on line " + (i + 1) + " of the " + abilityName + " ability!");
+            return null;
+        }
+
+        FunctionContext context = new FunctionContext(function, rawArguments, abilityName, trigger, (i + 1));
+
+        return AbilityParser.parseArguments(rawArguments, context);
     }
 
     /**

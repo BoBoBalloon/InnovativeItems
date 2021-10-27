@@ -69,6 +69,7 @@ public class ExpectedTargeters implements ExpectedArguments {
     }
 
     @Override
+    @NotNull
     public Consumer<FunctionContext> getOnError() {
         return context -> {};
     }

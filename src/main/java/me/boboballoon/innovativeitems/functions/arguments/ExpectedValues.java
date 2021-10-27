@@ -57,10 +57,10 @@ public class ExpectedValues implements ExpectedArguments {
      *
      * @return the method to be called on if the parsing fails for any reason
      */
-    @Nullable
+    @NotNull
     @Override
     public Consumer<FunctionContext> getOnError() {
-        return this.onError;
+        return this.onError != null ? this.onError : ExpectedArguments.DEFAULT_ERROR;
     }
 
     /**

@@ -19,18 +19,22 @@ public class MythicMobSkillKeyword extends Keyword {
     public MythicMobSkillKeyword() {
         super("mythicmobsskill",
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
-                new ExpectedTargeters(FunctionTargeter.ENTITY));
+                new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY));
     }
 
     @Override
     protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
-        EntityContext entityContext = (EntityContext) context;
-
         String skillName = (String) arguments.get(0);
-        LivingEntity target = entityContext.getEntity();
+        FunctionTargeter targeter = (FunctionTargeter) arguments.get(1);
+        LivingEntity target = null;
 
-        if (target instanceof Player) {
-            return;
+        if (targeter == FunctionTargeter.PLAYER) {
+            target = context.getPlayer();
+        }
+
+        if (targeter == FunctionTargeter.ENTITY && context instanceof EntityContext) {
+            EntityContext entityContext = (EntityContext) context;
+            target = entityContext.getEntity();
         }
 
         if (!MythicMobs.inst().getAPIHelper().castSkill(target, skillName, target.getLocation())) {

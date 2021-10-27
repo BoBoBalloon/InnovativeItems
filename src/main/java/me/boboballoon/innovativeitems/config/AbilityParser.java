@@ -173,9 +173,13 @@ public final class AbilityParser {
      * A util method used to get the active keywords from an ability config section
      */
     private static List<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger trigger, String abilityName) {
+        List<ActiveKeyword> keywords = new ArrayList<>();
+
         List<String> raw = AbilityParser.getLines(section, abilityName, true);
 
-        List<ActiveKeyword> keywords = new ArrayList<>();
+        if (raw == null) {
+            return keywords;
+        }
 
         for (int i = 0; i < raw.size(); i++) {
             String line = raw.get(i);
@@ -213,10 +217,9 @@ public final class AbilityParser {
     private static List<ActiveCondition> getAbilityConditions(ConfigurationSection section, AbilityTrigger trigger, String abilityName) {
         List<ActiveCondition> conditions = new ArrayList<>();
 
-        List<String> raw;
-        if (section.isList("conditions")) {
-            raw = section.getStringList("conditions");
-        } else {
+        List<String> raw = AbilityParser.getLines(section, abilityName, false);
+
+        if (raw == null) {
             return conditions;
         }
 
@@ -274,7 +277,10 @@ public final class AbilityParser {
             return section.getStringList(types);
         }
 
-        LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability " + types + " for " + abilityName + ", are you sure the " + type + " field is present?");
+        if (keyword) {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability " + types + " for " + abilityName + ", are you sure the " + type + " field is present?");
+        }
+
         return null;
     }
 
@@ -320,7 +326,6 @@ public final class AbilityParser {
      */
     private static List<Object> parseArguments(String[] rawArguments, FunctionContext context) {
         List<Object> parsedArguments = new ArrayList<>();
-        String argumentType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";;
 
         for (int i = 0; i < rawArguments.length; i++) {
             Object parsedValue = null;
@@ -332,12 +337,8 @@ public final class AbilityParser {
                 parsedValue = expectedArgument.getValue(rawArgument, context);
             } catch (Exception ignored) {}
 
-            if (parsedValue == null && expectedArgument.getOnError() == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Argument number " + (i + 1) + " on " + argumentType + context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
-                return null;
-            }
-
             if (parsedValue == null) {
+                expectedArgument.getOnError().accept(context);
                 return null;
             }
 

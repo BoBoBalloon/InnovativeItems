@@ -37,6 +37,7 @@ public class ExpectedManual implements ExpectedArguments {
      * @return the method to be called on if the parsing fails for any reason
      */
     @Override
+    @NotNull
     public Consumer<FunctionContext> getOnError() {
         return this.onError;
     }
@@ -53,13 +54,11 @@ public class ExpectedManual implements ExpectedArguments {
         Object value;
         try {
             value = this.manual.getValue(rawValue, context);
-        } catch (Throwable e) {
-            this.onError.accept(context);
+        } catch (Exception e) {
             return null;
         }
 
         if (value == null) {
-            this.onError.accept(context);
             return null;
         }
 

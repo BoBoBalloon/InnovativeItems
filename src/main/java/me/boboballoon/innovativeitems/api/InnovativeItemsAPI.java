@@ -2,7 +2,6 @@ package me.boboballoon.innovativeitems.api;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;

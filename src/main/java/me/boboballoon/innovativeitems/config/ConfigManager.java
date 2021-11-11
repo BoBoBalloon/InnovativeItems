@@ -2,14 +2,9 @@ package me.boboballoon.innovativeitems.config;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
-import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -421,11 +416,9 @@ public final class ConfigManager {
             this.generateDefaultConfigs(plugin, abilities, items);
         }
 
-        InnovativeCache cache = plugin.getItemCache();
+        InitializationManager initializationManager = new InitializationManager(items, abilities);
 
-        this.loadAbilities(abilities, cache);
-
-        this.loadItems(items, cache);
+        //init
 
         LogUtil.logUnblocked(LogUtil.Level.INFO, "Basic plugin initialization complete!");
     }
@@ -458,96 +451,5 @@ public final class ConfigManager {
         }
 
         LogUtil.log(LogUtil.Level.INFO, "Configuration generation complete!");
-    }
-
-    /**
-     * A method used to parse and cache abilities from yml files
-     *
-     * @param home  the home directory of all ability yml files
-     * @param cache the cache where loaded abilities will be registered to
-     */
-    private void loadAbilities(File home, InnovativeCache cache) {
-        LogUtil.log(LogUtil.Level.INFO, "Starting ability initialization and parsing...");
-
-        for (File file : home.listFiles()) {
-            YamlConfiguration configuration = new YamlConfiguration();
-
-            try {
-                configuration.load(file);
-            } catch (IOException | InvalidConfigurationException e) {
-                LogUtil.log(LogUtil.Level.SEVERE, "A " + e.getClass().getSimpleName() + " occurred while loading " + file.getName() + " during ability initialization and parsing stage!");
-                if (this.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
-                    e.printStackTrace();
-                }
-                continue;
-            }
-
-
-            int maxCount = (this.generateDefaultConfigs) ? 6 : 3;
-            for (String key : configuration.getKeys(false)) {
-                if (!InnovativeItems.isPluginPremium() && cache.getAbilitiesAmount() >= maxCount) {
-                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of abilities for the free version of the plugin! Skipping the ability identified as: " + key);
-                    continue;
-                }
-
-                ConfigurationSection section = configuration.getConfigurationSection(key);
-
-                AbilityParser.buildAbility(section, cache);
-            }
-        }
-
-        LogUtil.log(LogUtil.Level.INFO, "Ability initialization and parsing complete!");
-    }
-
-    /**
-     * A method used to parse and cache items from yml files
-     *
-     * @param home  the home directory of all item yml files
-     * @param cache the cache where loaded items will be registered to
-     */
-    private void loadItems(File home, InnovativeCache cache) {
-        LogUtil.log(LogUtil.Level.INFO, "Starting item initialization and parsing...");
-
-        for (File file : home.listFiles()) {
-            YamlConfiguration configuration = new YamlConfiguration();
-
-            try {
-                configuration.load(file);
-            } catch (IOException | InvalidConfigurationException e) {
-                LogUtil.log(LogUtil.Level.WARNING, "A " + e.getClass().getSimpleName() + " occurred while loading " + file.getName() + " during item initialization and parsing stage!");
-                if (this.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
-                    e.printStackTrace();
-                }
-                continue;
-            }
-
-            int maxCount = (this.generateDefaultConfigs) ? 16 : 10;
-            for (String key : configuration.getKeys(false)) {
-                ConfigurationSection section = configuration.getConfigurationSection(key);
-
-                String name = section.getName();
-
-                if (cache.contains(name)) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
-                    continue;
-                }
-
-                if (!InnovativeItems.isPluginPremium() && cache.getItemAmount() >= maxCount) {
-                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the item identified as: " + key);
-                    continue;
-                }
-
-                CustomItem item = ItemParser.parseItem(section, name);
-
-                if (item == null) {
-                    //error message was already sent from parseItem method, no need to put in here
-                    continue;
-                }
-
-                cache.registerItem(item);
-            }
-        }
-
-        LogUtil.log(LogUtil.Level.INFO, "Item initialization and parsing complete!");
     }
 }

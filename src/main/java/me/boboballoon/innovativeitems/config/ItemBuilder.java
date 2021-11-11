@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -17,52 +18,122 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
- * A class built for parsing configuration sections and convert into CustomItem objects
+ * A class that is responsible for building items and placing them into the cache
  */
-public final class ItemParser {
+public class ItemBuilder {
+    private final InitializationManager parent;
+    private final File itemDirectory;
+    private final Map<String, IncompleteItem<?>> finalizedItems;
+    private final ConfigManager configManager;
+    private final InnovativeCache cache;
+
+    public ItemBuilder(InitializationManager parent, ConfigManager configManager, InnovativeCache cache) {
+        this.parent = parent;
+        this.itemDirectory = this.parent.getItemDirectory();
+        this.finalizedItems = new HashMap<>();
+        this.configManager = configManager;
+        this.cache = cache;
+    }
+
     /**
-     * Constructor to prevent people from using this util class in an object oriented way
+     * Gets the instance of the parent init manager that made this item builder
+     *
+     * @return the instance of the parent init manager that made this item builder
      */
-    private ItemParser() {}
+    public InitializationManager getParent() {
+        return this.parent;
+    }
+
+    /**
+     * A method used to get the directory that holds all the item configuration files
+     *
+     * @return the directory that holds all the item configuration files
+     */
+    public File getItemDirectory() {
+        return this.itemDirectory;
+    }
+
+    /**
+     * A method used to return a map of incomplete items ready to be built and registered
+     *
+     * @return a map of incomplete items ready to be built and registered
+     */
+    public Map<String, IncompleteItem<?>> getFinalizedItems() {
+        return this.finalizedItems;
+    }
 
     /**
      * A util method used to parse a custom item from a config section
-     * 
-     * @param section the config section
-     * @param name the name of the item
-     * @return the custom item (null if an error occurred)
      */
-    @Nullable
-    public static CustomItem parseItem(ConfigurationSection section, String name) {
+    public void buildIncompleteItems() {
+        int maxCount = configManager.shouldGenerateDefaultConfigs() ? 16 : 10;
+
+        for (File file : this.itemDirectory.listFiles()) {
+            YamlConfiguration configuration = new YamlConfiguration();
+
+            try {
+                configuration.load(file);
+            } catch (IOException | InvalidConfigurationException e) {
+                LogUtil.log(LogUtil.Level.WARNING, "A " + e.getClass().getSimpleName() + " occurred while loading " + file.getName() + " during item initialization and parsing stage!");
+                if (configManager.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
+
+            for (String key : configuration.getKeys(false)) {
+                ConfigurationSection section = configuration.getConfigurationSection(key);
+
+                String name = section.getName();
+
+                if (this.cache.contains(name)) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + name + ", is already registered! Skipping item...");
+                    continue;
+                }
+
+                if (!InnovativeItems.isPluginPremium() && this.cache.getItemAmount() >= maxCount) {
+                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the item identified as: " + key);
+                    continue;
+                }
+
+                this.parseItem(section, name);
+            }
+        }
+    }
+
+    /**
+     * A util method used to parse a custom item from a config section
+     *
+     * @param section the config section
+     * @param name    the name of the item
+     */
+    private void parseItem(ConfigurationSection section, String name) {
         if (!section.isString("material")) {
             LogUtil.log(LogUtil.Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
-            return null;
+            return;
         }
 
+        Object ability = section.isString("ability") || section.isConfigurationSection("ability") ? this.getAbility(section, name) : null;
+        
         Material material;
         try {
             material = Material.valueOf(section.getString("material").toUpperCase());
         } catch (IllegalArgumentException e) {
             LogUtil.log(LogUtil.Level.WARNING, "Unknown material provided while parsing the item by the name of " + name + " during item initialization and parsing stage!");
-            return null;
-        }
-
-
-        Ability ability;
-        if (section.isString("ability") || section.isConfigurationSection("ability")) {
-            ability = ItemParser.getAbility(section, name);
-        } else {
-            ability = null;
+            return;
         }
 
         String displayName;
@@ -74,28 +145,28 @@ public final class ItemParser {
 
         List<String> lore;
         if (section.isList("lore")) {
-            lore = ItemParser.getLore(section);
+            lore = this.getLore(section);
         } else {
             lore = null;
         }
 
         Map<Enchantment, Integer> enchantments;
         if (section.isConfigurationSection("enchantments")) {
-            enchantments = ItemParser.getEnchantments(section, name);
+            enchantments = this.getEnchantments(section, name);
         } else {
             enchantments = null;
         }
 
         List<ItemFlag> flags;
         if (section.isList("flags")) {
-            flags = ItemParser.getItemFlags(section, name);
+            flags = this.getItemFlags(section, name);
         } else {
             flags = null;
         }
 
         Multimap<Attribute, AttributeModifier> attributes;
         if (section.isConfigurationSection("attributes")) {
-            attributes = ItemParser.getAttributes(section, name);
+            attributes = this.getAttributes(section, name);
         } else {
             attributes = null;
         }
@@ -124,48 +195,51 @@ public final class ItemParser {
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            this.finalizedItems.put(name, new IncompleteItem<>(CustomItemSkull.class, name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, this.getSkullName(skullSection), this.getSkullBase64(skullSection)));
+            return;
         }
 
         //leather armor item
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name));
+            this.finalizedItems.put(name, new IncompleteItem<>(CustomItemLeatherArmor.class, name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, this.getRGB(leatherArmorSection, name), this.getColor(leatherArmorSection, name)));
+            return;
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
+            this.finalizedItems.put(name, new IncompleteItem<>(CustomItemPotion.class, name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, this.getRGB(potionSection, name), this.getColor(potionSection, name), this.getPotionEffects(potionSection, name)));
+            return;
         }
 
         //banner item
         if (section.isConfigurationSection("banner") && CustomItemBanner.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, ItemParser.getBannerPatterns(bannerSection, name));
+            this.finalizedItems.put(name, new IncompleteItem<>(CustomItemBanner.class, name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, this.getBannerPatterns(bannerSection, name)));
+            return;
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+            this.finalizedItems.put(name, new IncompleteItem<>(CustomItemFirework.class, name, ability, displayName, lore, enchantments, flags, attributes, customModelData, this.getFireworkEffects(fireworkSection, name), this.getFireworkPower(fireworkSection, name)));
+            return;
         }
-        
+
         //generic item
-        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
+        this.finalizedItems.put(name, new IncompleteItem<>(CustomItem.class, name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable));
     }
 
     /**
      * Get the ability field from an item config section
      */
-    private static Ability getAbility(ConfigurationSection section, String itemName) {
+    private Object getAbility(ConfigurationSection section, String itemName) {
         Ability ability = null;
         String abilityName = null;
 
         if (section.isString("ability")) {
-            String rawAbility = section.getString("ability");
-            abilityName = rawAbility;
-            ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);
+            return section.getString("ability");
         }
 
         boolean isConfigurationSection = section.isConfigurationSection("ability");
@@ -189,7 +263,7 @@ public final class ItemParser {
     /**
      * Get the lore field from an item config section
      */
-    private static List<String> getLore(ConfigurationSection section) {
+    private List<String> getLore(ConfigurationSection section) {
         List<String> lore = section.getStringList("lore");
 
         for (int i = 0; i < lore.size(); i++) {
@@ -203,7 +277,7 @@ public final class ItemParser {
     /**
      * Get the enchantment field from an item config section
      */
-    private static Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
+    private Map<Enchantment, Integer> getEnchantments(ConfigurationSection section, String itemName) {
         ConfigurationSection enchantmentSection = section.getConfigurationSection("enchantments");
         Map<Enchantment, Integer> enchantments = new HashMap<>();
 
@@ -225,7 +299,7 @@ public final class ItemParser {
     /**
      * Get the item flags field from an item config section
      */
-    private static List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
+    private List<ItemFlag> getItemFlags(ConfigurationSection section, String itemName) {
         List<ItemFlag> flags = new ArrayList<>();
         for (String flag : section.getStringList("flags")) {
             ItemFlag itemFlag;
@@ -244,7 +318,7 @@ public final class ItemParser {
     /**
      * Get the attributes field from an item config section
      */
-    private static Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
+    private Multimap<Attribute, AttributeModifier> getAttributes(ConfigurationSection section, String itemName) {
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
         ConfigurationSection attributeSection = section.getConfigurationSection("attributes");
 
@@ -283,7 +357,7 @@ public final class ItemParser {
     /**
      * Get the skull name field from an skull config section
      */
-    private static String getSkullName(ConfigurationSection section) {
+    private String getSkullName(ConfigurationSection section) {
         if (!section.isString("player-name")) {
             return null;
         }
@@ -294,7 +368,7 @@ public final class ItemParser {
     /**
      * Get the skull base64 field from an skull config section
      */
-    private static String getSkullBase64(ConfigurationSection section) {
+    private String getSkullBase64(ConfigurationSection section) {
         if (!section.isString("base64")) {
             return null;
         }
@@ -305,7 +379,7 @@ public final class ItemParser {
     /**
      * Get the color from rgb value field from an item config section
      */
-    private static Color getRGB(ConfigurationSection section, String itemName) {
+    private Color getRGB(ConfigurationSection section, String itemName) {
         if (!section.isString("rgb")) {
             return null;
         }
@@ -332,7 +406,7 @@ public final class ItemParser {
     /**
      * Get the color from color name value field from an item config section
      */
-    private static Color getColor(ConfigurationSection section, String itemName) {
+    private Color getColor(ConfigurationSection section, String itemName) {
         if (!section.isString("color")) {
             return null;
         }
@@ -353,7 +427,7 @@ public final class ItemParser {
     /**
      * Get the potion effects from the effects field from a potion config section
      */
-    private static List<PotionEffect> getPotionEffects(ConfigurationSection section, String itemName) {
+    private List<PotionEffect> getPotionEffects(ConfigurationSection section, String itemName) {
         List<String> rawEffects = section.getStringList("effects");
         List<PotionEffect> effects = new ArrayList<>();
 
@@ -397,7 +471,7 @@ public final class ItemParser {
     /**
      * Get the patterns field from the banner field from a banner config section
      */
-    private static List<Pattern> getBannerPatterns(ConfigurationSection section, String itemName) {
+    private List<Pattern> getBannerPatterns(ConfigurationSection section, String itemName) {
         List<String> rawPatterns = section.getStringList("patterns");
         List<Pattern> patterns = new ArrayList<>();
 
@@ -434,7 +508,7 @@ public final class ItemParser {
     /**
      * Get all the firework effects from the config file and parse and initialize
      */
-    private static List<FireworkEffect> getFireworkEffects(ConfigurationSection section, String itemName) {
+    private List<FireworkEffect> getFireworkEffects(ConfigurationSection section, String itemName) {
         if (!section.isConfigurationSection("effects")) {
             return null;
         }
@@ -450,7 +524,7 @@ public final class ItemParser {
 
             ConfigurationSection effectSection = effectsSection.getConfigurationSection(key);
 
-            FireworkEffect effect = ItemParser.getFireworkEffect(effectSection, itemName);
+            FireworkEffect effect = this.getFireworkEffect(effectSection, itemName);
 
             if (effect == null) {
                 continue;
@@ -465,7 +539,7 @@ public final class ItemParser {
     /**
      * Get a firework effect from an effect config section
      */
-    private static FireworkEffect getFireworkEffect(ConfigurationSection section, String itemName) {
+    private FireworkEffect getFireworkEffect(ConfigurationSection section, String itemName) {
         boolean flicker;
         if (section.isBoolean("flicker")) {
             flicker = section.getBoolean("flicker");
@@ -534,7 +608,7 @@ public final class ItemParser {
     /**
      * Get the flight time field and convert it to the power field that can be passed into the object
      */
-    private static Integer getFireworkPower(ConfigurationSection section, String itemName) {
+    private Integer getFireworkPower(ConfigurationSection section, String itemName) {
         if (!section.isInt("flight-time")) {
             return null;
         }

@@ -44,6 +44,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
+    1. look at commit and change docs to match new annotations and explain how new init system works
      */
 
     /**

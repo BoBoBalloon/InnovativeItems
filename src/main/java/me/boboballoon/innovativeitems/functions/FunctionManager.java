@@ -4,7 +4,6 @@ import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +32,7 @@ public final class FunctionManager {
     public void registerKeyword(@NotNull Keyword keyword) {
         String identifier = keyword.getIdentifier();
 
-        if (!this.isValidIdentifier(identifier)) {
+        if (this.isInvalidIdentifier(identifier)) {
             //unblocked because debug level may be null at this point
             LogUtil.logUnblocked(LogUtil.Level.DEV, "Keyword with the identifier of " + identifier + " is not valid! Skipping...");
             return;
@@ -65,7 +64,7 @@ public final class FunctionManager {
     public void registerCondition(@NotNull Condition condition) {
         String identifier = condition.getIdentifier();
 
-        if (!this.isValidIdentifier(identifier)) {
+        if (this.isInvalidIdentifier(identifier)) {
             //unblocked because debug level may be null at this point
             LogUtil.logUnblocked(LogUtil.Level.DEV, "Condition with the identifier of " + identifier + " is not valid! Skipping...");
             return;
@@ -101,6 +100,21 @@ public final class FunctionManager {
     }
 
     /**
+     * A method used to register new keywords in the cache that depend on a specified plugin
+     *
+     * @param depend the name of the plugin these keywords depend on
+     * @param keywords all the keywords you wish to register
+     */
+    public void registerKeywords(@NotNull String depend, @NotNull Keyword... keywords) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerKeywords(keywords);
+    }
+
+    /**
      * A method used to register new conditions in the cache
      *
      * @param conditions all the conditions you wish to register
@@ -109,6 +123,21 @@ public final class FunctionManager {
         for (Condition condition : conditions) {
             this.registerCondition(condition);
         }
+    }
+
+    /**
+     * A method used to register new conditions in the cache that depend on a specified plugin
+     *
+     * @param depend the name of the plugin these keywords depend on
+     * @param conditions all the conditions you wish to register
+     */
+    public void registerConditions(@NotNull String depend, @NotNull Condition... conditions) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerConditions(conditions);
     }
 
     /**
@@ -144,12 +173,12 @@ public final class FunctionManager {
     }
 
     /**
-     * A method that checks whether a string is a valid identifier to place into the cache
+     * A method that checks whether a string is an invalid identifier to place into the cache
      *
      * @param identifier the identifier you wish to check
-     * @return a boolean that is true if the provided identifier is valid
+     * @return a boolean that is true if the provided identifier is invalid
      */
-    public boolean isValidIdentifier(String identifier) {
-        return (!this.contains(identifier) && identifier.matches("\\w+"));
+    public boolean isInvalidIdentifier(String identifier) {
+        return this.contains(identifier) || !identifier.matches("\\w+");
     }
 }

@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.functions.arguments;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -10,25 +11,16 @@ import java.util.function.Consumer;
  * A class used to wrap the ExpectedManual interface to provided support for error messages
  */
 public class ExpectedManual implements ExpectedArguments {
-    private final ExpectedArguments manual;
+    private final ExpectedFunction manual;
     private final Consumer<FunctionContext> onError;
 
-    public ExpectedManual(@NotNull ExpectedArguments manual, @NotNull Consumer<FunctionContext> onError) {
+    public ExpectedManual(@NotNull ExpectedFunction manual, @NotNull Consumer<FunctionContext> onError) {
         this.manual = manual;
         this.onError = onError;
     }
 
-    public ExpectedManual(@NotNull ExpectedArguments manual, @NotNull String fieldName) {
+    public ExpectedManual(@NotNull ExpectedFunction manual, @NotNull String fieldName) {
         this(manual, context -> LogUtil.logFunctionError(context, fieldName));
-    }
-
-    /**
-     * A method that returns the method used to get the desired object
-     *
-     * @return the method used to get the desired object
-     */
-    public ExpectedArguments getManual() {
-        return this.manual;
     }
 
     /**
@@ -58,10 +50,22 @@ public class ExpectedManual implements ExpectedArguments {
             return null;
         }
 
-        if (value == null) {
-            return null;
-        }
-
         return value;
+    }
+
+    /**
+     * Java does not define classes by shape, I just don't want argument inception in this class
+     */
+    public interface ExpectedFunction {
+        /**
+         * A method used to manually set the value of an argument in a keyword
+         *
+         * @param rawValue the raw value of the argument in the configuration file
+         * @param context the context in which the keyword was parsed
+         * @return the desired argument to be placed in the list, null if an error should be thrown
+         * @throws Exception when parsing fails for any reason
+         */
+        @Nullable
+        Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) throws Exception;
     }
 }

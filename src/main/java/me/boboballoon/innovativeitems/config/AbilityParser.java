@@ -90,7 +90,9 @@ public final class AbilityParser {
 
         if (section.isInt("cooldown")) {
             int cooldown = section.getInt("cooldown");
-            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown);
+            boolean showCooldown = section.isBoolean("show-cooldown") ? section.getBoolean("show-cooldown") : false;
+
+            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown, showCooldown);
         }
 
         return new Ability(name, keywords, conditions, trigger);

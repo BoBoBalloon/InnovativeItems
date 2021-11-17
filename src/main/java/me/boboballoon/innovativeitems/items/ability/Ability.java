@@ -76,21 +76,22 @@ public class Ability {
      * @return a boolean that is true when the ability executed successfully
      */
     public boolean execute(RuntimeContext context) {
+        if (Bukkit.getServer().isPrimaryThread()) {
+            throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
+        }
+
         if (this.shouldWrapContext(context)) {
             context = new FlexibleContext(context);
         } else if (!this.trigger.getExpectedContext().isInstance(context)) {
-            //silently fail
+            LogUtil.log(LogUtil.Level.NOISE, "Ability: " + this.identifier + " failed to execute due to an incompatible runtime context. (if safety is not an issue try setting the strict field in the main config file to false)");
             return false;
-        }
-
-        if (Bukkit.getServer().isPrimaryThread()) {
-            throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
         }
 
         AbilityExecuteEvent event = new AbilityExecuteEvent(context);
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
+            LogUtil.log(LogUtil.Level.NOISE, "Ability: " + this.identifier + " failed to execute due to the ability execute event being cancelled.");
             return false;
         }
 
@@ -104,6 +105,7 @@ public class Ability {
 
             //both must be opposites (when value is true, inverted must be false)
             if (value == condition.isInverted()) {
+                LogUtil.log(LogUtil.Level.NOISE, "Condition: " + condition.getBase().getIdentifier() + " failed on the " + this.identifier + "ability.");
                 return false;
             }
         }

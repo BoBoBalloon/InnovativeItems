@@ -37,7 +37,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Look at custom blocks here: https://github.com/xenondevs/Nova/blob/main/src/main/kotlin/xyz/xenondevs/nova/tileentity/TileEntityManager.kt
+    1. Make new option on custom items called "soulbound" it is a boolean that is default to false but if marked true will keep the item on death and will not drop the item when the entity dies
     2. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
     3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */

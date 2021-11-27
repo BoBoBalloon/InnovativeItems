@@ -22,8 +22,8 @@ import java.util.Map;
  * A class that represents a custom item that is a potion
  */
 public class CustomItemPotion extends CustomItem {
-    public CustomItemPotion(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
-        super(identifier, ability, CustomItemPotion.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, rgb, color, effects));
+    public CustomItemPotion(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+        super(identifier, ability, CustomItemPotion.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, soulbound, rgb, color, effects));
     }
 
     /**
@@ -42,14 +42,14 @@ public class CustomItemPotion extends CustomItem {
      * @param effects         all the custom potion effects applied on this item
      * @return the itemstack
      */
-    private static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+    private static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
         //if not potion
         if (!CustomItemPotion.isPotion(material)) {
             LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a potion!");
             throw new IllegalArgumentException("Illegal material provided in CustomItemPotion constructor");
         }
 
-        ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, false, true);
+        ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, false, true, soulbound);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
         if (rgb != null) {

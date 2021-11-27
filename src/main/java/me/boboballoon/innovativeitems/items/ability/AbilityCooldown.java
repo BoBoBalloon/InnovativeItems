@@ -49,7 +49,7 @@ public class AbilityCooldown extends Ability {
      *
      * @return a boolean that is true if this ability shows the user if it is on cooldown for them
      */
-    public boolean showCooldown() {
+    public boolean shouldShowCooldown() {
         return this.showCooldown;
     }
 

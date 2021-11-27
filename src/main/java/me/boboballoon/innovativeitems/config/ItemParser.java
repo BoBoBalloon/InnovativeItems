@@ -57,102 +57,58 @@ public final class ItemParser {
             return null;
         }
 
+        Ability ability = section.isString("ability") || section.isConfigurationSection("ability") ? ItemParser.getAbility(section, name) : null;
 
-        Ability ability;
-        if (section.isString("ability") || section.isConfigurationSection("ability")) {
-            ability = ItemParser.getAbility(section, name);
-        } else {
-            ability = null;
-        }
+        String displayName = section.isString("display-name") ? TextUtil.format(section.getString("display-name")) : null;
 
-        String displayName;
-        if (section.isString("display-name")) {
-            displayName = TextUtil.format(section.getString("display-name"));
-        } else {
-            displayName = null;
-        }
+        List<String> lore = section.isList("lore") ? ItemParser.getLore(section) : null;
 
-        List<String> lore;
-        if (section.isList("lore")) {
-            lore = ItemParser.getLore(section);
-        } else {
-            lore = null;
-        }
+        Map<Enchantment, Integer> enchantments = section.isConfigurationSection("enchantments") ? ItemParser.getEnchantments(section, name) : null;
 
-        Map<Enchantment, Integer> enchantments;
-        if (section.isConfigurationSection("enchantments")) {
-            enchantments = ItemParser.getEnchantments(section, name);
-        } else {
-            enchantments = null;
-        }
+        List<ItemFlag> flags = section.isList("flags") ? ItemParser.getItemFlags(section, name) : null;
 
-        List<ItemFlag> flags;
-        if (section.isList("flags")) {
-            flags = ItemParser.getItemFlags(section, name);
-        } else {
-            flags = null;
-        }
+        Multimap<Attribute, AttributeModifier> attributes = section.isConfigurationSection("attributes") ? ItemParser.getAttributes(section, name) : null;
 
-        Multimap<Attribute, AttributeModifier> attributes;
-        if (section.isConfigurationSection("attributes")) {
-            attributes = ItemParser.getAttributes(section, name);
-        } else {
-            attributes = null;
-        }
+        Integer customModelData = section.isInt("custom-model-data") ? section.getInt("custom-model-data") : null;
 
-        Integer customModelData;
-        if (section.isInt("custom-model-data")) {
-            customModelData = section.getInt("custom-model-data");
-        } else {
-            customModelData = null;
-        }
+        boolean unbreakable = section.getBoolean("unbreakable"); //default value is false if not provided
 
-        boolean unbreakable;
-        if (section.isBoolean("unbreakable")) {
-            unbreakable = section.getBoolean("unbreakable");
-        } else {
-            unbreakable = false;
-        }
+        boolean placeable = section.getBoolean("placeable"); //default value is false if not provided
 
-        boolean placeable;
-        if (section.isBoolean("placeable")) {
-            placeable = section.getBoolean("placeable");
-        } else {
-            placeable = false;
-        }
+        boolean soulbound = section.getBoolean("soulbound"); //default value is false if not provided
 
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name));
+            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name));
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
         }
 
         //banner item
         if (section.isConfigurationSection("banner") && CustomItemBanner.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, ItemParser.getBannerPatterns(bannerSection, name));
+            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, ItemParser.getBannerPatterns(bannerSection, name));
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
         }
         
         //generic item
-        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable);
+        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound);
     }
 
     /**

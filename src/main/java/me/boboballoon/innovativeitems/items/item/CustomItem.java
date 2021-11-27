@@ -24,8 +24,8 @@ public class CustomItem {
     private final Ability ability;
     private final ItemStack item;
 
-    public CustomItem(String identifier, Ability ability, Material material, String itemName, List<String> lore, Map<Enchantment, Integer> enchantments, List<ItemFlag> flags, Multimap<Attribute, AttributeModifier> attributes, Integer customModelData, boolean unbreakable, boolean placeable) {
-        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable));
+    public CustomItem(String identifier, Ability ability, Material material, String itemName, List<String> lore, Map<Enchantment, Integer> enchantments, List<ItemFlag> flags, Multimap<Attribute, AttributeModifier> attributes, Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
+        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound));
     }
 
     protected CustomItem(String identifier, Ability ability, ItemStack item) {
@@ -75,9 +75,10 @@ public class CustomItem {
      * @param attributes      all attributes for this item
      * @param customModelData the custom model data on the itemstack
      * @param unbreakable     if the custom item is unbreakable
+     * @param soulbound       if the custom item is saved on death
      * @return the itemstack
      */
-    public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable) {
+    public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -121,6 +122,7 @@ public class CustomItem {
         nbtItem.setBoolean("innovativeplugin-customitem", true);
         nbtItem.setString("innovativeplugin-customitem-id", identifier);
         nbtItem.setBoolean("innovativeplugin-customitem-placeable", placeable);
+        nbtItem.setBoolean("innovativeplugin-customitem-soulbound", soulbound);
 
         return item;
     }

@@ -13,7 +13,7 @@ import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
-import me.boboballoon.innovativeitems.listeners.BlockPlaceableListener;
+import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
 import org.bukkit.Bukkit;
@@ -37,9 +37,10 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make new option on custom items called "soulbound" it is a boolean that is default to false but if marked true will keep the item on death and will not drop the item when the entity dies
-    2. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
-    3. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
+    1. Add a resetattributes field to custom items to remove vanilla attributes (for example armor items have built in GENERIC.ARMOR, if field is true set it to zero before attributes field is added to item)
+    2. Test how I generate the other default config files and see if I save the main config by hand if it saves the comments, if so, do it that way
+    3. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
+    4. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*
@@ -86,8 +87,7 @@ public final class InnovativeItems extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String word = InnovativeItems.isPluginPremium() ? "premium" : "free";
-        LogUtil.logUnblocked(LogUtil.Level.INFO, "Loading up the " + word + " version of the plugin...");
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Loading up the " + (InnovativeItems.isPluginPremium() ? "premium" : "free") + " version of the plugin...");
 
         //config manager init
         this.configManager = new ConfigManager();
@@ -130,7 +130,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");
 
-        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new BlockPlaceableListener(), this.itemDefender);
+        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new ItemFieldListeners(), this.itemDefender);
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }

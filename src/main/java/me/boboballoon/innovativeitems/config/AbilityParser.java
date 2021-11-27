@@ -88,11 +88,10 @@ public final class AbilityParser {
 
         List<ActiveCondition> conditions = AbilityParser.getAbilityConditions(section, trigger, name);
 
-        if (section.isInt("cooldown")) {
-            int cooldown = section.getInt("cooldown");
-            boolean showCooldown = section.isBoolean("show-cooldown") ? section.getBoolean("show-cooldown") : false;
-
-            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown, showCooldown);
+        int cooldown = section.getInt("cooldown"); //if it does not exist it will return 0
+        if (cooldown > 0) { //if the cooldown is > 0 that means it must exist and it also is valid
+            //if show-cooldown does not exist it will return false (the proper default) if it is true that means it was set explicitly to true
+            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown, section.getBoolean("show-cooldown"));
         }
 
         return new Ability(name, keywords, conditions, trigger);

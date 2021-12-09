@@ -207,12 +207,12 @@ public class ExpectedValues implements ExpectedArguments {
      * A class used to list all possible primitive types to be parsed
      */
     public enum ExpectedPrimitives {
-        BYTE(byte.class),
-        SHORT(short.class),
-        INTEGER(int.class),
-        LONG(long.class),
-        FLOAT(float.class),
-        DOUBLE(double.class),
+        BYTE(Byte.class), //add numerical types must be the wrappers due to reflection
+        SHORT(Short.class),
+        INTEGER(Integer.class),
+        LONG(Long.class),
+        FLOAT(Float.class),
+        DOUBLE(Double.class),
         BOOLEAN(boolean.class),
         CHAR(char.class),
         STRING(String.class);

@@ -26,6 +26,11 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
 
     public FlexibleContext(@NotNull RuntimeContext context) {
         super(context.getPlayer(), context.getAbility());
+
+        if (context instanceof FlexibleContext) {
+            throw new IllegalArgumentException("You have passed an instance of FlexibleContext into the constructor of another instance of FlexibleContext!");
+        }
+
         this.context = context;
     }
 

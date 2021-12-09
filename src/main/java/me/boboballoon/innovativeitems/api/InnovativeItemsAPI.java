@@ -85,17 +85,31 @@ public final class InnovativeItemsAPI {
      *
      * @param identifier the provided identifier
      * @param player the player executing the ability
-     * @throws IllegalArgumentException when the provided identifier does not correlate to a currently loaded ability
      * @return a boolean that is true when the ability was successfully executed
      */
-    public static boolean executeAbility(@NotNull String identifier, @NotNull Player player) throws IllegalArgumentException {
+    public static boolean executeAbility(@NotNull String identifier, @NotNull Player player) {
+        return InnovativeItemsAPI.executeAbility(identifier, player, true);
+    }
+
+    /**
+     * A method used to execute an ability based on its identifier
+     *
+     * @param identifier the provided identifier
+     * @param player the player executing the ability
+     * @return a boolean that is true when the ability was successfully executed
+     */
+    public static boolean executeAbility(@NotNull String identifier, @NotNull Player player, boolean silent) {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(identifier);
 
-        if (ability == null) {
-            throw new IllegalArgumentException("The provided identifier: " + identifier + ", does not belong to any currently loaded ability!");
+        if (ability != null) {
+            return ability.execute(player);
         }
 
-        return ability.execute(player);
+        if (silent) {
+            return false;
+        } else {
+            throw new IllegalArgumentException("The provided identifier: " + identifier + ", does not belong to any currently loaded ability!");
+        }
     }
 
     /**
@@ -104,7 +118,7 @@ public final class InnovativeItemsAPI {
      * @param identifier the name of the custom item
      * @return an optional custom item
      */
-    public static Optional<CustomItem> getItem(@NotNull String identifier) {
+    public static Optional<CustomItem> getCustomItem(@NotNull String identifier) {
         CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(identifier);
         return Optional.ofNullable(item);
     }
@@ -115,32 +129,30 @@ public final class InnovativeItemsAPI {
      * @param identifier the name of the ability
      * @return an optional ability
      */
-    public static Optional<Ability> getCustomAbility(@NotNull String identifier) {
+    public static Optional<Ability> getAbility(@NotNull String identifier) {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(identifier);
         return Optional.ofNullable(ability);
     }
 
     /**
-     * A method used to get a custom item object from the cache
+     * A method used to get an custom item object from the cache
      *
      * @param identifier the name of the custom item
-     * @return the object that represents the custom item (null if it does not exist)
+     * @return an optional custom item
      */
-    @Nullable
     @Deprecated
-    public static CustomItem getCustomItem(@NotNull String identifier) {
-        return InnovativeItems.getInstance().getItemCache().getItem(identifier);
+    public static Optional<CustomItem> getItem(@NotNull String identifier) {
+        return InnovativeItemsAPI.getCustomItem(identifier);
     }
 
     /**
      * A method used to get an ability object from the cache
      *
      * @param identifier the name of the ability
-     * @return the object that represents the ability (null if it does not exist)
+     * @return an optional ability
      */
-    @Nullable
     @Deprecated
-    public static Ability getAbility(@NotNull String identifier) {
-        return InnovativeItems.getInstance().getItemCache().getAbility(identifier);
+    public static Optional<Ability> getCustomAbility(@NotNull String identifier) {
+        return InnovativeItemsAPI.getAbility(identifier);
     }
 }

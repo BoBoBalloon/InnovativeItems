@@ -3,6 +3,9 @@ package me.boboballoon.innovativeitems.util;
 import org.apache.commons.lang.IllegalClassException;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 /**
  * A class used to store util methods regarding the parsing/casting of variables
  */
@@ -21,44 +24,13 @@ public final class InitializationUtil {
      * @throws IllegalClassException when the provided clazz argument is not a supported number
      * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
      */
-    public static Number initNumber(@NotNull String text, @NotNull Class<? extends Number> clazz) throws IllegalClassException, NumberFormatException {
-        Number number = null;
-
-        //integers
-
-        if (clazz == byte.class || clazz == Byte.class) {
-            number = Byte.parseByte(text);
-        }
-
-        if (clazz == short.class || clazz == Short.class) {
-            number = Short.parseShort(text);
-        }
-
-        if (clazz == int.class || clazz == Integer.class) {
-            number = Integer.parseInt(text);
-        }
-
-        if (clazz == long.class || clazz == Long.class) {
-            number = Long.parseLong(text);
-        }
-
-        //floating points
-
-        if (clazz == float.class || clazz == Float.class) {
-            number = Float.parseFloat(text);
-        }
-
-        if (clazz == double.class || clazz == Double.class) {
-            number = Double.parseDouble(text);
-        }
-
-        //return or throw errors
-
-        if (number == null) {
+    public static <T extends Number> T initNumber(@NotNull String text, @NotNull Class<T> clazz) throws IllegalClassException, NumberFormatException {
+        try {
+            Method method = clazz.getMethod("valueOf", String.class);
+            return (T) method.invoke(null, text);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalClassException("Was expecting a class that extends number and was a primitive data type wrapper!");
         }
-
-        return number;
     }
 
     /**

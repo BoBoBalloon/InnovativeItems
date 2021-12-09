@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A class used to represent an event that is called when an ability is executed
+ * Does not override PlayerEvent due to the fact that it is not possible to make it async without reflection and that's dumb
  */
 public class AbilityExecuteEvent extends Event implements Cancellable {
     private final RuntimeContext context;
     private boolean cancelled = false;
 
-    private static final HandlerList handler = new HandlerList();
+    private static final HandlerList HANDLER = new HandlerList();
 
     public AbilityExecuteEvent(RuntimeContext context) {
         super(true);
@@ -62,10 +63,10 @@ public class AbilityExecuteEvent extends Event implements Cancellable {
     @Override
     @NotNull
     public HandlerList getHandlers() {
-        return handler;
+        return HANDLER;
     }
 
     public static HandlerList getHandlerList() {
-        return handler;
+        return HANDLER;
     }
 }

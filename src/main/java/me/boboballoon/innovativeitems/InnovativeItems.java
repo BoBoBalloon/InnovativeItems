@@ -39,8 +39,6 @@ public final class InnovativeItems extends JavaPlugin {
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     1. Add a resetattributes field to custom items to remove vanilla attributes (for example armor items have built in GENERIC.ARMOR, if field is true set it to zero before attributes field is added to item)
     2. Test how I generate the other default config files and see if I save the main config by hand if it saves the comments, if so, do it that way
-    3. Contact contact@crysis.tv to make a youtube video on the plugin (https://www.youtube.com/c/TheCrysisYT/)
-    4. Contact striker2ninja@gmail.com to make a youtube video on the plugin (https://www.youtube.com/c/SoulStriker)
      */
 
     /*

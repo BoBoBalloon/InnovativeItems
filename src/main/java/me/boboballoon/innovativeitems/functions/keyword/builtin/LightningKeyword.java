@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -21,7 +21,7 @@ public class LightningKeyword extends Keyword {
     public LightningKeyword() {
         super("lightning",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "damage amount"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "damage amount"));
     }
 
     @Override

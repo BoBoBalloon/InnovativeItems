@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
@@ -20,9 +20,9 @@ public class IsBlockCondition extends Condition {
     public IsBlockCondition() {
         super("isblock",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "x offset"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "y offset"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "z offset"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "x offset"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "y offset"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "z offset"),
                 new ExpectedManual((rawValue, context) -> Material.valueOf(rawValue.toUpperCase()), "material type"));
     }
 

@@ -2,14 +2,10 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.functions.context.FlexibleContext;
-import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
-import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
-import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.util.LogUtil;
 
 /**
@@ -18,7 +14,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 public class AbilityKeyword extends Keyword {
     public AbilityKeyword() {
         super("ability",
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING));
     }
 
     @Override

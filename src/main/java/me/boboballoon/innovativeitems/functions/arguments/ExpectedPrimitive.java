@@ -13,35 +13,34 @@ import java.util.function.Predicate;
 /**
  * A class that represents a "primitive" type that can be parsed for a keywords arguments
  */
-@Deprecated
-public class ExpectedValues implements ExpectedArguments {
-    private final ExpectedPrimitives primitive;
+public class ExpectedPrimitive implements ExpectedArguments {
+    private final PrimitiveType primitive;
     private final Consumer<FunctionContext> onError;
     private final Predicate<Object> condition;
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @Nullable Consumer<FunctionContext> onError, @Nullable Predicate<Object> condition) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive, @Nullable Consumer<FunctionContext> onError, @Nullable Predicate<Object> condition) {
         this.primitive = primitive;
         this.onError = onError;
         this.condition = condition;
     }
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @Nullable Consumer<FunctionContext> onError) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive, @Nullable Consumer<FunctionContext> onError) {
         this(primitive, onError, null);
     }
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @Nullable Predicate<Object> condition) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive, @Nullable Predicate<Object> condition) {
         this(primitive, (Consumer<FunctionContext>) null, condition);
     }
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @NotNull String fieldName, @Nullable Predicate<Object> condition) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive, @NotNull String fieldName, @Nullable Predicate<Object> condition) {
         this(primitive, context -> LogUtil.logFunctionError(context, fieldName), condition);
     }
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive, @NotNull String fieldName) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive, @NotNull String fieldName) {
         this(primitive, fieldName, null);
     }
 
-    public ExpectedValues(@NotNull ExpectedPrimitives primitive) {
+    public ExpectedPrimitive(@NotNull PrimitiveType primitive) {
         this(primitive, (Consumer<FunctionContext>) null, null);
     }
 
@@ -50,7 +49,7 @@ public class ExpectedValues implements ExpectedArguments {
      *
      * @return the expected value to parse
      */
-    public ExpectedPrimitives getPrimitive() {
+    public PrimitiveType getPrimitive() {
         return this.primitive;
     }
 
@@ -85,24 +84,24 @@ public class ExpectedValues implements ExpectedArguments {
     @Nullable
     @Override
     public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
-        if (this.primitive == ExpectedPrimitives.STRING) {
+        if (this.primitive == PrimitiveType.STRING) {
             return this.parseString(rawValue, context);
         }
 
-        if (this.primitive == ExpectedPrimitives.CHAR) {
+        if (this.primitive == PrimitiveType.CHAR) {
             return this.parseChar(rawValue, context);
         }
 
-        if (this.primitive == ExpectedPrimitives.BOOLEAN) {
+        if (this.primitive == PrimitiveType.BOOLEAN) {
             return this.parseBoolean(rawValue, context);
         }
 
-        if (this.primitive == ExpectedPrimitives.BYTE ||
-                this.primitive == ExpectedPrimitives.SHORT ||
-                this.primitive == ExpectedPrimitives.INTEGER ||
-                this.primitive == ExpectedPrimitives.LONG ||
-                this.primitive == ExpectedPrimitives.FLOAT ||
-                this.primitive == ExpectedPrimitives.DOUBLE) {
+        if (this.primitive == PrimitiveType.BYTE ||
+                this.primitive == PrimitiveType.SHORT ||
+                this.primitive == PrimitiveType.INTEGER ||
+                this.primitive == PrimitiveType.LONG ||
+                this.primitive == PrimitiveType.FLOAT ||
+                this.primitive == PrimitiveType.DOUBLE) {
             return this.parseNumber(rawValue, context);
         }
 
@@ -208,8 +207,7 @@ public class ExpectedValues implements ExpectedArguments {
     /**
      * A class used to list all possible primitive types to be parsed
      */
-    @Deprecated
-    public enum ExpectedPrimitives {
+    public enum PrimitiveType {
         BYTE(Byte.class), //add numerical types must be the wrappers due to reflection
         SHORT(Short.class),
         INTEGER(Integer.class),
@@ -222,7 +220,7 @@ public class ExpectedValues implements ExpectedArguments {
 
         private final Class<?> clazz;
 
-        ExpectedPrimitives(Class<?> clazz) {
+        PrimitiveType(Class<?> clazz) {
             this.clazz = clazz;
         }
 

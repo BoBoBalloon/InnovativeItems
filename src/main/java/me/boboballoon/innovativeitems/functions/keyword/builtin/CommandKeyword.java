@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
@@ -14,7 +14,7 @@ import org.bukkit.command.CommandException;
 public class CommandKeyword extends Keyword {
     public CommandKeyword() {
         super("command",
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING));
     }
 
     @Override

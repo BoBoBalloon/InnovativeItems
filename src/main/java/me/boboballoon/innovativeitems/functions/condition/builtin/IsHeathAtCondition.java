@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -16,8 +16,8 @@ public class IsHeathAtCondition extends Condition {
     public IsHeathAtCondition() {
         super("ishealthat",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "health amount"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.CHAR, "operation", object -> {
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "health amount"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.CHAR, "operation", object -> {
                     char value = (char) object;
                     return value == '>' || value == '<' || value == '=';
                 }));

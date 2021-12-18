@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -16,7 +16,7 @@ public class IsPermissionPresentCondition extends Condition {
     public IsPermissionPresentCondition() {
         super("ispermissionpresent",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING));
     }
 
     @Override

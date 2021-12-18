@@ -5,7 +5,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -24,7 +24,7 @@ public class SetEquipmentSlotKeyword extends Keyword {
     public SetEquipmentSlotKeyword() {
         super("setequipmentslot",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "item name"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING, "item name"),
                 new ExpectedManual((rawValue, context) -> {
                     RevisedEquipmentSlot equipmentSlot = RevisedEquipmentSlot.valueOf(rawValue.toUpperCase());
                     if (equipmentSlot != RevisedEquipmentSlot.ANY) {
@@ -33,7 +33,7 @@ public class SetEquipmentSlotKeyword extends Keyword {
                         return null;
                     }
                 }, "equipment slot"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.BOOLEAN, "is custom item"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.BOOLEAN, "is custom item"));
     }
 
     @Override

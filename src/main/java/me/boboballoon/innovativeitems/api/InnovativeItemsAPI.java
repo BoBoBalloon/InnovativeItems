@@ -2,15 +2,13 @@ package me.boboballoon.innovativeitems.api;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
+import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -132,27 +130,5 @@ public final class InnovativeItemsAPI {
     public static Optional<Ability> getAbility(@NotNull String identifier) {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(identifier);
         return Optional.ofNullable(ability);
-    }
-
-    /**
-     * A method used to get an custom item object from the cache
-     *
-     * @param identifier the name of the custom item
-     * @return an optional custom item
-     */
-    @Deprecated
-    public static Optional<CustomItem> getItem(@NotNull String identifier) {
-        return InnovativeItemsAPI.getCustomItem(identifier);
-    }
-
-    /**
-     * A method used to get an ability object from the cache
-     *
-     * @param identifier the name of the ability
-     * @return an optional ability
-     */
-    @Deprecated
-    public static Optional<Ability> getCustomAbility(@NotNull String identifier) {
-        return InnovativeItemsAPI.getAbility(identifier);
     }
 }

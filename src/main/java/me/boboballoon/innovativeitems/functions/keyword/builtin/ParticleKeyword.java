@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -20,10 +20,10 @@ public class ParticleKeyword extends Keyword {
         super("particle",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
                 new ExpectedManual((rawValue, context) -> Particle.valueOf(rawValue.toUpperCase()), "particle name"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "particle amount"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x offset"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y offset"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "z offset"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "particle amount"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "x offset"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "y offset"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "z offset"));
     }
 
     @Override

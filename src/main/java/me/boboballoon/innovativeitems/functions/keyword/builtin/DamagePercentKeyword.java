@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -16,7 +16,7 @@ public class DamagePercentKeyword extends Keyword {
     public DamagePercentKeyword() {
         super("damagepercent",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "damage"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "damage"));
     }
 
     @Override

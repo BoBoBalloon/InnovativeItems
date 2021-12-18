@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -17,8 +17,8 @@ public class ExplodeKeyword extends Keyword {
     public ExplodeKeyword() {
         super("explode",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "explosion power"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.BOOLEAN, "should break blocks"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.FLOAT, "explosion power"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.BOOLEAN, "should break blocks"));
     }
 
     @Override

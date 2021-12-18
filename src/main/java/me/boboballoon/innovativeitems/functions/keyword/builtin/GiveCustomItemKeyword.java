@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -20,8 +20,8 @@ public class GiveCustomItemKeyword extends Keyword {
     public GiveCustomItemKeyword() {
         super("givecustomitem",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING, "innovative item name"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "item amount", object -> {
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING, "innovative item name"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "item amount", object -> {
                     int integer = (int) object;
                     return integer > 0;
                 }));

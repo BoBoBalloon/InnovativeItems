@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -19,8 +19,8 @@ public class PlaySoundKeyword extends Keyword {
         super("playsound",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
                 new ExpectedManual((rawValue, context) -> Sound.valueOf(rawValue.toUpperCase()), "sound"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "volume"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.FLOAT, "pitch"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.FLOAT, "volume"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.FLOAT, "pitch"));
     }
 
     @Override

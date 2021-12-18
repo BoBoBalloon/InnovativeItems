@@ -6,7 +6,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -23,7 +23,7 @@ public class IsWearingCustomItemCondition extends Condition {
     public IsWearingCustomItemCondition() {
         super("iswearingcustomitem",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING),
                 new ExpectedManual((rawValue, context) -> {
                     RevisedEquipmentSlot slot = RevisedEquipmentSlot.valueOf(rawValue.toUpperCase());
                     if (slot != RevisedEquipmentSlot.HAND && slot != RevisedEquipmentSlot.OFF_HAND) {

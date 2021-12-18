@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableList;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 /**
  * Class that represents a keyword in an ability config file that executes a mythicmob skill
@@ -18,7 +17,7 @@ import org.bukkit.entity.Player;
 public class MythicMobSkillKeyword extends Keyword {
     public MythicMobSkillKeyword() {
         super("mythicmobsskill",
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING),
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY));
     }
 

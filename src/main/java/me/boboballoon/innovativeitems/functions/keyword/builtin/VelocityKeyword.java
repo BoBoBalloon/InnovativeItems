@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -17,9 +17,9 @@ public class VelocityKeyword extends Keyword {
     public VelocityKeyword() {
         super("velocity",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x increase"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y increase"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "z increase"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "x increase"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "y increase"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "z increase"));
     }
 
     @Override

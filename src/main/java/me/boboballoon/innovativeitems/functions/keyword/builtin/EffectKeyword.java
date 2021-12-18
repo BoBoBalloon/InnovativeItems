@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -20,8 +20,8 @@ public class EffectKeyword extends Keyword {
         super("effect",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
                 new ExpectedManual((rawValue, context) -> PotionEffectType.getByName(rawValue.toUpperCase()), "potion effect"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "duration"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "level"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "duration"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "level"));
     }
 
     @Override

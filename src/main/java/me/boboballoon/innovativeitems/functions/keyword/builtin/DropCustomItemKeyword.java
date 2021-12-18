@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -21,8 +21,8 @@ public class DropCustomItemKeyword extends Keyword {
     public DropCustomItemKeyword() {
         super("dropcustomitem",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "item amount", object -> {
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "item amount", object -> {
                     int integer = (int) object;
                     return integer > 0;
                 }));

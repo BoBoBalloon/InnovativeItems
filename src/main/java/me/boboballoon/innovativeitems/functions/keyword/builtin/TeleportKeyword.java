@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -21,9 +21,9 @@ public class TeleportKeyword extends Keyword {
     public TeleportKeyword() {
         super("teleport",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "x coordinate"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "y coordinate"),
-                new ExpectedValues(ExpectedValues.ExpectedPrimitives.DOUBLE, "z coordinate"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "x coordinate"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "y coordinate"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "z coordinate"),
                 new ExpectedManual((rawValue, context) -> Bukkit.getWorld(rawValue), "world name"));
     }
 

@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.functions.arguments;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
 import me.boboballoon.innovativeitems.util.InitializationUtil;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.TextUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,7 +190,7 @@ public class ExpectedValues implements ExpectedArguments {
             return null;
         }
 
-        return rawValue;
+        return TextUtil.format(rawValue);
     }
 
     /**

@@ -17,8 +17,8 @@ public class TitleMessageKeyword extends Keyword {
     public TitleMessageKeyword() {
         super("titlemessage",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                ((rawValue, context) -> TextUtil.format(rawValue)),
-                ((rawValue, context) -> TextUtil.format(rawValue)),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "fade in"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "duration"),
                 new ExpectedValues(ExpectedValues.ExpectedPrimitives.INTEGER, "fade out"));

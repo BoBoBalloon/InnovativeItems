@@ -3,10 +3,10 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedValues;
 import me.boboballoon.innovativeitems.functions.context.DamageContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
-import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.entity.LivingEntity;
 
 /**
@@ -16,7 +16,7 @@ public class MessageKeyword extends Keyword {
     public MessageKeyword() {
         super("message",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                ((rawValue, context) -> TextUtil.format(rawValue)));
+                new ExpectedValues(ExpectedValues.ExpectedPrimitives.STRING));
     }
 
     @Override

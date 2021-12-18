@@ -1,13 +1,18 @@
 package me.boboballoon.innovativeitems.util;
 
-import org.bukkit.ChatColor;
+import me.boboballoon.innovativeitems.InnovativeItems;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class used to store util methods regarding strings
  */
 public final class TextUtil {
+    private static final Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
     private static final String PREFIX = TextUtil.format("&r&e&l[InnovativeItems] > &r");
 
     /**
@@ -16,13 +21,28 @@ public final class TextUtil {
     private TextUtil() {}
 
     /**
-     * Method wrapper so I have access to a shortcut to this translate method
+     * Method to colorize a string with both default color codes + hex color support
+     * Stolen from: https://www.spigotmc.org/threads/hex-chat-class.449300/#post-3865028
      *
      * @param text text you wish to add color codes to
      * @return text with added color codes
      */
     public static String format(@NotNull String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
+        if (!InnovativeItems.isPluginPremium()) {
+            return ChatColor.translateAlternateColorCodes('&', text); //normal color codes
+        }
+
+        //normal color codes + hex color codes
+
+        Matcher matcher = HEX_PATTERN.matcher(ChatColor.translateAlternateColorCodes('&', text));
+
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(buffer, ChatColor.of(matcher.group(1)).toString());
+        }
+
+        return matcher.appendTail(buffer).toString();
     }
 
     /**

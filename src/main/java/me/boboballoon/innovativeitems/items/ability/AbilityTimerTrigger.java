@@ -2,13 +2,9 @@ package me.boboballoon.innovativeitems.items.ability;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -56,22 +52,9 @@ public class AbilityTimerTrigger extends BukkitRunnable {
             items[5] = inventory.getItemInOffHand();
 
             for (ItemStack itemStack : items) {
-                if (itemStack == null || itemStack.getType() == Material.AIR) {
-                    continue;
-                }
-
-                NBTItem nbtItem = new NBTItem(itemStack);
-
-                if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                    continue;
-                }
-
-                String key = nbtItem.getString("innovativeplugin-customitem-id");
-
-                CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
+                CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(itemStack);
 
                 if (item == null) {
-                    LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                     continue;
                 }
 

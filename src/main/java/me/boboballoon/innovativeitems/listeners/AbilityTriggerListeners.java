@@ -1,14 +1,11 @@
 package me.boboballoon.innovativeitems.listeners;
 
-import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.*;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -74,22 +71,9 @@ public class AbilityTriggerListeners implements Listener {
          * @param <T>             the class of the event that is executing the ability
          */
         static <T extends Event> void handleItem(ItemStack itemstack, AbilityTrigger expectedTrigger, T event, AbilityExecutor<T> executee) {
-            if (itemstack == null || itemstack.getType() == Material.AIR) {
-                return;
-            }
-
-            NBTItem nbtItem = new NBTItem(itemstack);
-
-            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                return;
-            }
-
-            String key = nbtItem.getString("innovativeplugin-customitem-id");
-
-            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(itemstack);
 
             if (item == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                 return;
             }
 
@@ -196,24 +180,9 @@ public class AbilityTriggerListeners implements Listener {
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
-            ItemStack itemStack = event.getItem();
-
-            if (itemStack == null || itemStack.getType() == Material.AIR) {
-                return;
-            }
-
-            NBTItem nbtItem = new NBTItem(itemStack);
-
-            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                return;
-            }
-
-            String key = nbtItem.getString("innovativeplugin-customitem-id");
-
-            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(key);
+            CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(event.getItem());
 
             if (item == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to identify the item by the name of " + key + " please report this issue to the developer of this plugin!");
                 return;
             }
 

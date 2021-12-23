@@ -1,8 +1,7 @@
 package me.boboballoon.innovativeitems.items;
 
-import de.tr7zw.nbtapi.NBTItem;
+import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -91,22 +90,16 @@ public final class ItemDefender implements Listener {
     private void onPrepareAnvil(PrepareAnvilEvent event) {
         AnvilInventory inventory = event.getInventory();
         for (int i = 0; i <= 1; i++) {
-            ItemStack item = inventory.getItem(i);
-
-            if (item == null || item.getType() == Material.AIR) {
+            if (InnovativeItems.getInstance().getItemCache().fromItemStack(inventory.getItem(i)) == null) {
                 continue;
             }
 
-            NBTItem customItem = new NBTItem(item);
-
-            if (customItem.hasKey("innovativeplugin-customitem")) {
-                event.setResult(null);
-                inventory.getViewers().stream().filter(player -> player instanceof Player).forEach(human -> {
-                    Player player = (Player) human;
-                    player.updateInventory();
-                });
-                return;
-            }
+            event.setResult(null);
+            inventory.getViewers().stream().filter(player -> player instanceof Player).forEach(human -> {
+                Player player = (Player) human;
+                player.updateInventory();
+            });
+            return;
         }
     }
 
@@ -122,16 +115,12 @@ public final class ItemDefender implements Listener {
         }
 
         for (ItemStack item : inventory.getMatrix()) {
-            if (item == null || item.getType() == Material.AIR) {
+            if (InnovativeItems.getInstance().getItemCache().fromItemStack(item) == null) {
                 continue;
             }
 
-            NBTItem customItem = new NBTItem(item);
-
-            if (customItem.hasKey("innovativeplugin-customitem")) {
-                inventory.setResult(null);
-                return;
-            }
+            inventory.setResult(null);
+            return;
         }
     }
 
@@ -150,22 +139,16 @@ public final class ItemDefender implements Listener {
     private void onPrepareSmithing(PrepareSmithingEvent event) {
         SmithingInventory inventory = event.getInventory();
         for (int i = 0; i <= 1; i++) {
-            ItemStack item = inventory.getItem(i);
-
-            if (item == null || item.getType() == Material.AIR) {
+            if (InnovativeItems.getInstance().getItemCache().fromItemStack(inventory.getItem(i)) == null) {
                 continue;
             }
 
-            NBTItem customItem = new NBTItem(item);
-
-            if (customItem.hasKey("innovativeplugin-customitem")) {
-                event.setResult(null);
-                inventory.getViewers().stream().filter(player -> player instanceof Player).forEach(human -> {
-                    Player player = (Player) human;
-                    player.updateInventory();
-                });
-                return;
-            }
+            event.setResult(null);
+            inventory.getViewers().stream().filter(player -> player instanceof Player).forEach(human -> {
+                Player player = (Player) human;
+                player.updateInventory();
+            });
+            return;
         }
     }
 
@@ -221,9 +204,7 @@ public final class ItemDefender implements Listener {
      * Logic to be used on cancellable related events to prevent repetitive code
      */
     private void onCancellable(Cancellable cancellable, ItemStack item) {
-        NBTItem customItem = new NBTItem(item);
-
-        if (customItem.hasKey("innovativeplugin-customitem")) {
+        if (InnovativeItems.getInstance().getItemCache().fromItemStack(item) != null) {
             cancellable.setCancelled(true);
         }
     }

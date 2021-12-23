@@ -310,9 +310,7 @@ public final class AbilityParser {
             rawArguments = new String[]{};
         }
 
-        int expectedSize = function.getArguments().size();
-
-        if (rawArguments.length != expectedSize) {
+        if (rawArguments.length != function.getArguments().size()) {
             LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + function.getIdentifier() + " " + type + " on line " + (i + 1) + " of the " + abilityName + " ability!");
             return null;
         }

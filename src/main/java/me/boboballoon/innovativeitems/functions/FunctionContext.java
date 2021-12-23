@@ -7,14 +7,14 @@ import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
  */
 public class FunctionContext {
     private final InnovativeFunction<?> function;
-    private final String[] context;
+    private final String[] rawArguments;
     private final String abilityName;
     private final AbilityTrigger abilityTrigger;
     private final int lineNumber;
 
-    public FunctionContext(InnovativeFunction<?> function, String[] context, String abilityName, AbilityTrigger abilityTrigger, int lineNumber) {
+    public FunctionContext(InnovativeFunction<?> function, String[] rawArguments, String abilityName, AbilityTrigger abilityTrigger, int lineNumber) {
         this.function = function;
-        this.context = context;
+        this.rawArguments = rawArguments;
         this.abilityName = abilityName;
         this.abilityTrigger = abilityTrigger;
         this.lineNumber = lineNumber;
@@ -34,8 +34,8 @@ public class FunctionContext {
      *
      * @return the array of arguments used for the function
      */
-    public String[] getContext() {
-        return this.context;
+    public String[] getRawArguments() {
+        return this.rawArguments;
     }
 
     /**
@@ -63,5 +63,15 @@ public class FunctionContext {
      */
     public int getLineNumber() {
         return this.lineNumber;
+    }
+
+    /**
+     * A method that returns the array of arguments used for the function
+     *
+     * @return the array of arguments used for the function
+     */
+    @Deprecated
+    public String[] getContext() {
+        return this.getRawArguments();
     }
 }

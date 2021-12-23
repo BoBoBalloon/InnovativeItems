@@ -24,11 +24,11 @@ public class CustomItem {
     private final Ability ability;
     private final ItemStack item;
 
-    public CustomItem(String identifier, Ability ability, Material material, String itemName, List<String> lore, Map<Enchantment, Integer> enchantments, List<ItemFlag> flags, Multimap<Attribute, AttributeModifier> attributes, Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
         this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound));
     }
 
-    protected CustomItem(String identifier, Ability ability, ItemStack item) {
+    protected CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item) {
         this.identifier = identifier;
         this.ability = ability;
         this.item = item;
@@ -62,6 +62,24 @@ public class CustomItem {
         return this.item;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof CustomItem)) {
+            return false;
+        }
+
+        CustomItem item = (CustomItem) obj;
+
+        if (!this.identifier.equals(item.getIdentifier())) {
+            return false;
+        }
+
+        return this.item.equals(item.getItemStack());
+    }
 
     /**
      * A method used to generate an itemstack based on this items internal values

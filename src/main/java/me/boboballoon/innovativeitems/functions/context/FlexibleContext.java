@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.functions.context;
 
-import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -8,11 +7,14 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,40 +79,52 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
             return itemContext.getItem();
         }
 
-        CustomItem mainHand = this.getCustomItemFromMainHand();
-        if (mainHand != null) {
-            return mainHand;
-        }
-
         InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
 
+        //check if player has an item in their inventory
+        CustomItem item = this.getCustomItemFromInventory(cache);
+        if (item != null) {
+            return item;
+        }
+
+        //get the first item in the cache
         if (cache.getItemAmount() > 0) {
             String identifier = cache.getItemIdentifiers().iterator().next();
             return cache.getItem(identifier);
         }
 
-        throw new NullPointerException("There is no custom item in the cache to fallback to...");
+        //no items exist to make a new dummy item that only exists in memory and register it
+        CustomItem dummyItem = new CustomItem("dummy-item", null, Material.DIRT, null, null, null, null, null, null, false, false, false);
+        cache.registerItem(dummyItem);
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "The player " + this.getPlayer().getName() + " (" + this.getPlayer().getUniqueId() + ") used the ability " + this.getAbility().getIdentifier() + ", which relied on a custom item targeter that had no fallback, so a new dummy fallback item was registered (will only exist in memory).");
+        return dummyItem;
     }
 
     /**
      * A method used to get a custom item in the players main hand if they have one
      *
+     * @param cache the cache to get the custom item from
      * @return the custom item in the players hand
      */
     @Nullable
-    private CustomItem getCustomItemFromMainHand() {
-        ItemStack item = this.context.getPlayer().getInventory().getItemInMainHand();
+    private CustomItem getCustomItemFromInventory(InnovativeCache cache) {
+        PlayerInventory inventory = this.context.getPlayer().getInventory();
 
-        if (item == null) {
-            return null;
+        CustomItem mainHand = cache.fromItemStack(inventory.getItemInMainHand());
+        if (mainHand != null) {
+            return mainHand;
         }
 
-        NBTItem nbtItem = new NBTItem(item);
+        for (ItemStack item : inventory) {
+            CustomItem customItem = cache.fromItemStack(item);
 
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-            return null;
+            if (customItem == null) {
+                continue;
+            }
+
+            return customItem;
         }
 
-        return InnovativeItems.getInstance().getItemCache().getItem(nbtItem.getString("innovativeplugin-customitem-id"));
+        return null;
     }
 }

@@ -1,8 +1,11 @@
 package me.boboballoon.innovativeitems.items;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,6 +77,27 @@ public final class InnovativeCache {
     @Nullable
     public CustomItem getItem(String name) {
         return this.items.get(name);
+    }
+
+    /**
+     * A method used to get a custom item from the cache via an itemstack
+     *
+     * @param item the item to get a custom item from
+     * @return the custom item that the itemstack represents (null if no custom item that matches exists)
+     */
+    @Nullable
+    public CustomItem fromItemStack(@Nullable ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return null;
+        }
+
+        NBTItem nbtItem = new NBTItem(item);
+
+        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+            return null;
+        }
+
+        return this.getItem(nbtItem.getString("innovativeplugin-customitem-id"));
     }
 
     /**

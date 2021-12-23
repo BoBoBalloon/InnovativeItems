@@ -1,17 +1,16 @@
 package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
-import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,29 +46,25 @@ public class IsHoldingCustomItemCondition extends Condition {
 
         String itemName = (String) arguments.get(1);
 
-        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(itemName);
+        InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+
+        CustomItem customItem = cache.getItem(itemName);
 
         if (customItem == null) {
             LogUtil.log(LogUtil.Level.WARNING, "The provided item name on the " + this.getIdentifier() + " condition on the " + context.getAbilityName() + " ability cannot resolve a custom item!");
             return false;
         }
 
-        ItemStack item = target.getInventory().getItemInMainHand();
+        ItemStack itemStack = target.getInventory().getItemInMainHand();
+        CustomItem item = cache.fromItemStack(itemStack);
 
-        if (item.getType() == Material.AIR) {
+        if (item == null) {
             return false;
         }
 
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-            return false;
-        }
-
-        String key = nbtItem.getString("innovativeplugin-customitem-id");
         int amount = (int) arguments.get(2);
 
-        return customItem.getIdentifier().equals(key) && item.getAmount() >= amount;
+        return customItem.equals(item) && itemStack.getAmount() >= amount;
     }
 
     @Override

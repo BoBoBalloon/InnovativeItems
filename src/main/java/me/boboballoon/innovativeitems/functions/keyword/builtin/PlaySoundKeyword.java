@@ -2,9 +2,9 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -18,7 +18,7 @@ public class PlaySoundKeyword extends Keyword {
     public PlaySoundKeyword() {
         super("playsound",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedManual((rawValue, context) -> Sound.valueOf(rawValue.toUpperCase()), "sound"),
+                new ExpectedEnum<>(Sound.class, "sound"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.FLOAT, "volume"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.FLOAT, "pitch"));
     }

@@ -3,7 +3,7 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
@@ -24,14 +24,7 @@ public class IsWearingCustomItemCondition extends Condition {
         super("iswearingcustomitem",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING),
-                new ExpectedManual((rawValue, context) -> {
-                    RevisedEquipmentSlot slot = RevisedEquipmentSlot.valueOf(rawValue.toUpperCase());
-                    if (slot != RevisedEquipmentSlot.HAND && slot != RevisedEquipmentSlot.OFF_HAND) {
-                        return slot;
-                    } else {
-                        return null;
-                    }
-                }, "equipment slot"));
+                new ExpectedEnum<>(RevisedEquipmentSlot.class, slot -> slot != RevisedEquipmentSlot.HAND && slot != RevisedEquipmentSlot.OFF_HAND, "equipment slot"));
     }
 
     @Override

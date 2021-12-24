@@ -47,6 +47,7 @@ public final class InnovativeItems extends JavaPlugin {
     CHANGE LIST:
     1. added some new logic to the FlexibleContext class to allow a more fail-safe use of the strict option
     2. deprecated getContext method in the FunctionContext class, use getRawArguments instead
+    3. added ExpectedEnum to the the built-in argument parsers
      */
 
     /**

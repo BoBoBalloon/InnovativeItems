@@ -2,7 +2,7 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
@@ -18,7 +18,7 @@ public class IsInBiomeCondition extends Condition {
     public IsInBiomeCondition() {
         super("isinbiome",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedManual((rawValue, context) -> Biome.valueOf(rawValue.toUpperCase()), "biome"));
+                new ExpectedEnum<>(Biome.class, "biome"));
     }
 
     @Override

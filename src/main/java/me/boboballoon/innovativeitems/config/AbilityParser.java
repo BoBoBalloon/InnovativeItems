@@ -315,9 +315,7 @@ public final class AbilityParser {
             return null;
         }
 
-        FunctionContext context = new FunctionContext(function, rawArguments, abilityName, trigger, (i + 1));
-
-        return AbilityParser.parseArguments(rawArguments, context);
+        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1));
     }
 
     /**

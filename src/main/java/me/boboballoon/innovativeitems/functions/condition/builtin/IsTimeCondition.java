@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.util.TimeOfDay;
@@ -12,7 +12,7 @@ import me.boboballoon.innovativeitems.util.TimeOfDay;
 public class IsTimeCondition extends Condition {
     public IsTimeCondition() {
         super("istime",
-                new ExpectedManual((rawValue, context) -> TimeOfDay.valueOf(rawValue.toUpperCase()), "time of day"));
+                new ExpectedEnum<>(TimeOfDay.class, "time of day"));
     }
 
     @Override

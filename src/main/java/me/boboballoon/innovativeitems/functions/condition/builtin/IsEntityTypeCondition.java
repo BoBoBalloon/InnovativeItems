@@ -2,7 +2,7 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
@@ -17,7 +17,7 @@ public class IsEntityTypeCondition extends Condition {
     public IsEntityTypeCondition() {
         super("isentitytype",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedManual((rawValue, context) -> EntityType.valueOf(rawValue.toUpperCase()), "entity type"));
+                new ExpectedEnum<>(EntityType.class, "entity type"));
     }
 
     @Override

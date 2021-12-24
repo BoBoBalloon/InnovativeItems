@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
@@ -20,7 +21,7 @@ public class IsBlockAtCondition extends Condition {
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "y"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "z"),
                 new ExpectedManual((rawValue, context) -> Bukkit.getWorld(rawValue), "world name"),
-                new ExpectedManual((rawValue, context) -> Material.valueOf(rawValue.toUpperCase()), "material type"));
+                new ExpectedEnum<>(Material.class, "material type"));
     }
 
     @Override

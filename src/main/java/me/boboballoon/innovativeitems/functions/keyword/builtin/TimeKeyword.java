@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.TimeOfDay;
@@ -13,7 +13,7 @@ import org.bukkit.World;
 public class TimeKeyword extends Keyword {
     public TimeKeyword() {
         super("time",
-                new ExpectedManual((rawValue, context) -> TimeOfDay.valueOf(rawValue.toUpperCase()), "time of day"));
+                new ExpectedEnum<>(TimeOfDay.class, "time of day"));
     }
 
     @Override

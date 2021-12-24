@@ -3,9 +3,9 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -25,14 +25,7 @@ public class SetEquipmentSlotKeyword extends Keyword {
         super("setequipmentslot",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING, "item name"),
-                new ExpectedManual((rawValue, context) -> {
-                    RevisedEquipmentSlot equipmentSlot = RevisedEquipmentSlot.valueOf(rawValue.toUpperCase());
-                    if (equipmentSlot != RevisedEquipmentSlot.ANY) {
-                        return equipmentSlot;
-                    } else {
-                        return null;
-                    }
-                }, "equipment slot"),
+                new ExpectedEnum<>(RevisedEquipmentSlot.class, slot -> slot != RevisedEquipmentSlot.ANY, "equipment slot"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.BOOLEAN, "is custom item"));
     }
 

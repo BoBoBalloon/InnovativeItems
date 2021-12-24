@@ -18,7 +18,7 @@ public class ShootProjectileKeyword extends Keyword {
         super("shootprojectile",
                 new ExpectedManual((rawValue, context) -> {
                     Class<? extends Entity> entity = EntityType.valueOf(rawValue.toUpperCase()).getEntityClass();
-                    return (Projectile.class.isAssignableFrom(entity)) ? entity : null;
+                    return Projectile.class.isAssignableFrom(entity) ? entity : null;
                 }, "projectile type"));
     }
 

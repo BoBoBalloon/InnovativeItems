@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedManual;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
@@ -19,7 +20,7 @@ public class ParticleKeyword extends Keyword {
     public ParticleKeyword() {
         super("particle",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY, FunctionTargeter.BLOCK),
-                new ExpectedManual((rawValue, context) -> Particle.valueOf(rawValue.toUpperCase()), "particle name"),
+                new ExpectedEnum<>(Particle.class, "particle name"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "particle amount"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "x offset"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.DOUBLE, "y offset"),

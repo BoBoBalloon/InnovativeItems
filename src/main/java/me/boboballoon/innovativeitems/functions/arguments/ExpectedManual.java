@@ -23,6 +23,10 @@ public class ExpectedManual implements ExpectedArguments {
         this(manual, context -> LogUtil.logFunctionError(context, fieldName));
     }
 
+    public ExpectedManual(@NotNull ExpectedFunction manual) {
+        this(manual, ExpectedArguments.DEFAULT_ERROR);
+    }
+
     /**
      * A method that returns the method to be called on if the parsing fails for any reason
      *

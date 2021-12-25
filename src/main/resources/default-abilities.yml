@@ -2,15 +2,27 @@ fairy-fullset:
   trigger: 'timer:5'
   conditions:
     - '!istime(NIGHT)'
-    - 'issneaking(?player)'
     - 'iswearingcustomitem(?player, fairy-helmet, HEAD)'
     - 'iswearingcustomitem(?player, fairy-chestplate, CHEST)'
     - 'iswearingcustomitem(?player, fairy-leggings, LEGS)'
     - 'iswearingcustomitem(?player, fairy-boots, FEET)'
   keywords:
+    - 'ability(fairy-fullset-buff)'
+    - 'ability(fairy-fullset-safety)'
+
+fairy-fullset-buff:
+  trigger: 'none'
+  conditions:
+    - 'issneaking(?player)'
+  keywords:
     - 'velocity(?player, 0, .75, 0)'
-    - 'effect(?player, JUMP, 10, 99)'
-    - 'effect(?player, SLOW_FALLING, 40, 99)'
+
+fairy-fullset-safety:
+  trigger: 'none'
+  conditions:
+    - 'isfalling(?player)'
+  keywords:
+    - 'effect(?player, SLOW_FALLING, 10, 0)'
 
 fairy-attack:
   trigger: 'damage-dealt'

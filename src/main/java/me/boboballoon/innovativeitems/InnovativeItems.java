@@ -45,9 +45,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-    1. added some new logic to the FlexibleContext class to allow a more fail-safe use of the strict option
-    2. deprecated getContext method in the FunctionContext class, use getRawArguments instead
-    3. added ExpectedEnum to the the built-in argument parsers
      */
 
     /**
@@ -56,7 +53,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return true;
+        return false;
     }
 
     @Override
@@ -81,7 +78,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),
                 new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
-                new IsBlockAtCondition(), new IsFacingCondition());
+                new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition());
 
         //dependent functions
 

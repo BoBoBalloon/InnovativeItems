@@ -19,7 +19,7 @@ public class ExpectedEnum<T extends Enum<T>> implements ExpectedArguments {
     public ExpectedEnum(@NotNull Class<T> clazz, @NotNull Consumer<FunctionContext> onError, @Nullable Predicate<T> condition) {
         this.clazz = clazz;
         this.onError = onError;
-        this.condition = condition;
+        this.condition = condition != null ? condition : type -> true;
     }
 
     public ExpectedEnum(@NotNull Class<T> clazz, @Nullable Predicate<T> condition, @NotNull String fieldName) {

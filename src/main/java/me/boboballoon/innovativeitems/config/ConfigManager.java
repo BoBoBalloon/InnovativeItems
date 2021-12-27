@@ -45,11 +45,6 @@ public final class ConfigManager {
     private boolean shouldUpdateLocal;
     private boolean shouldDeleteLocal;
 
-    //item defender (copy of values)
-    private boolean allowCraftingLocal;
-    private boolean allowSmeltingLocal;
-    private boolean allowBrewingLocal;
-
     public ConfigManager() {
         this.reloadMainConfigValues();
     }
@@ -121,36 +116,6 @@ public final class ConfigManager {
             config.set("garbage-collector.should-delete", true);
         }
         this.setShouldDelete(shouldDelete);
-
-        //load up item defender allow crafting option, sets to true if no value is present
-        boolean allowCrafting;
-        if (config.contains("item-defender.allow-crafting")) {
-            allowCrafting = config.getBoolean("item-defender.allow-crafting");
-        } else {
-            allowCrafting = false;
-            config.set("item-defender.allow-crafting", false);
-        }
-        this.setShouldAllowCrafting(allowCrafting);
-
-        //load up item defender allow smelting option, sets to true if no value is present
-        boolean allowSmelting;
-        if (config.contains("item-defender.allow-smelting")) {
-            allowSmelting = config.getBoolean("item-defender.allow-smelting");
-        } else {
-            allowSmelting = false;
-            config.set("item-defender.allow-smelting", false);
-        }
-        this.setShouldAllowSmelting(allowSmelting);
-
-        //load up item defender allow brewing option, sets to true if no value is present
-        boolean allowBrewing;
-        if (config.contains("item-defender.allow-brewing")) {
-            allowBrewing = config.getBoolean("item-defender.allow-brewing");
-        } else {
-            allowBrewing = false;
-            config.set("item-defender.allow-brewing", false);
-        }
-        this.setShouldAllowBrewing(allowBrewing);
 
         plugin.saveConfig();
     }
@@ -283,66 +248,6 @@ public final class ConfigManager {
     }
 
     /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that returns a boolean that when true the item defender will prevent custom items being used in crafting recipes
-     *
-     * @return a boolean that when true the item defender will prevent custom items being used in crafting recipes
-     */
-    public boolean shouldAllowCrafting() {
-        return this.allowCraftingLocal;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that will set a boolean that when true the item defender will prevent custom items being used in crafting recipes
-     *
-     * @param allowCrafting a boolean that when true the item defender will prevent custom items being used in crafting recipes
-     */
-    public void setShouldAllowCrafting(boolean allowCrafting) {
-        this.allowCraftingLocal = allowCrafting;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that returns a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     *
-     * @return a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     */
-    public boolean shouldAllowSmelting() {
-        return this.allowSmeltingLocal;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that will set a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     *
-     * @param allowSmelting a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     */
-    public void setShouldAllowSmelting(boolean allowSmelting) {
-        this.allowSmeltingLocal = allowSmelting;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that returns a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     *
-     * @return a boolean that when true the item defender will prevent custom items being used in smelting recipes
-     */
-    public boolean shouldAllowBrewing() {
-        return this.allowBrewingLocal;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method that will set a boolean that when true the item defender will prevent custom items being used in brewing recipes
-     *
-     * @param allowBrewing a boolean that when true the item defender will prevent custom items being used in brewing recipes
-     */
-    public void setShouldAllowBrewing(boolean allowBrewing) {
-        this.allowBrewingLocal = allowBrewing;
-    }
-
-    /**
      * A method used to clear the cache and reload all elements
      */
     public void reload() {
@@ -442,11 +347,13 @@ public final class ConfigManager {
             if (!defaultAbilities.exists()) {
                 defaultAbilities.createNewFile();
                 Files.copy(plugin.getResource("default-abilities.yml"), defaultAbilities.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                LogUtil.log(LogUtil.Level.INFO, "Created a new default abilities file!");
             }
 
             if (!defaultItems.exists()) {
                 defaultItems.createNewFile();
                 Files.copy(plugin.getResource("default-items.yml"), defaultItems.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                LogUtil.log(LogUtil.Level.INFO, "Created a new default items file!");
             }
         } catch (IOException e) {
             LogUtil.log(LogUtil.Level.SEVERE, "There was an error trying to write a new file to disk...");

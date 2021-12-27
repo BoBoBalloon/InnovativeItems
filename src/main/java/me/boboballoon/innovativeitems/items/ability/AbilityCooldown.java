@@ -5,9 +5,11 @@ import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +22,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class AbilityCooldown extends Ability {
     private final long cooldown;
-    private final boolean showCooldown;
+    private final CooldownMessage message;
     private final Map<UUID, Long> onCooldown;
 
-    public AbilityCooldown(@NotNull String identifier, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger, long cooldown, boolean showCooldown) {
+    public AbilityCooldown(@NotNull String identifier, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger, long cooldown, @Nullable CooldownMessage message) {
         super(identifier, keywords, conditions, trigger);
 
         if (cooldown <= 0) {
@@ -31,7 +33,7 @@ public class AbilityCooldown extends Ability {
         }
 
         this.cooldown = cooldown * 50; //convert ticks to milliseconds
-        this.showCooldown = showCooldown;
+        this.message = message;
         this.onCooldown = new HashMap<>();
     }
 
@@ -45,12 +47,13 @@ public class AbilityCooldown extends Ability {
     }
 
     /**
-     * A method used to return if this ability shows the user if it is on cooldown for them
+     * A method used to return the message that is sent to the player if they used this ability while it was still on cooldown
      *
-     * @return a boolean that is true if this ability shows the user if it is on cooldown for them
+     * @return the message that is sent to the player if they used this ability while it was still on cooldown (null if no message should be sent)
      */
-    public boolean shouldShowCooldown() {
-        return this.showCooldown;
+    @Nullable
+    public CooldownMessage getMessage() {
+        return this.message;
     }
 
     /**
@@ -63,17 +66,31 @@ public class AbilityCooldown extends Ability {
     }
 
     /**
+     * A method used to return if this ability shows the user if it is on cooldown for them
+     *
+     * @return a boolean that is true if this ability shows the user if it is on cooldown for them
+     */
+    @Deprecated
+    public boolean shouldShowCooldown() {
+        return this.message != null;
+    }
+
+    /**
      * A method used to execute an ability with a cooldown (will always be fired async)
      *
      * @param context the context in which the ability was triggered
      * @return a boolean that is true when the ability executed successfully
      */
     @Override
-    public boolean execute(RuntimeContext context) {
-        UUID uuid = context.getPlayer().getUniqueId();
+    public boolean execute(@NotNull RuntimeContext context) {
+        Player player = context.getPlayer();
+        UUID uuid = player.getUniqueId();
 
         if (this.onCooldown.containsKey(uuid) && this.onCooldown.get(uuid) + this.cooldown > System.currentTimeMillis()) {
-            this.message(context.getPlayer());
+            if (this.message != null) {
+                this.message.send(player, this.onCooldown.get(uuid), this.cooldown);
+            }
+
             return false;
         }
 
@@ -87,21 +104,32 @@ public class AbilityCooldown extends Ability {
     }
 
     /**
-     * A method used to send an actionbar message saying how much time they have left on cooldown
-     *
-     * @param player the player to send the actionbar message to
+     * A class that represents a message sent to a player when the ability they tried to execute is still on cooldown
      */
-    private void message(Player player) {
-        if (!this.showCooldown) {
-            return;
+    public static class CooldownMessage {
+        private final String message;
+        private final ChatMessageType type;
+
+        public CooldownMessage(@NotNull String message, @NotNull ChatMessageType type) {
+            this.message = TextUtil.format(message);
+            this.type = type;
         }
 
-        long millis = (this.onCooldown.get(player.getUniqueId()) + this.cooldown) - System.currentTimeMillis();
+        /**
+         * A method used to send an actionbar message saying how much time they have left on cooldown
+         *
+         * @param player the player to send the actionbar message to
+         * @param waitTime the time that they last executed the ability
+         * @param cooldown the cooldown time of the ability
+         */
+        public void send(Player player, long waitTime, long cooldown) {
+            long millis = (waitTime + cooldown) - System.currentTimeMillis();
 
-        String text = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+            String cooldownText = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
 
-        TextComponent message = new TextComponent(TextUtil.format("&r&cYou have " + text + " time left until you can use " + this.getIdentifier() + " again!"));
+            BaseComponent[] message = TextComponent.fromLegacyText(this.message.replace("{cooldown}", cooldownText));
 
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            player.spigot().sendMessage(this.type, message);
+        }
     }
 }

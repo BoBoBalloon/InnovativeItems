@@ -64,14 +64,4 @@ public class FunctionContext {
     public int getLineNumber() {
         return this.lineNumber;
     }
-
-    /**
-     * A method that returns the array of arguments used for the function
-     *
-     * @return the array of arguments used for the function
-     */
-    @Deprecated
-    public String[] getContext() {
-        return this.getRawArguments();
-    }
 }

@@ -75,7 +75,7 @@ public class Ability {
      * @param context the context in which the ability was triggered
      * @return a boolean that is true when the ability executed successfully
      */
-    public boolean execute(RuntimeContext context) {
+    public boolean execute(@NotNull RuntimeContext context) {
         if (Bukkit.getServer().isPrimaryThread()) {
             throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
         }
@@ -123,7 +123,7 @@ public class Ability {
      * @param player the player to execute the ability
      * @return a boolean that is true when the ability executed successfully
      */
-    public boolean execute(Player player) {
+    public boolean execute(@NotNull Player player) {
         RuntimeContext context = new RuntimeContext(player, this);
 
         return this.execute(context);

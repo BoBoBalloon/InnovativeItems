@@ -37,10 +37,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    -1. remove the deprecated getContext method in the function context class
-    0. Test ItemDefender changes (for example replace the for loop in the anvil method with an enhanced for loop)
-    1. Add a resetattributes field to custom items to remove vanilla attributes (for example armor items have built in GENERIC.ARMOR, if field is true set it to zero before attributes field is added to item)
-    2. Test how I generate the other default config files and see if I save the main config by hand if it saves the comments, if so, do it that way
      */
 
     /*
@@ -53,7 +49,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return false;
+        return true;
     }
 
     @Override
@@ -125,7 +121,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
 
         //init item defender
-        this.itemDefender = new ItemDefender(this.configManager.shouldAllowCrafting(), this.configManager.shouldAllowSmelting(), this.configManager.shouldAllowBrewing());
+        this.itemDefender = new ItemDefender();
 
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");

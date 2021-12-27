@@ -4,6 +4,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
+import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
@@ -48,6 +49,16 @@ public final class InnovativeItemsAPI {
      */
     public static GarbageCollector getGarbageCollector() {
         return InnovativeItems.getInstance().getGarbageCollector();
+    }
+
+    /**
+     * A method used to return the active instance of the item defender
+     * (Should not be used until the plugin is enabled, will return null if used when the plugin is loaded)
+     *
+     * @return the active instance of the item defender
+     */
+    public static ItemDefender getItemDefender() {
+        return InnovativeItems.getInstance().getItemDefender();
     }
 
     /**

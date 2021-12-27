@@ -26,7 +26,7 @@ import org.bukkit.inventory.PlayerInventory;
  */
 public class AbilityTriggerListeners implements Listener {
     /**
-     * An inner class used to decrease eliminate code
+     * An inner class used to eliminate repetitive code
      */
     @FunctionalInterface
     private interface AbilityExecutor<T extends Event> {

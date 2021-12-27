@@ -15,6 +15,7 @@ import me.boboballoon.innovativeitems.items.ability.AbilityCooldown;
 import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,7 +92,7 @@ public final class AbilityParser {
         int cooldown = section.getInt("cooldown"); //if it does not exist it will return 0
         if (cooldown > 0) { //if the cooldown is > 0 that means it must exist and it also is valid
             //if show-cooldown does not exist it will return false (the proper default) if it is true that means it was set explicitly to true
-            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown, section.getBoolean("show-cooldown"));
+            return new AbilityCooldown(name, keywords, conditions, trigger, cooldown, AbilityParser.getCooldownMessage(section, name));
         }
 
         return new Ability(name, keywords, conditions, trigger);
@@ -279,10 +280,37 @@ public final class AbilityParser {
         }
 
         if (keyword) {
-            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability " + types + " for " + abilityName + ", are you sure the " + type + " field is present?");
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability keywords for " + abilityName + ", are you sure the keyword field is present?");
         }
 
         return null;
+    }
+
+    /**
+     * A utility method used to get the cooldown message
+     */
+    private static AbilityCooldown.CooldownMessage getCooldownMessage(ConfigurationSection section, String abilityName) {
+        if (section.isBoolean("show-cooldown")) {
+            LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the legacy syntax for a cooldown message was detected... It is not recommended to use this syntax and should be removed as soon as possible!");
+            return section.getBoolean("show-cooldown") ? new AbilityCooldown.CooldownMessage("&r&cYou have {cooldown} time left until you can use " + abilityName + " again!", ChatMessageType.ACTION_BAR) : null;
+        }
+
+        if (!section.contains("show-cooldown")) {
+            return null;
+        }
+
+        String message = section.getString("show-cooldown");
+        ChatMessageType messageType = ChatMessageType.CHAT;
+
+        try {
+            if (section.contains("show-cooldown-type")) {
+                messageType = ChatMessageType.valueOf(section.getString("show-cooldown-type").toUpperCase());
+            }
+        } catch (IllegalArgumentException e) {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the ability cooldown message type for " + abilityName + ", are you sure that you provided a valid message type?");
+        }
+
+        return new AbilityCooldown.CooldownMessage(message, messageType);
     }
 
     /**
@@ -298,7 +326,7 @@ public final class AbilityParser {
         }
 
         if (function.getClass().isAnnotationPresent(Deprecated.class)) {
-            LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the keyword by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
+            LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the " + type + " by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
         }
 
         String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');

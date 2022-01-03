@@ -46,10 +46,10 @@ public class AbilityTriggerListeners implements Listener {
          * @param player          the targeted player
          * @param expectedTrigger the trigger to fire each ability
          * @param event           the event that is executing the ability
-         * @param executee        the runtime context fed to each ability
+         * @param executor        the runtime context fed to each ability
          * @param <T>             the class of the event that is executing the ability
          */
-        static <T extends Event> void handle(Player player, AbilityTrigger expectedTrigger, T event, AbilityExecutor<T> executee) {
+        static <T extends Event> void handle(Player player, AbilityTrigger expectedTrigger, T event, AbilityExecutor<T> executor) {
             ItemStack[] items = new ItemStack[6];
             PlayerInventory inventory = player.getInventory();
             for (int i = 0; i < 4; i++) {
@@ -59,7 +59,7 @@ public class AbilityTriggerListeners implements Listener {
             items[5] = inventory.getItemInOffHand();
 
             for (ItemStack itemstack : items) {
-                AbilityExecutor.handleItem(itemstack, expectedTrigger, event, executee);
+                AbilityExecutor.handleItem(itemstack, expectedTrigger, event, executor);
             }
         }
 
@@ -67,10 +67,10 @@ public class AbilityTriggerListeners implements Listener {
          * @param itemstack       the itemstack to check
          * @param expectedTrigger the trigger to fire each ability
          * @param event           the event that is executing the ability
-         * @param executee        the runtime context fed to each ability
+         * @param executor        the runtime context fed to each ability
          * @param <T>             the class of the event that is executing the ability
          */
-        static <T extends Event> void handleItem(ItemStack itemstack, AbilityTrigger expectedTrigger, T event, AbilityExecutor<T> executee) {
+        static <T extends Event> void handleItem(ItemStack itemstack, AbilityTrigger expectedTrigger, T event, AbilityExecutor<T> executor) {
             CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(itemstack);
 
             if (item == null) {
@@ -83,7 +83,7 @@ public class AbilityTriggerListeners implements Listener {
                 return;
             }
 
-            RuntimeContext context = executee.buildContext(event, ability, item);
+            RuntimeContext context = executor.buildContext(event, ability, item);
 
             ability.execute(context);
         }

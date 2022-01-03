@@ -37,6 +37,13 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    1. Make an AbilityTrigger abstract class that implements Listener with the generic type of T extends Event, it needs every argument the enum constructor has with one addition, Class<T> clazz
+       a. convert the var arg of strings to a var arg of FunctionTargeters
+       b. use the provided registerEvent method to register the ability trigger (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/plugin/PluginManager.html#registerEvent(java.lang.Class,org.bukkit.event.Listener,org.bukkit.event.EventPriority,org.bukkit.plugin.EventExecutor,org.bukkit.plugin.Plugin,boolean))
+          a. use the method like so: Bukkit.getPluginManager().registerEvent(trigger.getType(), EventPriority.HIGHEST, (listener, event) -> trigger.call(trigger.getType().cast(event)), InnovativeItems.getInstance(), true);
+       c. deprecate the old enum class and all methods with it
+       d. make a new map in the FunctionManager class that holds the ability triggers
+       e. make the AbilityExecutor<T extends Event> inner class a protected class inside of the AbilityTrigger class
      */
 
     /*

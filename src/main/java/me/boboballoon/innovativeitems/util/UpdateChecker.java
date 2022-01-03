@@ -55,12 +55,7 @@ public class UpdateChecker {
 
         Scanner scanner = new Scanner(input);
 
-        String version;
-        if (scanner.hasNext()) {
-            version = scanner.next();
-        } else {
-            return null;
-        }
+        String version = scanner.hasNext() ? scanner.next() : null;
 
         scanner.close();
 

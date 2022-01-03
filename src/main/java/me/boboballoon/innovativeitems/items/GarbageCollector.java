@@ -153,11 +153,18 @@ public final class GarbageCollector implements Listener {
                 continue;
             }
 
-            CustomItem customItem = InnovativeItems.getInstance().getItemCache().fromItemStack(item);
+            NBTItem nbtItem = new NBTItem(item);
+
+            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+                continue;
+            }
+
+            CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(nbtItem.getString("innovativeplugin-customitem-id"));
 
             if (customItem == null) {
                 if (this.shouldDelete) {
                     item.setAmount(0); //delete itemstack
+                    LogUtil.log(LogUtil.Level.NOISE, "Deleting item " + item.toString() + " in " + inventory.getType().name() + " at " + inventory.getLocation().toString());
                 }
 
                 continue;
@@ -178,6 +185,7 @@ public final class GarbageCollector implements Listener {
             newItem.setAmount(item.getAmount());
 
             inventory.setItem(i, newItem);
+            LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + inventory.getType().name() + " at " + inventory.getLocation().toString());
         }
     }
 

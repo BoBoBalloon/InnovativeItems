@@ -9,9 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A class that is responsible for holding all items and abilities in memory during runtime
@@ -98,6 +96,41 @@ public final class InnovativeCache {
         }
 
         return this.getItem(nbtItem.getString("innovativeplugin-customitem-id"));
+    }
+
+    /**
+     * A method used to get a custom item from the cache via a collection of itemstacks
+     *
+     * @param items the collection of itemstacks (the collection cannot be null, individual elements can)
+     * @param includeNulls a boolean that represents if itemstacks in the provided collection that are not custom items should be placed in the output collection as null or simply ignored
+     * @return a collection of custom items from the collection of itemstacks
+     */
+    @NotNull
+    public Collection<CustomItem> fromItemStacks(@NotNull Collection<ItemStack> items, boolean includeNulls) {
+        List<CustomItem> output = new ArrayList<>();
+
+        for (ItemStack stack : items) {
+            CustomItem item = this.fromItemStack(stack);
+
+            if (item == null && !includeNulls) {
+                continue;
+            }
+
+            output.add(item);
+        }
+
+        return !output.isEmpty() ? output : Collections.emptyList();
+    }
+
+    /**
+     * A method used to get a custom item from the cache via a collection of itemstacks
+     *
+     * @param items the collection of itemstacks (the collection cannot be null, individual elements can)
+     * @return a collection of custom items from the collection of itemstacks
+     */
+    @NotNull
+    public Collection<CustomItem> fromItemStacks(@NotNull Collection<ItemStack> items) {
+        return this.fromItemStacks(items, false);
     }
 
     /**

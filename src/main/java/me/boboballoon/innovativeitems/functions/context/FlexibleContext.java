@@ -24,43 +24,29 @@ import java.util.Iterator;
  * A class that represents a runtime context where no field can be null
  */
 public final class FlexibleContext extends RuntimeContext implements EntityContext, BlockContext, ItemContext {
-    private final RuntimeContext context;
+    private final LivingEntity entity;
+    private final Block block;
+    private final CustomItem item;
 
-    public FlexibleContext(@NotNull RuntimeContext context) {
-        super(context.getPlayer(), context.getAbility());
-
-        if (context instanceof FlexibleContext) {
-            throw new IllegalArgumentException("You have passed an instance of FlexibleContext into the constructor of another instance of FlexibleContext!");
-        }
-
-        this.context = context;
+    public FlexibleContext(@NotNull Player player, @NotNull Ability ability, @Nullable LivingEntity entity, @Nullable Block block, @Nullable CustomItem item) {
+        super(player, ability);
+        this.entity = entity;
+        this.block = block;
+        this.item = item;
     }
 
     public FlexibleContext(@NotNull Player player, @NotNull Ability ability) {
-        super(player, ability);
-        this.context = new RuntimeContext(player, ability);
-    }
-
-    @Override
-    @NotNull
-    public Block getBlock() {
-        if (this.context instanceof BlockContext) {
-            BlockContext blockContext = (BlockContext) this.context;
-            return blockContext.getBlock();
-        }
-
-        return this.context.getPlayer().getLocation().getBlock();
+        this(player, ability, null, null, null);
     }
 
     @Override
     @NotNull
     public LivingEntity getEntity() {
-        if (this.context instanceof EntityContext) {
-            EntityContext entityContext = (EntityContext) this.context;
-            return entityContext.getEntity();
+        if (this.entity != null) {
+            return this.entity;
         }
 
-        Player player = this.context.getPlayer();
+        Player player = this.getPlayer();
 
         Iterator<Entity> entities = player.getNearbyEntities(5, 5, 5).stream().filter(e -> e instanceof LivingEntity).iterator();
 
@@ -73,10 +59,19 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
 
     @Override
     @NotNull
+    public Block getBlock() {
+        if (this.block != null) {
+            return this.block;
+        }
+
+        return this.getPlayer().getLocation().getBlock();
+    }
+
+    @Override
+    @NotNull
     public CustomItem getItem() {
-        if (this.context instanceof ItemContext) {
-            ItemContext itemContext = (ItemContext) this.context;
-            return itemContext.getItem();
+        if (this.item != null) {
+            return this.item;
         }
 
         InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
@@ -108,7 +103,7 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
      */
     @Nullable
     private CustomItem getCustomItemFromInventory(InnovativeCache cache) {
-        PlayerInventory inventory = this.context.getPlayer().getInventory();
+        PlayerInventory inventory = this.getPlayer().getInventory();
 
         CustomItem mainHand = cache.fromItemStack(inventory.getItemInMainHand());
         if (mainHand != null) {
@@ -126,5 +121,24 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
         }
 
         return null;
+    }
+
+    /**
+     * A method used to wrap a runtime context and convert it into an instance of the flexible context class
+     *
+     * @param context the context to wrap
+     * @return an instance of the flexible context class
+     */
+    @NotNull
+    public static FlexibleContext wrap(@NotNull RuntimeContext context) {
+        if (context instanceof FlexibleContext) {
+            throw new IllegalArgumentException("You have passed an instance of FlexibleContext into the wrap static method of FlexibleContext!");
+        }
+
+        LivingEntity entity = context instanceof EntityContext ? ((EntityContext) context).getEntity() : null;
+        Block block = context instanceof BlockContext ? ((BlockContext) context).getBlock() : null;
+        CustomItem item = context instanceof ItemContext ? ((ItemContext) context).getItem() : null;
+
+        return new FlexibleContext(context.getPlayer(), context.getAbility(), entity, block, item);
     }
 }

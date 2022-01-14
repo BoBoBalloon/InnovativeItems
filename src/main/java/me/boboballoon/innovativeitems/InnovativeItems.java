@@ -12,7 +12,7 @@ import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
-import me.boboballoon.innovativeitems.listeners.AbilityTriggerListeners;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.*;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
@@ -37,13 +37,9 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make an AbilityTrigger abstract class that implements Listener with the generic type of T extends Event, it needs every argument the enum constructor has with one addition, Class<T> clazz
-       a. convert the var arg of strings to a var arg of FunctionTargeters
-       b. use the provided registerEvent method to register the ability trigger (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/plugin/PluginManager.html#registerEvent(java.lang.Class,org.bukkit.event.Listener,org.bukkit.event.EventPriority,org.bukkit.plugin.EventExecutor,org.bukkit.plugin.Plugin,boolean))
-          a. use the method like so: Bukkit.getPluginManager().registerEvent(trigger.getType(), EventPriority.HIGHEST, (listener, event) -> trigger.call(trigger.getType().cast(event)), InnovativeItems.getInstance(), true);
-       c. deprecate the old enum class and all methods with it
-       d. make a new map in the FunctionManager class that holds the ability triggers
-       e. make the AbilityExecutor<T extends Event> inner class a protected class inside of the AbilityTrigger class
+    1. Write new section on dev api wiki how to make new triggers and post update
+    2. Make a new projectile hit trigger
+    3. Make custom durability options for custom items
      */
 
     /*
@@ -64,7 +60,7 @@ public final class InnovativeItems extends JavaPlugin {
         //instance init
         InnovativeItems.instance = this;
 
-        //load up and register all keywords
+        //load up and register all keywords and conditions
         this.functionManager = new FunctionManager();
 
         this.functionManager.registerKeywords(new DelayKeyword(), new DamageKeyword(), new HealKeyword(), new ParticleKeyword(),
@@ -86,6 +82,12 @@ public final class InnovativeItems extends JavaPlugin {
         //dependent functions
 
         this.functionManager.registerKeyword("MythicMobs", new MythicMobSkillKeyword());
+
+        //ability triggers
+
+        this.functionManager.registerTriggers(new BlockBreakTrigger(), new ConsumeItemTrigger(), new CrouchTrigger(), new DamageDealtTrigger(),
+                new DamageTakenTrigger(), new LeftClickBlockTrigger(), new LeftClickTrigger(), new NoneTrigger(),
+                new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger());
     }
 
     @Override
@@ -94,6 +96,8 @@ public final class InnovativeItems extends JavaPlugin {
 
         //config manager init
         this.configManager = new ConfigManager();
+
+        this.functionManager.registerTriggerQueue(); //map triggers from queue to function manager
 
         //update checker run (if value is true)
         if (this.configManager.shouldCheckForUpdates()) {
@@ -133,7 +137,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");
 
-        this.registerListeners(this.garbageCollector, new AbilityTriggerListeners(), new ItemFieldListeners(), this.itemDefender);
+        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender);
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }

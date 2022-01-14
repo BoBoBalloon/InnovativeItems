@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.functions.context;
 
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class RuntimeContext {
      *
      * @return the trigger of the ability that fired this keyword
      */
-    public final AbilityTrigger getAbilityTrigger() {
+    public final AbilityTrigger<?, ?> getAbilityTrigger() {
         return this.ability.getTrigger();
     }
 }

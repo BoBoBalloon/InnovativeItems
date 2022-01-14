@@ -163,8 +163,8 @@ public final class GarbageCollector implements Listener {
 
             if (customItem == null) {
                 if (this.shouldDelete) {
-                    item.setAmount(0); //delete itemstack
                     LogUtil.log(LogUtil.Level.NOISE, "Deleting item " + item.toString() + " in " + inventory.getType().name() + " at " + inventory.getLocation().toString());
+                    item.setAmount(0); //delete itemstack
                 }
 
                 continue;

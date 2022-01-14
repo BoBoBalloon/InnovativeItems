@@ -1,6 +1,6 @@
 package me.boboballoon.innovativeitems.functions;
 
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 
 /**
  * Represents the context in which a function was used in
@@ -9,10 +9,10 @@ public class FunctionContext {
     private final InnovativeFunction<?> function;
     private final String[] rawArguments;
     private final String abilityName;
-    private final AbilityTrigger abilityTrigger;
+    private final AbilityTrigger<?, ?> abilityTrigger;
     private final int lineNumber;
 
-    public FunctionContext(InnovativeFunction<?> function, String[] rawArguments, String abilityName, AbilityTrigger abilityTrigger, int lineNumber) {
+    public FunctionContext(InnovativeFunction<?> function, String[] rawArguments, String abilityName, AbilityTrigger<?, ?> abilityTrigger, int lineNumber) {
         this.function = function;
         this.rawArguments = rawArguments;
         this.abilityName = abilityName;
@@ -52,7 +52,7 @@ public class FunctionContext {
      *
      * @return the trigger of the ability that contains this function
      */
-    public AbilityTrigger getAbilityTrigger() {
+    public AbilityTrigger<?, ?> getAbilityTrigger() {
         return this.abilityTrigger;
     }
 

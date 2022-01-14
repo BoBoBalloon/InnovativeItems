@@ -1,8 +1,10 @@
 package me.boboballoon.innovativeitems.items.ability;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -12,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -25,8 +26,8 @@ public class AbilityCooldown extends Ability {
     private final CooldownMessage message;
     private final Map<UUID, Long> onCooldown;
 
-    public AbilityCooldown(@NotNull String identifier, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger, long cooldown, @Nullable CooldownMessage message) {
-        super(identifier, keywords, conditions, trigger);
+    public AbilityCooldown(@NotNull String identifier, @NotNull ImmutableList<ActiveKeyword> keywords, @NotNull ImmutableList<ActiveCondition> conditions, @NotNull AbilityTrigger<?, ?> trigger, @NotNull String providedTriggerIdentifier, long cooldown, @Nullable CooldownMessage message) {
+        super(identifier, keywords, conditions, trigger, providedTriggerIdentifier);
 
         if (cooldown <= 0) {
             throw new IllegalArgumentException("The provided cooldown is less than or equal to zero!");
@@ -66,6 +67,22 @@ public class AbilityCooldown extends Ability {
     }
 
     /**
+     * A quick method to tell if the provided user still has this ability on cooldown
+     *
+     * @param player the provided user
+     * @return a boolean that is true if the provided user still has this ability on cooldown
+     */
+    public boolean isOnCooldown(@NotNull Player player) {
+        UUID uuid = player.getUniqueId();
+
+        if (!this.onCooldown.containsKey(uuid)) {
+            return false;
+        }
+
+        return this.onCooldown.get(uuid) + this.cooldown > System.currentTimeMillis();
+    }
+
+    /**
      * A method used to return if this ability shows the user if it is on cooldown for them
      *
      * @return a boolean that is true if this ability shows the user if it is on cooldown for them
@@ -86,11 +103,12 @@ public class AbilityCooldown extends Ability {
         Player player = context.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        if (this.onCooldown.containsKey(uuid) && this.onCooldown.get(uuid) + this.cooldown > System.currentTimeMillis()) {
-            if (this.message != null) {
-                this.message.send(player, this.onCooldown.get(uuid), this.cooldown);
-            }
+        boolean isOnCooldown = this.isOnCooldown(player);
 
+        if (isOnCooldown && this.message != null) {
+            this.message.send(player, this.onCooldown.get(uuid), this.cooldown);
+            return false;
+        } else if (isOnCooldown) {
             return false;
         }
 

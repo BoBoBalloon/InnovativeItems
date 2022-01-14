@@ -57,7 +57,7 @@ public class ExpectedTargeters implements ExpectedArguments {
             return null;
         }
 
-        if (!context.getAbilityTrigger().getAllowedTargeters().contains(rawValue)) {
+        if (!context.getAbilityTrigger().getTargeters().contains(targeter)) {
             LogUtil.log(LogUtil.Level.WARNING, "Line " + context.getLineNumber() + section +  " on ability " + context.getAbilityName() + " has an invalid targeter for the trigger of " + context.getAbilityTrigger().getIdentifier() + "!");
             return null;
         }

@@ -1,8 +1,8 @@
 package me.boboballoon.innovativeitems.items;
 
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTimerTrigger;
-import me.boboballoon.innovativeitems.items.ability.AbilityTrigger;
+import me.boboballoon.innovativeitems.items.ability.AbilityTimerClock;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.TimerTrigger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  * A class that is responsible for holding ability trigger timers in memory during runtime
  */
 public final class AbilityTimerManager {
-    private final Map<Long, AbilityTimerTrigger> timers;
+    private final Map<Long, AbilityTimerClock> timers;
 
     public AbilityTimerManager() {
         this.timers = new HashMap<>();
@@ -24,7 +24,7 @@ public final class AbilityTimerManager {
      * @param timer the delay in between executions
      */
     public void registerTimer(Ability ability, long timer) {
-        if (ability.getTrigger() != AbilityTrigger.TIMER) {
+        if (!(ability.getTrigger() instanceof TimerTrigger)) {
             return;
         }
 
@@ -33,14 +33,14 @@ public final class AbilityTimerManager {
             return;
         }
 
-        this.timers.put(timer, new AbilityTimerTrigger(timer, ability));
+        this.timers.put(timer, new AbilityTimerClock(timer, ability));
     }
 
     /**
      * A method used to wipe all data currently in the cache
      */
     public void clearCache() {
-        for (AbilityTimerTrigger trigger : this.timers.values()) {
+        for (AbilityTimerClock trigger : this.timers.values()) {
             trigger.cancel();
         }
 

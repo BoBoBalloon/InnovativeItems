@@ -10,12 +10,11 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
+import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * A class used to show an ability tied to an item
@@ -24,13 +23,16 @@ public class Ability {
     private final String identifier;
     private final ImmutableList<ActiveKeyword> keywords;
     private final ImmutableList<ActiveCondition> conditions;
-    private final AbilityTrigger trigger;
+    private final AbilityTrigger<?, ?> trigger;
+    private final String providedTriggerIdentifier;
 
-    public Ability(@NotNull String identifier, @NotNull List<ActiveKeyword> keywords, @NotNull List<ActiveCondition> conditions, @NotNull AbilityTrigger trigger) {
+    public Ability(@NotNull String identifier, @NotNull ImmutableList<ActiveKeyword> keywords, @NotNull ImmutableList<ActiveCondition> conditions, @NotNull AbilityTrigger<?, ?> trigger, @NotNull String providedTriggerIdentifier) {
         this.identifier = identifier;
-        this.keywords = ImmutableList.copyOf(keywords);
-        this.conditions = ImmutableList.copyOf(conditions);
+        this.keywords = keywords;
+        this.conditions = conditions;
         this.trigger = trigger;
+        this.providedTriggerIdentifier = providedTriggerIdentifier;
+        this.trigger.init(this);
     }
 
     /**
@@ -56,7 +58,7 @@ public class Ability {
      *
      * @return the trigger that fires this ability
      */
-    public AbilityTrigger getTrigger() {
+    public AbilityTrigger<?, ?> getTrigger() {
         return this.trigger;
     }
 
@@ -67,6 +69,15 @@ public class Ability {
      */
     public ImmutableList<ActiveCondition> getConditions() {
         return this.conditions;
+    }
+
+    /**
+     * A method used to get the provided identifier for a given ability trigger (only useful for regex usage, where you need to parse this string)
+     *
+     * @return the provided identifier for a given ability trigger (only useful for regex usage, where you need to parse this string)
+     */
+    public String getProvidedTriggerIdentifier() {
+        return this.providedTriggerIdentifier;
     }
 
     /**
@@ -81,8 +92,8 @@ public class Ability {
         }
 
         if (this.shouldWrapContext(context)) {
-            context = new FlexibleContext(context);
-        } else if (!this.trigger.getExpectedContext().isInstance(context)) {
+            context = FlexibleContext.wrap(context);
+        } else if (!this.trigger.getContextClass().isInstance(context)) {
             LogUtil.log(LogUtil.Level.NOISE, "Ability: " + this.identifier + " failed to execute due to an incompatible runtime context. (if safety is not an issue try setting the strict field in the main config file to false)");
             return false;
         }
@@ -105,7 +116,7 @@ public class Ability {
 
             //both must be opposites (when value is true, inverted must be false)
             if (value == condition.isInverted()) {
-                LogUtil.log(LogUtil.Level.NOISE, "Condition: " + condition.getBase().getIdentifier() + " failed on the " + this.identifier + "ability.");
+                LogUtil.log(LogUtil.Level.NOISE, "Condition: " + condition.getBase().getIdentifier() + " failed on the " + this.identifier + " ability.");
                 return false;
             }
         }

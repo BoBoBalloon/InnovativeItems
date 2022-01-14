@@ -129,7 +129,6 @@ public final class ItemParser {
             ConfigurationSection abilitySection = section.getConfigurationSection("ability");
             abilityName = itemName + "-anonymous-ability";
             ability = AbilityParser.parseAbility(abilitySection, abilityName);
-            AbilityParser.registerAbilityTimer(ability, abilitySection);
         } else if (isConfigurationSection) {
             LogUtil.logUnblocked(LogUtil.Level.WARNING, "An anonymous ability was used for the " + itemName + " item but are not supported in the free version of the plugin!");
             return null;

@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.items.ability;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.TimerTrigger;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +16,7 @@ import java.util.Set;
 /**
  * A class that represents a timer that will fire a set of abilities on a specified delay
  */
-public class AbilityTimerTrigger extends BukkitRunnable {
+public class AbilityTimerClock extends BukkitRunnable {
     private final Set<Ability> abilities;
 
     /**
@@ -24,7 +25,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
      * @param timer the delay in between each trigger
      * @param abilities the abilities that must be fired
      */
-    public AbilityTimerTrigger(long timer, Set<Ability> abilities) {
+    public AbilityTimerClock(long timer, Set<Ability> abilities) {
         this.abilities = abilities;
         this.runTaskTimerAsynchronously(InnovativeItems.getInstance(), 0L, timer);
     }
@@ -35,7 +36,7 @@ public class AbilityTimerTrigger extends BukkitRunnable {
      * @param timer the delay in between each trigger
      * @param abilities the abilities that must be fired
      */
-    public AbilityTimerTrigger(long timer, Ability... abilities) {
+    public AbilityTimerClock(long timer, Ability... abilities) {
         this(timer, Sets.newHashSet(abilities));
     }
 
@@ -64,13 +65,9 @@ public class AbilityTimerTrigger extends BukkitRunnable {
                     continue;
                 }
 
-                AbilityTrigger trigger = ability.getTrigger();
-
-                if (trigger != AbilityTrigger.TIMER) {
-                    continue;
+                if (ability.getTrigger() instanceof TimerTrigger) {
+                    ability.execute(player);
                 }
-
-                ability.execute(player);
             }
         }
     }

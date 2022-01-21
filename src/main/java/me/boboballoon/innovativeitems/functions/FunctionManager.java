@@ -252,6 +252,9 @@ public final class FunctionManager {
         if (this.triggerManager != null) {
             this.triggerManager.map(this.triggers);
             this.triggerManager = null;
+            LogUtil.log(LogUtil.Level.INFO, "Finished mapping all ability triggers from queue to cache and registering related events!");
+        } else {
+            LogUtil.log(LogUtil.Level.DEV, "The FunctionManager registerTriggerQueue() method was called after the queue was mapped to the cache...");
         }
     }
 

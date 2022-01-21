@@ -124,7 +124,9 @@ public class InnovativeItemsCommand extends BaseCommand {
             target.getInventory().addItem(customItem.getItemStack());
         }
 
-        if (!silent) TextUtil.sendMessage(target, "&r&aAdded " + amount + " " + customItem.getIdentifier() + " to your inventory!");
+        if (!silent) {
+            TextUtil.sendMessage(target, "&r&aAdded " + amount + " " + customItem.getIdentifier() + " to your inventory!");
+        }
 
         TextUtil.sendMessage(sender, "&r&aGave " + amount + " " + customItem.getIdentifier() + " to " + target.getName() + "!");
     }

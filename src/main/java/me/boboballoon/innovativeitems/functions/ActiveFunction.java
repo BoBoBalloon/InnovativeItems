@@ -7,7 +7,6 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -23,9 +22,9 @@ public abstract class ActiveFunction<T> {
      * @param base the base function being used
      * @param arguments the list of arguments with targeters already parsed
      */
-    public ActiveFunction(@NotNull InnovativeFunction<T> base, @NotNull List<Object> arguments) {
+    public ActiveFunction(@NotNull InnovativeFunction<T> base, @NotNull ImmutableList<Object> arguments) {
         this.base = base;
-        this.arguments = ImmutableList.copyOf(arguments);
+        this.arguments = arguments;
     }
 
     /**

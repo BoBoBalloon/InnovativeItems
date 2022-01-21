@@ -1,8 +1,6 @@
-package me.boboballoon.innovativeitems.items;
+package me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer;
 
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.ability.AbilityTimerClock;
-import me.boboballoon.innovativeitems.items.ability.trigger.builtin.TimerTrigger;
 
 import java.util.HashMap;
 import java.util.Map;

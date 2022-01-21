@@ -1,8 +1,7 @@
-package me.boboballoon.innovativeitems.items.ability.trigger.builtin;
+package me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
-import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.InventoryIterator;

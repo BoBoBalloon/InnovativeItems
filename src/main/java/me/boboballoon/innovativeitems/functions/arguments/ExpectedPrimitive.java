@@ -208,7 +208,7 @@ public class ExpectedPrimitive implements ExpectedArguments {
      * A class used to list all possible primitive types to be parsed
      */
     public enum PrimitiveType {
-        BYTE(Byte.class), //add numerical types must be the wrappers due to reflection
+        BYTE(Byte.class), //all numerical types must be the wrappers due to reflection usage on the InitializationUtil.initNumber() method
         SHORT(Short.class),
         INTEGER(Integer.class),
         LONG(Long.class),

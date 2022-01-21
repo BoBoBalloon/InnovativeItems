@@ -6,13 +6,15 @@ import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.functions.condition.builtin.*;
+import me.boboballoon.innovativeitems.functions.condition.builtin.dependent.IsInRegionCondition;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.dependent.MythicMobSkillKeyword;
-import me.boboballoon.innovativeitems.items.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.*;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.AbilityTimerManager;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerTrigger;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
@@ -37,9 +39,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Write new section on dev api wiki how to make new triggers and post update
-    2. Make a new projectile hit trigger
-    3. Make custom durability options for custom items
+    1. Make a new projectile hit trigger
+    2. Make custom durability options for custom items
      */
 
     /*
@@ -81,7 +82,9 @@ public final class InnovativeItems extends JavaPlugin {
 
         //dependent functions
 
-        this.functionManager.registerKeyword("MythicMobs", new MythicMobSkillKeyword());
+        this.functionManager.registerKeywords("MythicMobs", new MythicMobSkillKeyword());
+
+        this.functionManager.registerConditions("WorldGuard", new IsInRegionCondition());
 
         //ability triggers
 
@@ -135,7 +138,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.itemDefender = new ItemDefender();
 
         //register listeners
-        LogUtil.log(LogUtil.Level.INFO, "Registering event listeners...");
+        LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");
 
         this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender);
 

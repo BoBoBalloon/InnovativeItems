@@ -28,6 +28,10 @@ public final class LogUtil {
      * @param text  text you wish to log
      */
     public static void log(@NotNull Level level, @NotNull String text) {
+        if (level == Level.NOTHING) {
+            return;
+        }
+
         int debugLevel = InnovativeItems.getInstance().getConfigManager().getDebugLevel();
 
         if (level == Level.NOISE && debugLevel < Level.NOISE.getDebugLevel()) {
@@ -60,17 +64,21 @@ public final class LogUtil {
      * @param text  text you wish to log
      */
     public static void logUnblocked(@NotNull Level level, @NotNull String text) {
+        if (level == Level.NOTHING) {
+            return;
+        }
+
         InnovativeItems.getInstance().getLogger().log(level.getLogLevel(), text);
     }
 
     /**
      * A method wrapper to log a function exception to prevent repetitive code
      *
-     * @param level       the log level
-     * @param fieldName   the name of field to be initialized
+     * @param level        the log level
+     * @param fieldName    the name of field to be initialized
      * @param functionName the name of the function
      * @param functionType whether the function is a keyword or condition
-     * @param abilityName the name of the ability the keyword is being initialized on
+     * @param abilityName  the name of the ability the keyword is being initialized on
      */
     public static void logFunctionError(@NotNull Level level, @NotNull String fieldName, @NotNull String functionName, @NotNull String functionType, @NotNull String abilityName) {
         LogUtil.log(level, "There is not a valid " + fieldName + " entered on the " + functionName + " " + functionType + " on the " + abilityName + " ability!");

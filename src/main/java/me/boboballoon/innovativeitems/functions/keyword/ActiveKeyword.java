@@ -1,9 +1,8 @@
 package me.boboballoon.innovativeitems.functions.keyword;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.ActiveFunction;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * A class that represents a keyword after being parsed
@@ -15,7 +14,7 @@ public class ActiveKeyword extends ActiveFunction<Void> {
      * @param base the base keyword being used
      * @param arguments the list of arguments with targeters already parsed
      */
-    public ActiveKeyword(@NotNull Keyword base, @NotNull List<Object> arguments) {
+    public ActiveKeyword(@NotNull Keyword base, @NotNull ImmutableList<Object> arguments) {
         super(base, arguments);
     }
 

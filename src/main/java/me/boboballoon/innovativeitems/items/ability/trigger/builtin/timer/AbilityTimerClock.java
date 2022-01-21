@@ -1,9 +1,9 @@
-package me.boboballoon.innovativeitems.items.ability;
+package me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.ability.trigger.builtin.TimerTrigger;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

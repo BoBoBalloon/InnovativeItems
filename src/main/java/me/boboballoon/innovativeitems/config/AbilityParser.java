@@ -154,7 +154,7 @@ public final class AbilityParser {
 
             Keyword keyword = InnovativeItems.getInstance().getFunctionManager().getKeyword(split[0]);
 
-            List<Object> parsedArguments = AbilityParser.checkAndParse(keyword, i, abilityName, split, trigger, true);
+            ImmutableList<Object> parsedArguments = AbilityParser.checkAndParse(keyword, i, abilityName, split, trigger, true);
 
             if (parsedArguments == null) {
                 //already sent error message in the checkAndParse() method
@@ -209,7 +209,7 @@ public final class AbilityParser {
 
             Condition condition = InnovativeItems.getInstance().getFunctionManager().getCondition(conditionName);
 
-            List<Object> parsedArguments = AbilityParser.checkAndParse(condition, i, abilityName, split, trigger, false);
+            ImmutableList<Object> parsedArguments = AbilityParser.checkAndParse(condition, i, abilityName, split, trigger, false);
 
             if (parsedArguments == null) {
                 //already sent error message in the checkAndParse() method
@@ -270,7 +270,7 @@ public final class AbilityParser {
     /**
      * A utility method used to clean up and centralize the parsing process
      */
-    private static List<Object> checkAndParse(InnovativeFunction<?> function, int i, String abilityName, String[] split, AbilityTrigger<?, ?> trigger, boolean keyword) {
+    private static ImmutableList<Object> checkAndParse(InnovativeFunction<?> function, int i, String abilityName, String[] split, AbilityTrigger<?, ?> trigger, boolean keyword) {
         String type = keyword ? "keyword" : "condition";
         String types = type + "s";
 
@@ -297,7 +297,7 @@ public final class AbilityParser {
             return null;
         }
 
-        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1));
+        return ImmutableList.copyOf(AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1)));
     }
 
     /**

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ConsumeItemTrigger extends AbilityTrigger<PlayerItemConsumeEvent, ConsumeContext> {
     public ConsumeItemTrigger() {
-        super("item-consume", null, PlayerItemConsumeEvent.class, ConsumeContext.class, InventoryIterator.Constants.bothHands(), null);
+        super("item-consume", null, PlayerItemConsumeEvent.class, ConsumeContext.class, InventoryIterator.fromFunctionSingleton((event, inventory) -> event.getItem()), null);
     }
 
     @Override

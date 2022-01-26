@@ -4,6 +4,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents context where an entity was damaged that can assist execution that cannot be cached and must be parsed during runtime separately
@@ -19,6 +20,7 @@ public class DamageContext extends RuntimeContext implements EntityContext {
     }
 
     @Override
+    @NotNull
     public LivingEntity getEntity() {
         return this.entity;
     }

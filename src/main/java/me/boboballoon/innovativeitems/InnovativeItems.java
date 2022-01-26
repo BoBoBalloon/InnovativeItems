@@ -41,6 +41,7 @@ public final class InnovativeItems extends JavaPlugin {
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     1. Make a new projectile hit trigger
     2. Make custom durability options for custom items
+    3. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
      */
 
     /*

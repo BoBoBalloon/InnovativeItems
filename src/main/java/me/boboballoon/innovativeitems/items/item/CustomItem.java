@@ -81,6 +81,11 @@ public class CustomItem {
         return this.item.equals(item.getItemStack());
     }
 
+    @Override
+    public int hashCode() {
+        return this.identifier.hashCode() * (this.ability != null ? this.ability.hashCode() : 1) * this.item.hashCode();
+    }
+
     /**
      * A method used to generate an itemstack based on this items internal values
      *

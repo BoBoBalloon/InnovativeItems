@@ -132,7 +132,7 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
     @NotNull
     public static FlexibleContext wrap(@NotNull RuntimeContext context) {
         if (context instanceof FlexibleContext) {
-            throw new IllegalArgumentException("You have passed an instance of FlexibleContext into the wrap static method of FlexibleContext!");
+            return (FlexibleContext) context;
         }
 
         LivingEntity entity = context instanceof EntityContext ? ((EntityContext) context).getEntity() : null;

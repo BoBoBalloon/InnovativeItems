@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents context where the item was clicked and targeting a block that can assist execution that cannot be cached and must be parsed during runtime separately
@@ -19,6 +20,7 @@ public class InteractContextBlock extends InteractContext implements BlockContex
     }
 
     @Override
+    @NotNull
     public Block getBlock() {
         return this.block;
     }

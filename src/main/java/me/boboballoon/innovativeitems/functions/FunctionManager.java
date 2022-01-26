@@ -346,6 +346,7 @@ public final class FunctionManager {
             T event = (T) instance;
 
             if (!trigger.getPredicate().test(event)) {
+                LogUtil.log(LogUtil.Level.NOISE, "The event " + event.getEventName() + " failed the trigger predicate on the " + trigger.getIdentifier() + " ability trigger!");
                 return;
             }
 
@@ -355,7 +356,7 @@ public final class FunctionManager {
                 Ability ability = item.getAbility();
 
                 if (ability == null || ability.getTrigger() != trigger) {
-                    return;
+                    continue;
                 }
 
                 RuntimeContext context = trigger.trigger(event, item, ability);

@@ -15,6 +15,9 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that is responsible for cleaning up "dead" items in game
@@ -170,17 +173,11 @@ public final class GarbageCollector implements Listener {
                 continue;
             }
 
-            if (!this.shouldUpdate) {
+            ItemStack newItem = customItem.getItemStack().clone();
+
+            if (!this.shouldUpdate || bruteCompare(customItem, item)) {
                 continue;
             }
-
-            ItemStack customItemstack = customItem.getItemStack();
-
-            if (item.isSimilar(customItemstack)) {
-                continue;
-            }
-
-            ItemStack newItem = customItemstack.clone();
 
             newItem.setAmount(item.getAmount());
 
@@ -239,5 +236,36 @@ public final class GarbageCollector implements Listener {
         LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
         this.cleanInventory(inventory, true);
+    }
+
+    /**
+     * An unoptimized way to compare if two items are the same (without considering amount or durability)
+     */
+    private static boolean bruteCompare(@NotNull CustomItem item, @NotNull ItemStack two) {
+        ItemStack one = item.getItemStack();
+
+        if (one.getType() != two.getType() || !two.hasItemMeta()) {
+            return false;
+        }
+
+        ItemMeta metaOne = one.getItemMeta();
+        ItemMeta metaTwo = two.getItemMeta();
+
+        boolean customDamageable = metaOne instanceof Damageable;
+        boolean stackDamageable = metaTwo instanceof Damageable;
+
+        if (customDamageable != stackDamageable) {
+            return false;
+        }
+
+        if (customDamageable) { //already passed condition above, so if this is true, both are true
+            metaOne = metaOne.clone();
+            metaTwo = metaTwo.clone();
+
+            ((Damageable) metaOne).setDamage(1);
+            ((Damageable) metaTwo).setDamage(1);
+        }
+
+        return Bukkit.getItemFactory().equals(metaOne, metaTwo);
     }
 }

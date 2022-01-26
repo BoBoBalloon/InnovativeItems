@@ -297,13 +297,13 @@ public final class AbilityParser {
             return null;
         }
 
-        return ImmutableList.copyOf(AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1)));
+        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1));
     }
 
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static List<Object> parseArguments(String[] rawArguments, FunctionContext context) {
+    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context) {
         List<Object> parsedArguments = new ArrayList<>();
 
         for (int i = 0; i < rawArguments.length; i++) {
@@ -324,6 +324,6 @@ public final class AbilityParser {
             parsedArguments.add(parsedValue);
         }
 
-        return parsedArguments;
+        return ImmutableList.copyOf(parsedArguments);
     }
 }

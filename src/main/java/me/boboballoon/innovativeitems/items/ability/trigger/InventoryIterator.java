@@ -34,9 +34,9 @@ public interface InventoryIterator<T extends Event> {
     @NotNull
     static <T extends Event> InventoryIterator<T> fromFunction(@NotNull BiFunction<T, PlayerInventory, Collection<ItemStack>> function) {
         return (event, player) -> {
-            Collection<CustomItem> items = InnovativeItems.getInstance().getItemCache().fromItemStacks(function.apply(event, player.getInventory()));
+            Collection<ItemStack> raw = function.apply(event, player.getInventory());
 
-            return !items.isEmpty() ? items : Collections.emptyList();
+            return InnovativeItems.getInstance().getItemCache().fromItemStacks(raw);
         };
     }
 

@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents context where a block was broken and can assist execution that cannot be cached and must be parsed during runtime separately
@@ -21,11 +22,13 @@ public class BlockBreakContext extends RuntimeContext implements BlockContext, I
     }
 
     @Override
+    @NotNull
     public Block getBlock() {
         return this.block;
     }
 
     @Override
+    @NotNull
     public CustomItem getItem() {
         return this.item;
     }

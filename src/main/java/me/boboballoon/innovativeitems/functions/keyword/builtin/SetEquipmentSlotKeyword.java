@@ -15,6 +15,7 @@ import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -30,7 +31,7 @@ public class SetEquipmentSlotKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Player target = null;
         FunctionTargeter rawTarget = (FunctionTargeter) arguments.get(0);
 

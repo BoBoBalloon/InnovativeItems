@@ -16,3 +16,8 @@ debug-level: 2
 garbage-collector:
   should-update: true #if true, when a custom item does not match the values in the config, will update the item to match config
   should-delete: true #if true, when a custom item is not present in the cache, the garbage collector will delete the item
+
+#The item defender will ensure that custom items are not used in unintended ways that could destroy the item#
+item-defender:
+  enabled: true #if false the item defender system will not function at all
+  close-inventories: true #if true not only will the system disable interaction with the inventory but also close it

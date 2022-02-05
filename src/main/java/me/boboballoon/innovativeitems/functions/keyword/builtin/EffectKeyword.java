@@ -11,6 +11,7 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that gives a potion effect to a selected target
@@ -25,7 +26,7 @@ public class EffectKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         LivingEntity target = null;
         FunctionTargeter rawTarget = (FunctionTargeter) arguments.get(0);
 

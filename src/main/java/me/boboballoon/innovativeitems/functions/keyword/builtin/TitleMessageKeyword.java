@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that sends a title message to a selected target
@@ -24,7 +25,7 @@ public class TitleMessageKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
         Player target = null;
 

@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the target is in the selected biome
@@ -22,7 +23,7 @@ public class IsInBiomeCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Block block = null;
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
 

@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the target has a permission
@@ -20,7 +21,7 @@ public class IsPermissionPresentCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Permissible target = null;
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
 

@@ -15,10 +15,10 @@ public abstract class Keyword extends InnovativeFunction<Void> {
     }
 
     @Override
-    protected final Void call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected final Void call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         this.calling(arguments, context);
         return null;
     }
 
-    protected abstract void calling(ImmutableList<Object> arguments, RuntimeContext context);
+    protected abstract void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context);
 }

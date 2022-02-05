@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.util.TextUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that sends an action bar to a player
@@ -22,7 +23,7 @@ public class ActionbarKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
         Player target = null;
 

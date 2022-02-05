@@ -11,6 +11,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the target is holding a vanilla item
@@ -24,7 +25,7 @@ public class IsHoldingItemCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Player target = null;
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
 

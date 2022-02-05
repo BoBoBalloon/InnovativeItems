@@ -47,19 +47,17 @@ public class ExpectedManual implements ExpectedArguments {
      */
     @Override
     public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
-        Object value;
         try {
-            value = this.manual.getValue(rawValue, context);
+            return this.manual.getValue(rawValue, context);
         } catch (Exception e) {
             return null;
         }
-
-        return value;
     }
 
     /**
      * Java does not define classes by shape, I just don't want argument inception in this class
      */
+    @FunctionalInterface
     public interface ExpectedFunction {
         /**
          * A method used to manually set the value of an argument in a keyword

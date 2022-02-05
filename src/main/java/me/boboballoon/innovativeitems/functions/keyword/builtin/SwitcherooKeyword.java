@@ -9,6 +9,7 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that swaps the position of two entities
@@ -20,7 +21,7 @@ public class SwitcherooKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         LivingEntity entityOne = context.getPlayer();
         LivingEntity entityTwo;
 

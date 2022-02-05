@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.config;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
@@ -45,6 +46,10 @@ public final class ConfigManager {
     private boolean shouldUpdateLocal;
     private boolean shouldDeleteLocal;
 
+    //item defender
+    private boolean itemDefenderEnabledLocal;
+    private boolean closeInventoriesLocal;
+
     public ConfigManager() {
         this.reloadMainConfigValues();
     }
@@ -59,7 +64,7 @@ public final class ConfigManager {
 
         //load up update checker values, set to true if none is present
         boolean checkForUpdates;
-        if (config.contains("check-for-updates")) {
+        if (config.isBoolean("check-for-updates")) {
             checkForUpdates = config.getBoolean("check-for-updates");
         } else {
             checkForUpdates = true;
@@ -69,7 +74,7 @@ public final class ConfigManager {
 
         //load up default config values, set to true if none is present
         boolean generateDefaultConfigs;
-        if (config.contains("generate-default-configs")) {
+        if (config.isBoolean("generate-default-configs")) {
             generateDefaultConfigs = config.getBoolean("generate-default-configs");
         } else {
             generateDefaultConfigs = true;
@@ -79,7 +84,7 @@ public final class ConfigManager {
 
         //strict mode
         boolean strict;
-        if (config.contains("strict")) {
+        if (config.isBoolean("strict")) {
             strict = config.getBoolean("strict");
         } else {
             strict = true;
@@ -89,7 +94,7 @@ public final class ConfigManager {
 
         //load up debug level, sets to 2 if no value is present
         int debugLevel;
-        if (config.contains("debug-level")) {
+        if (config.isInt("debug-level")) {
             debugLevel = config.getInt("debug-level");
         } else {
             debugLevel = 2;
@@ -99,7 +104,7 @@ public final class ConfigManager {
 
         //load up garbage collector should update option, sets to true if no value is present
         boolean shouldUpdate;
-        if (config.contains("garbage-collector.should-update")) {
+        if (config.isBoolean("garbage-collector.should-update")) {
             shouldUpdate = config.getBoolean("garbage-collector.should-update");
         } else {
             shouldUpdate = true;
@@ -109,13 +114,33 @@ public final class ConfigManager {
 
         //load up garbage collector should delete option, sets to true if no value is present
         boolean shouldDelete;
-        if (config.contains("garbage-collector.should-delete")) {
+        if (config.isBoolean("garbage-collector.should-delete")) {
             shouldDelete = config.getBoolean("garbage-collector.should-delete");
         } else {
             shouldDelete = true;
             config.set("garbage-collector.should-delete", true);
         }
         this.setShouldDelete(shouldDelete);
+
+        //if the item defender should be active
+        boolean enabled;
+        if (config.isBoolean("item-defender.enabled")) {
+            enabled = config.getBoolean("item-defender.enabled");
+        } else {
+            enabled = true;
+            config.set("item-defender.enabled", true);
+        }
+        this.setIsItemDefenderEnabled(enabled);
+
+        //if the item defender should close inventories (results in items being dropped)
+        boolean closeInventories;
+        if (config.isBoolean("item-defender.close-inventories")) {
+            closeInventories = config.getBoolean("item-defender.close-inventories");
+        } else {
+            closeInventories = true;
+            config.set("item-defender.close-inventories", true);
+        }
+        this.setShouldCloseInventories(closeInventories);
 
         plugin.saveConfig();
     }
@@ -209,6 +234,46 @@ public final class ConfigManager {
 
     /**
      * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method used to get if the item defender should be active
+     *
+     * @return if the item defender should be active
+     */
+    public boolean isItemDefenderEnabled() {
+        return this.itemDefenderEnabledLocal;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method used to set if the item defender should be active
+     *
+     * @param itemDefenderEnabled a boolean that is true if the item defender should be active
+     */
+    public void setIsItemDefenderEnabled(boolean itemDefenderEnabled) {
+        this.itemDefenderEnabledLocal = itemDefenderEnabled;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method used to get if the item defender should forcibly close inventories
+     *
+     * @return if the item defender should forcibly close inventories
+     */
+    public boolean shouldCloseInventories() {
+        return this.closeInventoriesLocal;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
+     * A method used to set if the item defender should forcibly close inventories
+     *
+     * @param shouldCloseInventories a boolean that is true if the item defender should forcibly close inventories
+     */
+    public void setShouldCloseInventories(boolean shouldCloseInventories) {
+        this.closeInventoriesLocal = shouldCloseInventories;
+    }
+
+    /**
+     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
      * A method that returns a boolean that is true when the garbage collector is set to update item mismatches
      *
      * @return a boolean that is true when the garbage collector is set to update item mismatches
@@ -289,6 +354,14 @@ public final class ConfigManager {
             garbageCollector.setEnabled(true);
 
             garbageCollector.cleanAllPlayerInventories(false);
+
+            LogUtil.log(LogUtil.Level.INFO, "Updating item defender to match config...");
+
+            ItemDefender itemDefender = plugin.getItemDefender();
+            itemDefender.setEnabled(this.itemDefenderEnabledLocal);
+            itemDefender.setShouldCloseInventories(this.closeInventoriesLocal);
+
+            LogUtil.log(LogUtil.Level.INFO, "Item defender settings now match config!");
 
             LogUtil.logUnblocked(LogUtil.Level.INFO, "Plugin reload complete!");
         }, 100L);

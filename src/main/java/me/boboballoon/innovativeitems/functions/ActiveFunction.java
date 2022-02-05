@@ -51,11 +51,7 @@ public abstract class ActiveFunction<T> {
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
     @Nullable
-    public final T execute(RuntimeContext context) {
-        if (this.arguments == null) {
-            return null;
-        }
-
+    public final T execute(@NotNull RuntimeContext context) {
         try {
             return this.base.execute(this.arguments, context);
         } catch (ExecutionException e) {

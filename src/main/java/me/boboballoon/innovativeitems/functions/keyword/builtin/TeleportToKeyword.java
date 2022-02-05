@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that teleports a targeter to another targeter
@@ -22,7 +23,7 @@ public class TeleportToKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         FunctionTargeter entityTargeter = (FunctionTargeter) arguments.get(0);
         FunctionTargeter locationTargeter = (FunctionTargeter) arguments.get(1);
 

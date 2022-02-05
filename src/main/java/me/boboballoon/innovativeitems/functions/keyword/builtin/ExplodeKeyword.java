@@ -9,6 +9,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that spawns an explosion at a selected target
@@ -22,7 +23,7 @@ public class ExplodeKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Location location = null;
         FunctionTargeter rawLocation = (FunctionTargeter) arguments.get(0);
 

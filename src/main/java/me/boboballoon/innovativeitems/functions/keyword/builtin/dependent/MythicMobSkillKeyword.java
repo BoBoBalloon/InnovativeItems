@@ -10,6 +10,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that executes a mythicmob skill
@@ -22,7 +23,7 @@ public class MythicMobSkillKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         String skillName = (String) arguments.get(0);
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(1);
         LivingEntity target = null;

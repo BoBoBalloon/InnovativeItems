@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the block at the target location is the specified type
@@ -25,7 +26,7 @@ public class IsBlockAtCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         int x = (int) arguments.get(0);
         int y = (int) arguments.get(1);
         int z = (int) arguments.get(2);

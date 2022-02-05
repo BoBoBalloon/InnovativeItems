@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the target is wearing a vanilla item
@@ -25,7 +26,7 @@ public class IsWearingItemCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Player target = null;
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
 

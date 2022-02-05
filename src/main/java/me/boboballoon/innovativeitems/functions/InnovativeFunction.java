@@ -46,6 +46,14 @@ public abstract class InnovativeFunction<T> {
     }
 
     /**
+     * A method that executes code that will be fired by the keyword
+     *
+     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
+     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
+     */
+    protected abstract T call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context);
+
+    /**
      * A method that returns a boolean that is true when the function will be run async
      *
      * @return a boolean that is true when the function will be run async
@@ -53,20 +61,12 @@ public abstract class InnovativeFunction<T> {
     public abstract boolean isAsync();
 
     /**
-     * A method that executes code that will be fired by the keyword
-     *
-     * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
-     * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
-     */
-    protected abstract T call(ImmutableList<Object> arguments, RuntimeContext context);
-
-    /**
      * A method that executes code that will be fired by the keyword (FIRE ASYNC)
      *
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
-    public final T execute(ImmutableList<Object> arguments, RuntimeContext context) throws ExecutionException {
+    public final T execute(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) throws ExecutionException {
         if (Bukkit.getServer().isPrimaryThread()) {
             throw new IllegalStateException("The function execute method cannot be called from the main thread!");
         }

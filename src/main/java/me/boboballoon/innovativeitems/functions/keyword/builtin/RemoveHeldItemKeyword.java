@@ -9,6 +9,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that removes the item in the targets hand
@@ -21,7 +22,7 @@ public class RemoveHeldItemKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Player target = null;
         FunctionTargeter rawTarget = (FunctionTargeter) arguments.get(0);
 

@@ -12,6 +12,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that fires a particle at a selected target
@@ -28,7 +29,7 @@ public class ParticleKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         Location location = null;
         FunctionTargeter rawLocation = (FunctionTargeter) arguments.get(0);
 

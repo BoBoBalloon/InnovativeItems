@@ -87,6 +87,10 @@ public class Ability {
      * @return a boolean that is true when the ability executed successfully
      */
     public boolean execute(@NotNull RuntimeContext context) {
+        if (this != context.getAbility()) {
+            throw new IllegalArgumentException("An instance of RuntimeContext has been passed to an ability that does not reflect the context!");
+        }
+
         if (Bukkit.getServer().isPrimaryThread()) {
             throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
         }
@@ -146,11 +150,11 @@ public class Ability {
      * @param context the current runtime context
      * @return if the current runtime context should be wrapped
      */
-    private boolean shouldWrapContext(RuntimeContext context) {
+    private boolean shouldWrapContext(@NotNull RuntimeContext context) {
         if (InnovativeItems.getInstance().getConfigManager().isStrict()) {
             return false;
         }
 
-        return !((context instanceof EntityContext && context instanceof BlockContext && context instanceof ItemContext) || context instanceof FlexibleContext);
+        return !(context instanceof EntityContext && context instanceof BlockContext && context instanceof ItemContext);
     }
 }

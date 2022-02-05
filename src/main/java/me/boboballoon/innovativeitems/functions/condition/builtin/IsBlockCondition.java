@@ -12,6 +12,7 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a condition in an ability config file that checks if the block at the target location is the specified type
@@ -27,7 +28,7 @@ public class IsBlockCondition extends Condition {
     }
 
     @Override
-    protected Boolean call(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected Boolean call(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
         Location location = null;
 

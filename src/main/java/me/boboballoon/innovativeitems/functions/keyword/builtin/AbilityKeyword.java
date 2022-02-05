@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that executes another ability
@@ -18,7 +19,7 @@ public class AbilityKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         String rawAbility = (String) arguments.get(0);
 
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(rawAbility);

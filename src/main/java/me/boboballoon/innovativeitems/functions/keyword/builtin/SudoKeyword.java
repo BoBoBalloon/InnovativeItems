@@ -11,6 +11,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that represents a keyword in an ability config file that executes a command as a selected target
@@ -23,7 +24,7 @@ public class SudoKeyword extends Keyword {
     }
 
     @Override
-    protected void calling(ImmutableList<Object> arguments, RuntimeContext context) {
+    protected void calling(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) {
         FunctionTargeter targeter = (FunctionTargeter) arguments.get(0);
         LivingEntity target = null;
 

@@ -144,7 +144,7 @@ public final class FunctionManager {
     /**
      * A method used to register new conditions in the cache that depend on a specified plugin
      *
-     * @param depend the name of the plugin these keywords depend on
+     * @param depend the name of the plugin these conditions depend on
      * @param conditions all the conditions you wish to register
      */
     public void registerConditions(@NotNull String depend, @NotNull Condition... conditions) {
@@ -171,7 +171,22 @@ public final class FunctionManager {
     }
 
     /**
-     * A method used to register n amount of new trigger in the cache
+     * A method used to register a new trigger in the cache
+     *
+     * @param depend the name of the plugin this ability trigger depends on
+     * @param trigger the trigger you wish to register
+     */
+    public void registerTrigger(@NotNull String depend, @NotNull AbilityTrigger<?, ?> trigger) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerTrigger(trigger);
+    }
+
+    /**
+     * A method used to register new triggers in the cache
      *
      * @param triggers the triggers you wish to register
      */
@@ -179,6 +194,21 @@ public final class FunctionManager {
         for (AbilityTrigger<?, ?> trigger : triggers) {
             this.registerTrigger(trigger);
         }
+    }
+
+    /**
+     * A method used to register new triggers in the cache
+     *
+     * @param depend the name of the plugin these ability triggers depend on
+     * @param triggers the triggers you wish to register
+     */
+    public void registerTrigger(@NotNull String depend, @NotNull AbilityTrigger<?, ?>... triggers) {
+        if (Bukkit.getPluginManager().getPlugin(depend) == null) {
+            //silently fail
+            return;
+        }
+
+        this.registerTriggers(triggers);
     }
 
     /**
@@ -231,7 +261,7 @@ public final class FunctionManager {
      * @param identifier the identifier of the function
      * @return a boolean that is true when said identifier is present
      */
-    public boolean contains(String identifier) {
+    public boolean contains(@NotNull String identifier) {
         return this.keywords.containsKey(identifier) || this.conditions.containsKey(identifier) || this.triggers.containsKey(identifier) || (this.triggerManager != null && this.triggerManager.containsIdentifier(identifier));
     }
 
@@ -241,7 +271,7 @@ public final class FunctionManager {
      * @param identifier the identifier you wish to check
      * @return a boolean that is true if the provided identifier is invalid
      */
-    public boolean isInvalidIdentifier(String identifier) {
+    public boolean isInvalidIdentifier(@NotNull String identifier) {
         return this.contains(identifier) || !identifier.matches("\\w+");
     }
 

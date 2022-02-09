@@ -19,7 +19,7 @@ public interface ExpectedArguments {
      */
     Consumer<FunctionContext> DEFAULT_ERROR = context -> {
         String argumentType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";
-        LogUtil.log(LogUtil.Level.WARNING, "Argument number " + context.getLineNumber() + " on " + argumentType + context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
+        LogUtil.log(LogUtil.Level.WARNING, "Argument number " + context.getLineNumber() + " on " + argumentType + " " +  context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
     };
 
     /**

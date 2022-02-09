@@ -28,6 +28,7 @@ public class AbilityExecuteEvent extends Event implements Cancellable {
      *
      * @return the context given to the ability
      */
+    @NotNull
     public RuntimeContext getContext() {
         return this.context;
     }
@@ -37,6 +38,7 @@ public class AbilityExecuteEvent extends Event implements Cancellable {
      *
      * @return the ability attempting to be executed
      */
+    @NotNull
     public Ability getAbility() {
         return this.context.getAbility();
     }
@@ -46,6 +48,7 @@ public class AbilityExecuteEvent extends Event implements Cancellable {
      *
      * @return the player executing the ability
      */
+    @NotNull
     public Player getPlayer() {
         return this.context.getPlayer();
     }

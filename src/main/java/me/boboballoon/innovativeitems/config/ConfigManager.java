@@ -6,12 +6,14 @@ import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,9 @@ public final class ConfigManager {
 
     //strict mode
     private boolean strict;
+
+    //placeable item error message
+    private String failedItemPlaceMessage;
 
     //debug level
     /**
@@ -91,6 +96,15 @@ public final class ConfigManager {
             config.set("strict", true);
         }
         this.setStrict(strict);
+
+        String failedItemPlaceMessage;
+        if (config.isString("failed-item-place")) {
+            failedItemPlaceMessage = config.getString("failed-item-place", "null");
+        } else {
+            failedItemPlaceMessage = "null";
+            config.set("failed-item-place", "null");
+        }
+        this.setFailedItemPlaceMessage(failedItemPlaceMessage);
 
         //load up debug level, sets to 2 if no value is present
         int debugLevel;
@@ -200,6 +214,25 @@ public final class ConfigManager {
     }
 
     /**
+     * Gets the message to be sent to players when they try and place down a custom item that is not placeable
+     *
+     * @return the message to be sent to players when they try and place down a custom item that is not placeable
+     */
+    @NotNull
+    public String getFailedItemPlaceMessage() {
+        return this.failedItemPlaceMessage;
+    }
+
+    /**
+     * Sets the message to be sent to players when they try and place down a custom item that is not placeable
+     *
+     * @param failedItemPlaceMessage the message to be sent to players when they try and place down a custom item that is not placeable
+     */
+    public void setFailedItemPlaceMessage(@NotNull String failedItemPlaceMessage) {
+        this.failedItemPlaceMessage = TextUtil.format(failedItemPlaceMessage);
+    }
+
+    /**
      * A method that returns the current debug level
      *
      * @return the current debug level
@@ -215,21 +248,17 @@ public final class ConfigManager {
      * @param saveConfig if the config file should be updated to reflect this change
      */
     public void setDebugLevel(int debugLevel, boolean saveConfig) {
-        if (debugLevel > 5) {
-            this.debugLevel = 5;
-        } else if (debugLevel < 0) {
-            this.debugLevel = 0;
-        } else {
-            this.debugLevel = debugLevel;
+        this.debugLevel = Math.max(Math.min(debugLevel, 5), 0); //pick the lowest number, the max or debugLevel (if higher picks 5, if lower picks debugLevel) pick the biggest number next (self explanatory)
+
+        if (!saveConfig) {
+            return;
         }
 
-        if (saveConfig) {
-            Plugin plugin = InnovativeItems.getInstance();
-            FileConfiguration config = plugin.getConfig();
+        Plugin plugin = InnovativeItems.getInstance();
+        FileConfiguration config = plugin.getConfig();
 
-            config.set("debug-level", this.debugLevel);
-            plugin.saveConfig();
-        }
+        config.set("debug-level", this.debugLevel);
+        plugin.saveConfig();
     }
 
     /**
@@ -411,7 +440,7 @@ public final class ConfigManager {
     /**
      * A method used to generate the default configuration files
      */
-    private void generateDefaultConfigs(InnovativeItems plugin, File abilities, File items) {
+    private void generateDefaultConfigs(@NotNull InnovativeItems plugin, @NotNull File abilities, @NotNull File items) {
         LogUtil.log(LogUtil.Level.INFO, "Starting default configuration generation...");
         File defaultAbilities = new File(abilities, "default-abilities.yml");
         File defaultItems = new File(items, "default-items.yml");
@@ -446,7 +475,7 @@ public final class ConfigManager {
      * @param home  the home directory of all ability yml files
      * @param cache the cache where loaded abilities will be registered to
      */
-    private void loadAbilities(File home, InnovativeCache cache) {
+    private void loadAbilities(@NotNull File home, @NotNull InnovativeCache cache) {
         LogUtil.log(LogUtil.Level.INFO, "Starting ability initialization and parsing...");
 
         for (File file : home.listFiles()) {
@@ -485,7 +514,7 @@ public final class ConfigManager {
      * @param home  the home directory of all item yml files
      * @param cache the cache where loaded items will be registered to
      */
-    private void loadItems(File home, InnovativeCache cache) {
+    private void loadItems(@NotNull File home, @NotNull InnovativeCache cache) {
         LogUtil.log(LogUtil.Level.INFO, "Starting item initialization and parsing...");
 
         for (File file : home.listFiles()) {

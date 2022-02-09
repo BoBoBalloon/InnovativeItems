@@ -39,10 +39,11 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make a new projectile hit trigger
-    2. Add option for abilities to consume mana cost (hook into MMOCore developer api)
-    3. Make custom durability options for custom items
-    4. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    1. Make a "right-click-entity" trigger using PlayerInteractEntityEvent
+    2. Make a new projectile hit trigger
+    3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
+    4. Make custom durability options for custom items
+    5. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
      */
 
     /*

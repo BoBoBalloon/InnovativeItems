@@ -18,15 +18,15 @@ import java.util.function.Consumer;
 public class ExpectedTargeters implements ExpectedArguments {
     private final ImmutableSet<FunctionTargeter> targeters;
 
-    public ExpectedTargeters(ImmutableSet<FunctionTargeter> targeters) {
+    public ExpectedTargeters(@NotNull ImmutableSet<FunctionTargeter> targeters) {
         this.targeters = targeters;
     }
 
-    public ExpectedTargeters(Collection<FunctionTargeter> targeters) {
+    public ExpectedTargeters(@NotNull Collection<FunctionTargeter> targeters) {
         this(ImmutableSet.copyOf(targeters));
     }
 
-    public ExpectedTargeters(FunctionTargeter... targeters) {
+    public ExpectedTargeters(@NotNull FunctionTargeter... targeters) {
         this(ImmutableSet.copyOf(targeters));
     }
 

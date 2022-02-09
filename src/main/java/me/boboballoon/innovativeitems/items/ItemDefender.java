@@ -35,6 +35,7 @@ public final class ItemDefender implements Listener {
      *
      * @return a mutable set that all the inventory types that cannot be used with a custom item are contained
      */
+    @NotNull
     public Set<Class<? extends Inventory>> getBlacklistedInventories() {
         return this.blacklistedInventories;
     }

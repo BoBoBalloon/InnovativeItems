@@ -62,7 +62,7 @@ public final class InnovativeCache {
      * @return the ability (null if not present in cache)
      */
     @Nullable
-    public Ability getAbility(String name) {
+    public Ability getAbility(@NotNull String name) {
         return this.abilities.get(name);
     }
 
@@ -73,7 +73,7 @@ public final class InnovativeCache {
      * @return the item (null if not present in cache)
      */
     @Nullable
-    public CustomItem getItem(String name) {
+    public CustomItem getItem(@NotNull String name) {
         return this.items.get(name);
     }
 
@@ -147,7 +147,7 @@ public final class InnovativeCache {
      * @param name name the name (id) of the item
      * @return a boolean that is true when said name is present
      */
-    public boolean contains(String name) {
+    public boolean contains(@NotNull String name) {
         return (this.abilities.containsKey(name) || this.items.containsKey(name));
     }
 
@@ -156,6 +156,7 @@ public final class InnovativeCache {
      *
      * @return a set of all ids of all registered abilities
      */
+    @NotNull
     public Set<String> getAbilityIdentifiers() {
         return this.abilities.keySet();
     }
@@ -165,6 +166,7 @@ public final class InnovativeCache {
      *
      * @return a set of all ids of all registered items
      */
+    @NotNull
     public Set<String> getItemIdentifiers() {
         return this.items.keySet();
     }

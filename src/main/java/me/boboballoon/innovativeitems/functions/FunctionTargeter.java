@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -32,9 +33,9 @@ public enum FunctionTargeter {
      * @return the corresponding keyword targeter (null if nothing matches)
      */
     @Nullable
-    public static FunctionTargeter getFromIdentifier(String identifier) {
+    public static FunctionTargeter getFromIdentifier(@NotNull String identifier) {
         for (FunctionTargeter targeter : FunctionTargeter.values()) {
-            if (identifier.equalsIgnoreCase(targeter.getIdentifier())) {
+            if (identifier.equals(targeter.getIdentifier())) {
                 return targeter;
             }
         }

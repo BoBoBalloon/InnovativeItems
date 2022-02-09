@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions;
 
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents the context in which a function was used in
@@ -12,7 +13,7 @@ public class FunctionContext {
     private final AbilityTrigger<?, ?> abilityTrigger;
     private final int lineNumber;
 
-    public FunctionContext(InnovativeFunction<?> function, String[] rawArguments, String abilityName, AbilityTrigger<?, ?> abilityTrigger, int lineNumber) {
+    public FunctionContext(@NotNull InnovativeFunction<?> function, @NotNull String[] rawArguments, @NotNull String abilityName, @NotNull AbilityTrigger<?, ?> abilityTrigger, int lineNumber) {
         this.function = function;
         this.rawArguments = rawArguments;
         this.abilityName = abilityName;
@@ -25,6 +26,7 @@ public class FunctionContext {
      *
      * @return the type of keyword being used as a base for the active function
      */
+    @NotNull
     public InnovativeFunction<?> getFunction() {
         return this.function;
     }
@@ -34,6 +36,7 @@ public class FunctionContext {
      *
      * @return the array of arguments used for the function
      */
+    @NotNull
     public String[] getRawArguments() {
         return this.rawArguments;
     }
@@ -43,6 +46,7 @@ public class FunctionContext {
      *
      * @return the name of the ability that contains this function
      */
+    @NotNull
     public String getAbilityName() {
         return this.abilityName;
     }
@@ -52,6 +56,7 @@ public class FunctionContext {
      *
      * @return the trigger of the ability that contains this function
      */
+    @NotNull
     public AbilityTrigger<?, ?> getAbilityTrigger() {
         return this.abilityTrigger;
     }

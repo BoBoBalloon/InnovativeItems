@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
+import me.boboballoon.innovativeitems.InnovativeItems;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,14 +41,16 @@ public class ItemFieldListeners implements Listener {
 
         NBTItem nbtItem = new NBTItem(item);
 
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+        if (!nbtItem.hasKey("innovativeplugin-customitem") || nbtItem.getBoolean("innovativeplugin-customitem-placeable")) {
             return;
         }
 
-        boolean placeable = nbtItem.getBoolean("innovativeplugin-customitem-placeable");
+        event.setCancelled(true);
 
-        if (!placeable) {
-            event.setCancelled(true);
+        String placeMessage = InnovativeItems.getInstance().getConfigManager().getFailedItemPlaceMessage();
+
+        if (!placeMessage.equals("null")) {
+            event.getPlayer().sendMessage(placeMessage);
         }
     }
 
@@ -71,13 +74,7 @@ public class ItemFieldListeners implements Listener {
 
             NBTItem nbtItem = new NBTItem(item);
 
-            if (!nbtItem.hasKey("innovativeplugin-customitem")) {
-                continue;
-            }
-
-            boolean soulbound = nbtItem.getBoolean("innovativeplugin-customitem-soulbound");
-
-            if (!soulbound) {
+            if (!nbtItem.hasKey("innovativeplugin-customitem") || !nbtItem.getBoolean("innovativeplugin-customitem-soulbound")) {
                 continue;
             }
 

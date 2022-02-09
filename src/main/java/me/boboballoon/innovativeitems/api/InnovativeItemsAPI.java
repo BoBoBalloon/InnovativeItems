@@ -27,38 +27,60 @@ public final class InnovativeItemsAPI {
      *
      * @return the active instance of the keyword manager
      */
+    @NotNull
     public static FunctionManager getFunctionManager() {
         return InnovativeItems.getInstance().getFunctionManager();
     }
 
     /**
      * A method used to return the active instance of the config manager
-     * (Should not be used until the plugin is enabled, will return null if used when the plugin is loaded)
+     * (Should not be used until the plugin is enabled, will throw {@link java.lang.IllegalStateException} if used when the plugin is loaded)
      *
      * @return the active instance of the config manager
      */
+    @NotNull
     public static ConfigManager getConfigManager() {
-        return InnovativeItems.getInstance().getConfigManager();
+        ConfigManager manager = InnovativeItems.getInstance().getConfigManager();
+
+        if (manager == null) {
+            throw new IllegalStateException("You tried to access the plugin's config manager before the plugin was enabled!");
+        }
+
+        return manager;
     }
 
     /**
      * A method used to return the active instance of the garbage collector
-     * (Should not be used until the plugin is enabled, will return null if used when the plugin is loaded)
+     * (Should not be used until the plugin is enabled, will throw {@link java.lang.IllegalStateException} if used when the plugin is loaded)
      *
      * @return the active instance of the garbage collector
      */
+    @NotNull
     public static GarbageCollector getGarbageCollector() {
-        return InnovativeItems.getInstance().getGarbageCollector();
+        GarbageCollector garbage = InnovativeItems.getInstance().getGarbageCollector();
+
+        if (garbage == null) {
+            throw new IllegalStateException("You tried to access the plugin's garbage collector before the plugin was enabled!");
+        }
+
+        return garbage;
     }
 
     /**
      * A method used to return the active instance of the item defender
-     * (Should not be used until the plugin is enabled, will return null if used when the plugin is loaded)
+     * (Should not be used until the plugin is enabled, will throw {@link java.lang.IllegalStateException} if used when the plugin is loaded)
      *
      * @return the active instance of the item defender
      */
+    @NotNull
     public static ItemDefender getItemDefender() {
-        return InnovativeItems.getInstance().getItemDefender();
+        ItemDefender defender = InnovativeItems.getInstance().getItemDefender();
+
+        if (defender == null) {
+            throw new IllegalStateException("You tried to access the plugin's item defender before the plugin was enabled!");
+        }
+
+        return defender;
     }
 
     /**
@@ -127,6 +149,7 @@ public final class InnovativeItemsAPI {
      * @param identifier the name of the custom item
      * @return an optional custom item
      */
+    @NotNull
     public static Optional<CustomItem> getCustomItem(@NotNull String identifier) {
         CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(identifier);
         return Optional.ofNullable(item);
@@ -138,6 +161,7 @@ public final class InnovativeItemsAPI {
      * @param identifier the name of the ability
      * @return an optional ability
      */
+    @NotNull
     public static Optional<Ability> getAbility(@NotNull String identifier) {
         Ability ability = InnovativeItems.getInstance().getItemCache().getAbility(identifier);
         return Optional.ofNullable(ability);

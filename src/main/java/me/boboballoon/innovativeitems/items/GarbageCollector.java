@@ -100,7 +100,7 @@ public final class GarbageCollector implements Listener {
      * @param inventory the inventory that will be cleaned
      * @param async a boolean that is true when this method should be scheduled to fire async
      */
-    public void cleanInventory(Inventory inventory, boolean async) {
+    public void cleanInventory(@NotNull Inventory inventory, boolean async) {
         if (!this.enabled) {
             LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
@@ -147,7 +147,7 @@ public final class GarbageCollector implements Listener {
      *
      * @param inventory the inventory to cleanup
      */
-    private void cleanup(Inventory inventory) {
+    private void cleanup(@NotNull Inventory inventory) {
         ItemStack[] items = inventory.getContents();
         for (int i = 0; i < items.length; i++) {
             ItemStack item = items[i];

@@ -39,6 +39,7 @@ public class AbilityKeyword extends Keyword {
             return;
         }
 
+        context.setAbility(ability);
         ability.execute(context);
     }
 

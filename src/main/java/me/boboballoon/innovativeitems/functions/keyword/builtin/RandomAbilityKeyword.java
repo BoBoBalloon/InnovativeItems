@@ -52,6 +52,7 @@ public class RandomAbilityKeyword extends Keyword {
 
         Ability ability = abilities.get(index);
 
+        context.setAbility(ability);
         ability.execute(context);
     }
 

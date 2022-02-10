@@ -289,7 +289,7 @@ public final class AbilityParser {
 
         //in the case of no arguments provided
         if (rawArguments.length == 1 && rawArguments[0].equals("")) {
-            rawArguments = new String[]{};
+            rawArguments = new String[0];
         }
 
         if (rawArguments.length != function.getArguments().size()) {

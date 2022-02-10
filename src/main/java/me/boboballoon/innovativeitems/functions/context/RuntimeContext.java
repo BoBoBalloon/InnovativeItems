@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RuntimeContext {
     private final Player player;
-    private final Ability ability;
+    private Ability ability;
 
     /**
      * A constructor that builds the runtime context
@@ -39,6 +39,15 @@ public class RuntimeContext {
      */
     public final Ability getAbility() {
         return this.ability;
+    }
+
+    /**
+     * A method used to set the ability of this runtime context
+     *
+     * @param ability the new ability of this runtime context
+     */
+    public final void setAbility(@NotNull Ability ability) {
+        this.ability = ability;
     }
 
     /**

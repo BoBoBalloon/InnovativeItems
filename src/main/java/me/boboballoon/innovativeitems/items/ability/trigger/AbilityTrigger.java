@@ -149,9 +149,9 @@ public abstract class AbilityTrigger<T extends Event, S extends RuntimeContext> 
      * @param event the event that was called
      * @param item the custom item that was involved in this event
      * @param ability the ability on the custom item that MUST BE PASSED INTO {@link S}
-     * @return a runtime context that will be used to fire the wrapped ability async
+     * @return a runtime context that will be used to fire the wrapped ability async (null if it should be cancelled)
      */
-    @NotNull
+    @Nullable
     public abstract S trigger(@NotNull T event, @NotNull CustomItem item, @NotNull Ability ability);
 
     /**

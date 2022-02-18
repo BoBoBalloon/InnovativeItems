@@ -48,12 +48,18 @@ public class RandomAbilityKeyword extends Keyword {
             abilities.add(ability);
         }
 
+        if (abilities.isEmpty()) {
+            return;
+        }
+
         int index = ThreadLocalRandom.current().nextInt(abilities.size());
 
+        Ability currentAbility = context.getAbility();
         Ability ability = abilities.get(index);
 
         context.setAbility(ability);
         ability.execute(context);
+        context.setAbility(currentAbility);
     }
 
     @Override

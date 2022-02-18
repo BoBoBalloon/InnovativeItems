@@ -66,7 +66,7 @@ public class IsWearingCustomItemCondition extends Condition {
 
         CustomItem item = cache.fromItemStack(target.getInventory().getItem(slot.getSlot()));
 
-        return customItem.equals(item);
+        return customItem.getIdentifier().equals(item.getIdentifier());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class IsWearingCustomItemCondition extends Condition {
                 continue;
             }
 
-            if (customItem.equals(customItemTwo)) {
+            if (customItem.getIdentifier().equals(customItemTwo.getIdentifier())) {
                 return true;
             }
         }

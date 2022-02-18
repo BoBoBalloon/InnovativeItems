@@ -2,6 +2,9 @@ package me.boboballoon.innovativeitems.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.util.TextUtil;
+import me.boboballoon.innovativeitems.util.armorevent.ArmorEquipEvent;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -105,5 +108,35 @@ public class ItemFieldListeners implements Listener {
         ItemStack[] items = this.soulboundItems.remove(uuid).toArray(new ItemStack[0]);
 
         player.getInventory().addItem(items);
+    }
+
+    /**
+     * Listener used to check when a player equips armor
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerEquipArmor(ArmorEquipEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        ItemStack item = event.getNewArmorPiece();
+
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+
+        NBTItem nbt = new NBTItem(item);
+
+        if (!nbt.hasKey("innovativeplugin-customitem") || nbt.getBoolean("innovativeplugin-customitem-wearable")) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            event.setCancelled(true);
+        } else {
+            TextUtil.sendMessage(player, "&r&cYou cannot equip this item, but you are in creative mode so I guess you get a pass...");
+        }
     }
 }

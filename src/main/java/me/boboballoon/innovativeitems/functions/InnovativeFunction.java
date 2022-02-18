@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedArguments;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -66,6 +67,7 @@ public abstract class InnovativeFunction<T> {
      * @param arguments the arguments that are used to execute the keyword (empty if no arguments are needed)
      * @param context context that can assist execution that cannot be cached and must be parsed during runtime separately
      */
+    @Nullable
     public final T execute(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) throws ExecutionException {
         if (Bukkit.getServer().isPrimaryThread()) {
             throw new IllegalStateException("The function execute method cannot be called from the main thread!");

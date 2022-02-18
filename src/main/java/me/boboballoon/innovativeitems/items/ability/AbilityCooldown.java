@@ -143,7 +143,7 @@ public class AbilityCooldown extends Ability {
         public void send(Player player, long waitTime, long cooldown) {
             long millis = (waitTime + cooldown) - System.currentTimeMillis();
 
-            String cooldownText = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+            String cooldownText = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) % 60); //there are 60 seconds in a minute so the remainder of seconds divided by a minute would be the seconds left
 
             BaseComponent[] message = TextComponent.fromLegacyText(this.message.replace("{cooldown}", cooldownText));
 

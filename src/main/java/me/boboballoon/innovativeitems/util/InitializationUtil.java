@@ -24,6 +24,7 @@ public final class InitializationUtil {
      * @throws IllegalClassException when the provided clazz argument is not a supported number
      * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
      */
+    @NotNull
     public static <T extends Number> T initNumber(@NotNull String text, @NotNull Class<T> clazz) throws IllegalClassException, NumberFormatException {
         try {
             Method method = clazz.getMethod("valueOf", String.class);

@@ -39,8 +39,11 @@ public class AbilityKeyword extends Keyword {
             return;
         }
 
+        Ability currentAbility = context.getAbility();
+
         context.setAbility(ability);
         ability.execute(context);
+        context.setAbility(currentAbility);
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.util;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,7 @@ public class UpdateChecker {
 
     private static final String RESOURCE_ID = InnovativeItems.isPluginPremium() ? "93570" : "96456";
 
-    public UpdateChecker(Plugin plugin) {
+    public UpdateChecker(@NotNull Plugin plugin) {
         this.description = plugin.getDescription();
     }
 

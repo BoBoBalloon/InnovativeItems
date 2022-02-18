@@ -18,6 +18,8 @@ import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerT
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
+import me.boboballoon.innovativeitems.util.armorevent.ArmorListener;
+import me.boboballoon.innovativeitems.util.armorevent.DispenserArmorListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -39,15 +41,18 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    0. Make adddurability keyword that adds durability to an equipment slot
     1. Make a "right-click-entity" trigger using PlayerInteractEntityEvent
-    2. Make a new projectile hit trigger
-    3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
-    4. Make custom durability options for custom items
-    5. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    2. Make a "double-right-click" and "double-left-click" triggers
+    3. Make a new projectile hit trigger
+    4. Add option for abilities to consume mana cost (hook into MMOCore developer api)
+    5. Make custom durability options for custom items
+    6. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
      */
 
     /*
     CHANGE LIST:
+
      */
 
     /**
@@ -103,8 +108,6 @@ public final class InnovativeItems extends JavaPlugin {
         //config manager init
         this.configManager = new ConfigManager();
 
-        this.functionManager.registerTriggerQueue(); //map triggers from queue to function manager
-
         //update checker run (if value is true)
         if (this.configManager.shouldCheckForUpdates()) {
             UpdateChecker updateChecker = new UpdateChecker(this);
@@ -143,7 +146,8 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");
 
-        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender);
+        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener());
+        this.functionManager.registerCachedTriggers();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }

@@ -13,12 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,16 +27,14 @@ public final class FunctionManager {
     private final Map<String, Keyword> keywords;
     private final Map<String, Condition> conditions;
     private final Map<String, AbilityTrigger<?, ?>> triggers;
-    private AbilityTriggerManager triggerManager;
 
     public FunctionManager() {
         this.keywords = new HashMap<>();
         this.conditions = new HashMap<>();
         this.triggers = new HashMap<>();
 
-        this.triggerManager = new AbilityTriggerManager();
-        LogUtil.logUnblocked(LogUtil.Level.INFO, "Function manager initialized!");
         //unblocked because debug level is null
+        LogUtil.logUnblocked(LogUtil.Level.INFO, "Function manager initialized!");
     }
 
     /**
@@ -162,11 +159,16 @@ public final class FunctionManager {
      * @param trigger the trigger you wish to register
      */
     public void registerTrigger(@NotNull AbilityTrigger<?, ?> trigger) {
-        if (this.triggerManager != null) {
-            this.triggerManager.addToQueue(trigger);
-        } else if (!this.contains(trigger.getIdentifier()) && trigger.getIdentifier().matches("[\\w-]+")) {
+        if (this.contains(trigger.getIdentifier()) || !trigger.getIdentifier().matches("[\\w-]+")) {
+            return;
+        }
+
+        this.triggers.put(trigger.getIdentifier(), trigger);
+
+        Plugin plugin = InnovativeItems.getInstance();
+
+        if (plugin.isEnabled()) {
             FunctionManager.registerTriggerEvent(trigger);
-            this.triggers.put(trigger.getIdentifier(), trigger);
         }
     }
 
@@ -262,7 +264,7 @@ public final class FunctionManager {
      * @return a boolean that is true when said identifier is present
      */
     public boolean contains(@NotNull String identifier) {
-        return this.keywords.containsKey(identifier) || this.conditions.containsKey(identifier) || this.triggers.containsKey(identifier) || (this.triggerManager != null && this.triggerManager.containsIdentifier(identifier));
+        return this.keywords.containsKey(identifier) || this.conditions.containsKey(identifier) || this.triggers.containsKey(identifier);
     }
 
     /**
@@ -276,85 +278,11 @@ public final class FunctionManager {
     }
 
     /**
-     * A method that registers the internal queue of ability triggers (FOR INTERNAL USE ONLY)
+     * A method for internal use only that will reregister all event listeners for ability triggers
      */
-    public void registerTriggerQueue() {
-        if (this.triggerManager != null) {
-            this.triggerManager.map(this.triggers);
-            this.triggerManager = null;
-            LogUtil.log(LogUtil.Level.INFO, "Finished mapping all ability triggers from queue to cache and registering related events!");
-        } else {
-            LogUtil.log(LogUtil.Level.DEV, "The FunctionManager registerTriggerQueue() method was called after the queue was mapped to the cache...");
-        }
-    }
-
-    /**
-     * An inner class used to manage ability triggers
-     */
-    private static class AbilityTriggerManager {
-        private List<AbilityTrigger<?, ?>> queue;
-
-        public AbilityTriggerManager() {
-            this.queue = new ArrayList<>();
-        }
-
-        /**
-         * A method used to add an ability trigger to the queue
-         *
-         * @param trigger the trigger to add to the queue
-         */
-        public void addToQueue(@NotNull AbilityTrigger<?, ?> trigger) {
-            if (this.contains(trigger) && !trigger.getIdentifier().matches("[\\w-]+")) {
-                LogUtil.logUnblocked(LogUtil.Level.DEV, "Trigger with the identifier of " + trigger.getIdentifier() + " is not valid! Skipping...");
-                return;
-            }
-
-            this.queue.add(trigger);
-        }
-
-        /**
-         * A method used to check if the queue contains the provided trigger
-         *
-         * @param trigger the provided trigger
-         * @return check if the queue contains the provided trigger
-         */
-        public boolean contains(@NotNull AbilityTrigger<?, ?> trigger) {
-            for (AbilityTrigger<?, ?> element : this.queue) {
-                if (trigger.getIdentifier().equals(element.getIdentifier()) || trigger.getRegex().equals(element.getRegex())) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * A method used to check if the queue contains the provided identifier
-         *
-         * @param identifier the provided identifier
-         * @return check if the queue contains the provided identifier
-         */
-        public boolean containsIdentifier(@NotNull String identifier) {
-            for (AbilityTrigger<?, ?> trigger : this.queue) {
-                if (trigger.getIdentifier().equals(identifier) || trigger.getRegex().equals(identifier)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * A method used to map out all ability triggers in the queue to their identifier and register the provided events
-         */
-        public void map(@NotNull Map<String, AbilityTrigger<?, ?>> map) {
-            for (AbilityTrigger<?, ?> trigger : this.queue) {
-                FunctionManager.registerTriggerEvent(trigger);
-                map.put(trigger.getIdentifier(), trigger);
-            }
-
-            this.queue = null;
-            LogUtil.log(LogUtil.Level.NOISE, "Mapped triggers in queue to function manager!");
+    public void registerCachedTriggers() {
+        for (AbilityTrigger<?, ?> trigger : this.triggers.values()) {
+            FunctionManager.registerTriggerEvent(trigger);
         }
     }
 
@@ -390,7 +318,10 @@ public final class FunctionManager {
                 }
 
                 RuntimeContext context = trigger.trigger(event, item, ability);
-                Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
+
+                if (context != null) {
+                    Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
+                }
             }
         }), InnovativeItems.getInstance());
     }

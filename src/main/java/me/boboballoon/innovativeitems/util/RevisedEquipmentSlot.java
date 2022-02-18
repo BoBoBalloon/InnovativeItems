@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.util;
 
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -38,7 +39,7 @@ public enum RevisedEquipmentSlot {
      * @return a revised equipment slot
      */
     @Nullable
-    public static RevisedEquipmentSlot getFromSlot(EquipmentSlot slot) {
+    public static RevisedEquipmentSlot getFromSlot(@NotNull EquipmentSlot slot) {
         for (RevisedEquipmentSlot equipmentSlot : RevisedEquipmentSlot.values()) {
             if (slot.name().equals(equipmentSlot.name())) {
                 return equipmentSlot;

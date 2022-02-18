@@ -1,6 +1,8 @@
 package me.boboballoon.innovativeitems.util;
 
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class used to represent all cardinal directions
@@ -18,7 +20,8 @@ public enum Direction {
     /**
      * A util method I stole from https://www.spigotmc.org/threads/player-direction.175482/#post-1854571 to get a players direction
      */
-    public static Direction getCardinalDirection(Entity entity) {
+    @Nullable
+    public static Direction getCardinalDirection(@NotNull Entity entity) {
         double rotation = (entity.getLocation().getYaw() - 90F) % 360F;
         if (rotation < 0.0D) {
             rotation += 360.0D;

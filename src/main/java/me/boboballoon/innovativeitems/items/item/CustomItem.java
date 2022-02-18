@@ -24,8 +24,8 @@ public class CustomItem {
     private final Ability ability;
     private final ItemStack item;
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
-        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound));
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable) {
+        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable));
     }
 
     protected CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item) {
@@ -62,30 +62,6 @@ public class CustomItem {
         return this.item;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof CustomItem)) {
-            return false;
-        }
-
-        CustomItem item = (CustomItem) obj;
-
-        if (!this.identifier.equals(item.getIdentifier())) {
-            return false;
-        }
-
-        return this.item.equals(item.getItemStack());
-    }
-
-    @Override
-    public int hashCode() {
-        return this.identifier.hashCode() * (this.ability != null ? this.ability.hashCode() : 1) * this.item.hashCode();
-    }
-
     /**
      * A method used to generate an itemstack based on this items internal values
      *
@@ -99,9 +75,10 @@ public class CustomItem {
      * @param customModelData the custom model data on the itemstack
      * @param unbreakable     if the custom item is unbreakable
      * @param soulbound       if the custom item is saved on death
+     * @param wearable        if the custom item can be worn by a user
      * @return the itemstack
      */
-    public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound) {
+    public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -146,6 +123,7 @@ public class CustomItem {
         nbtItem.setString("innovativeplugin-customitem-id", identifier);
         nbtItem.setBoolean("innovativeplugin-customitem-placeable", placeable);
         nbtItem.setBoolean("innovativeplugin-customitem-soulbound", soulbound);
+        nbtItem.setBoolean("innovativeplugin-customitem-wearable", wearable);
 
         return item;
     }

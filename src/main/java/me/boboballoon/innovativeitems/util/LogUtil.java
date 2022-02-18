@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.functions.FunctionContext;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class used to store util methods regarding logging
@@ -130,6 +131,7 @@ public final class LogUtil {
          *
          * @return the current internal debug level to be used
          */
+        @Nullable
         public java.util.logging.Level getLogLevel() {
             return this.logLevel;
         }

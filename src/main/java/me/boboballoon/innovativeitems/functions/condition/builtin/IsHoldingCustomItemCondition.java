@@ -65,7 +65,7 @@ public class IsHoldingCustomItemCondition extends Condition {
 
         int amount = (int) arguments.get(2);
 
-        return customItem.equals(item) && itemStack.getAmount() >= amount;
+        return customItem.getIdentifier().equals(item.getIdentifier()) && itemStack.getAmount() >= amount;
     }
 
     @Override

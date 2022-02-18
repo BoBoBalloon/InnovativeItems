@@ -25,8 +25,8 @@ import java.util.UUID;
  * A class that represents a custom item that is a player skull
  */
 public class CustomItemSkull extends CustomItem {
-    public CustomItemSkull(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, @Nullable String skullName, @Nullable String base64) {
-        super(identifier, ability, CustomItemSkull.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, skullName, base64));
+    public CustomItemSkull(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, @Nullable String skullName, @Nullable String base64) {
+        super(identifier, ability, CustomItemSkull.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, skullName, base64));
     }
 
     /**
@@ -44,8 +44,8 @@ public class CustomItemSkull extends CustomItem {
      * @param base64          a base64 encoded string of the skin you wish to place on a player skull (if applicable)
      * @return the itemstack
      */
-    private static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, @Nullable String skullName, @Nullable String base64) {
-        ItemStack item = CustomItem.generateItem(identifier, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable, soulbound);
+    private static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, @Nullable String skullName, @Nullable String base64) {
+        ItemStack item = CustomItem.generateItem(identifier, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, placeable, soulbound, wearable);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         if (base64 != null) {

@@ -183,7 +183,6 @@ public final class AbilityParser {
             String line = raw.get(i);
 
             boolean inverted;
-
             if (line.matches("\\w+\\(.*\\)")) { //regex = ^\w+\(.*\)$
                 inverted = false;
             } else if (line.matches("!\\w+\\(.*\\)")) { //regex = ^!\w+\(.*\)$
@@ -200,12 +199,7 @@ public final class AbilityParser {
                 continue;
             }
 
-            String conditionName;
-            if (!inverted) {
-                conditionName = split[0];
-            } else {
-                conditionName = split[0].substring(1);
-            }
+            String conditionName = !inverted ? split[0] : split[0].substring(1);
 
             Condition condition = InnovativeItems.getInstance().getFunctionManager().getCondition(conditionName);
 

@@ -27,6 +27,7 @@ public final class TextUtil {
      * @param text text you wish to add color codes to
      * @return text with added color codes
      */
+    @NotNull
     public static String format(@NotNull String text) {
         if (!InnovativeItems.isPluginPremium()) {
             return ChatColor.translateAlternateColorCodes('&', text); //normal color codes

@@ -28,7 +28,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             TextUtil.format("&r&e&l- /innovativeitems debug <level>"),
             TextUtil.format("&r&e&l- /innovativeitems reload"),
             TextUtil.format("&r&e&l- /innovativeitems execute <ability> <player>"),
-            TextUtil.format("&r&e&l- /innovativeitems garbagecollector clean <player>"));
+            TextUtil.format("&r&e&l- /innovativeitems clean <player>"));
 
     /**
      * A "command" that gives a player all the possible commands they can execute

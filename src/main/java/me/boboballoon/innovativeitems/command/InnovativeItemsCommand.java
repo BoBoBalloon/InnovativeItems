@@ -224,26 +224,19 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Subcommand("clean")
     @CommandCompletion("@players @nothing")
     public void onClean(CommandSender sender, String[] args) {
-        if (args.length == 1) {
-            this.cleanPlayer(sender, args[0]);
-        } else {
+        if (args.length != 1) {
             TextUtil.sendMessage(sender, "&r&aCleaning up all players inventories!");
             InnovativeItems.getInstance().getGarbageCollector().cleanAllPlayerInventories(true);
         }
-    }
 
-    /**
-     * A method that cleans a players inventory
-     */
-    private void cleanPlayer(CommandSender sender, String playerName) {
-        Player target = Bukkit.getPlayerExact(playerName);
+        Player target = Bukkit.getPlayerExact(args[0]);
 
         if (target == null) {
             TextUtil.sendMessage(sender, "&r&cYou have entered the name of a player that is not online!");
             return;
         }
 
-        TextUtil.sendMessage(sender, "&r&aCleaning up the inventory of a player by the name of " + target.getName() + "!");
-        InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true);
+        TextUtil.sendMessage(target, "&r&aCleaning up the inventory of a player by the name of " + target.getName() + "!");
+        InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true, target);
     }
 }

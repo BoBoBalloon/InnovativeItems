@@ -2,7 +2,6 @@ package me.boboballoon.innovativeitems.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.util.TextUtil;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorEquipEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -121,22 +120,16 @@ public class ItemFieldListeners implements Listener {
 
         ItemStack item = event.getNewArmorPiece();
 
-        if (item == null || item.getType() == Material.AIR) {
-            return;
+        if (item == null || item.getType() == Material.AIR || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return; //will not cancel event if item is null or player is in creative mode
         }
 
         NBTItem nbt = new NBTItem(item);
 
         if (!nbt.hasKey("innovativeplugin-customitem") || nbt.getBoolean("innovativeplugin-customitem-wearable")) {
-            return;
+            return; //will not cancel if item is not a custom item or is, in fact, wearable
         }
 
-        Player player = event.getPlayer();
-
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            event.setCancelled(true);
-        } else {
-            TextUtil.sendMessage(player, "&r&cYou cannot equip this item, but you are in creative mode so I guess you get a pass...");
-        }
+        event.setCancelled(true);
     }
 }

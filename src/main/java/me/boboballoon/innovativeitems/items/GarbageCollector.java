@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -104,19 +106,38 @@ public final class GarbageCollector implements Listener {
      * A method that will clean an inventory based on the options set in the garbage collector
      *
      * @param inventory the inventory that will be cleaned
-     * @param async a boolean that is true when this method should be scheduled to fire async
+     * @param async     a boolean that is true when this method should be scheduled to fire async
+     * @param player    a player that the inventory revolves around
      */
-    public void cleanInventory(@NotNull Inventory inventory, boolean async) {
+    public void cleanInventory(@NotNull Inventory inventory, boolean async, @Nullable Player player) {
         if (!this.enabled) {
             LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
         }
 
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanup(inventory));
-        } else {
-            this.cleanup(inventory);
+        List<ItemStack> items = new ArrayList<>(Arrays.asList(inventory.getContents()));
+
+        if (player != null) {
+            items.add(player.getItemOnCursor());
         }
+
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanup(items, inventory.getType(), inventory.getLocation()));
+        } else if (!Bukkit.isPrimaryThread()) { //code below runs if "!async && !Bukkit.isPrimaryThread()"
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> this.cleanup(items, inventory.getType(), inventory.getLocation()));
+        } else { //code below runs if "!async && Bukkit.isPrimaryThread()"
+            this.cleanup(items, inventory.getType(), inventory.getLocation());
+        }
+    }
+
+    /**
+     * A method that will clean an inventory based on the options set in the garbage collector
+     *
+     * @param inventory the inventory that will be cleaned
+     * @param async     a boolean that is true when this method should be scheduled to fire async
+     */
+    public void cleanInventory(@NotNull Inventory inventory, boolean async) {
+        this.cleanInventory(inventory, async, null);
     }
 
     /**
@@ -149,63 +170,45 @@ public final class GarbageCollector implements Listener {
     }
 
     /**
-     * A method used to clean one inventory
+     * A utility method that will correct all custom items inside this list of itemstacks
      *
-     * @param inventory the inventory to cleanup
+     * @param items    the list of itemstacks
+     * @param type     the type of inventory this item collection of item represents
+     * @param location the location of the inventory
      */
-    private void cleanup(@NotNull Inventory inventory) {
-        List<ItemStack> items = new ArrayList<>(Arrays.asList(inventory.getContents()));
-
-        if (inventory.getHolder() instanceof Player) {
-            Player player = (Player) inventory.getHolder();
-            items.add(player.getItemOnCursor());
-        }
-
+    private void cleanup(@NotNull List<ItemStack> items, @NotNull InventoryType type, @NotNull Location location) {
         for (ItemStack item : items) {
-            this.cleanup(item, inventory);
-        }
-    }
-
-    /**
-     * A utility method that will
-     *
-     * @param item the item to clean and correct
-     * @param inventory the inventory the item is currently being held in
-     */
-    private void cleanup(@NotNull ItemStack item, @Nullable Inventory inventory) {
-        if (item == null || item.getType() == Material.AIR) {
-            return;
-        }
-
-        NBTItem nbt = new NBTItem(item);
-
-        if (!nbt.hasKey("innovativeplugin-customitem")) {
-            return;
-        }
-
-        String identifier = nbt.getString("innovativeplugin-customitem-id");
-        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(identifier);
-
-        if (customItem == null) {
-            if (this.shouldDelete) {
-                LogUtil.log(LogUtil.Level.NOISE, inventory != null ? "Deleting item " + item.toString() + " in " + inventory.getType().name() + " at " + inventory.getLocation().toString() : "Deleting item with identifier of " + identifier);
-                item.setAmount(0); //delete itemstack
+            if (item == null || item.getType() == Material.AIR) {
+                continue;
             }
 
-            return;
+            NBTItem nbt = new NBTItem(item);
+
+            if (!nbt.hasKey("innovativeplugin-customitem")) {
+                continue;
+            }
+
+            String identifier = nbt.getString("innovativeplugin-customitem-id");
+            CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(identifier);
+
+            if (this.shouldDelete && customItem == null) {
+                LogUtil.log(LogUtil.Level.NOISE, "Deleting custom item " + identifier + " in " + type.name() + " at " + location.toString());
+                item.setAmount(0); //delete itemstack
+                continue;
+            }
+
+            if (!this.shouldUpdate || customItem == null || bruteCompare(customItem, item)) {
+                continue;
+            }
+
+            ItemStack customItemData = customItem.getItemStack();
+
+            item.setType(customItemData.getType());
+            item.setData(customItemData.getData());
+            item.setItemMeta(customItemData.getItemMeta());
+
+            LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + type.name() + " at " + location.toString());
         }
-
-        if (!this.shouldUpdate || bruteCompare(customItem, item)) {
-            return;
-        }
-
-        ItemStack customItemData = customItem.getItemStack();
-
-        item.setType(customItemData.getType());
-        item.setData(customItemData.getData());
-        item.setItemMeta(customItemData.getItemMeta());
-
-        LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + (inventory != null ? inventory.getType().name() : "unknown inventory") + " at " + (inventory != null ? inventory.getLocation().toString() : "unknown location"));
     }
 
     /**
@@ -217,7 +220,7 @@ public final class GarbageCollector implements Listener {
 
         LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
 
-        this.cleanInventory(player.getInventory(), true);
+        this.cleanInventory(player.getInventory(), true, player);
     }
 
     /**
@@ -257,7 +260,7 @@ public final class GarbageCollector implements Listener {
 
         LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
-        this.cleanInventory(inventory, true);
+        this.cleanInventory(inventory, true, player);
     }
 
     /**

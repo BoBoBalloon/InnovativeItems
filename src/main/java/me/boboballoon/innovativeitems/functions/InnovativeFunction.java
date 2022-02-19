@@ -69,7 +69,7 @@ public abstract class InnovativeFunction<T> {
      */
     @Nullable
     public final T execute(@NotNull ImmutableList<Object> arguments, @NotNull RuntimeContext context) throws ExecutionException {
-        if (Bukkit.getServer().isPrimaryThread()) {
+        if (Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("The function execute method cannot be called from the main thread!");
         }
 

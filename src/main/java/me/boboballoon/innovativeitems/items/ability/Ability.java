@@ -91,7 +91,7 @@ public class Ability {
             throw new IllegalArgumentException("An instance of RuntimeContext has been passed to an ability that does not reflect the context!");
         }
 
-        if (Bukkit.getServer().isPrimaryThread()) {
+        if (Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("The ability execute method cannot be called from the main thread!");
         }
 

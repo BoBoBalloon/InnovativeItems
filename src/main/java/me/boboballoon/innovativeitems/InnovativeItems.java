@@ -52,7 +52,6 @@ public final class InnovativeItems extends JavaPlugin {
 
     /*
     CHANGE LIST:
-
      */
 
     /**

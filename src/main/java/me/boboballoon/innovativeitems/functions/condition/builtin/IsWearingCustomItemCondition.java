@@ -66,6 +66,10 @@ public class IsWearingCustomItemCondition extends Condition {
 
         CustomItem item = cache.fromItemStack(target.getInventory().getItem(slot.getSlot()));
 
+        if (item == null) {
+            return false;
+        }
+
         return customItem.getIdentifier().equals(item.getIdentifier());
     }
 

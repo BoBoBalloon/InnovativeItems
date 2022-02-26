@@ -23,10 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * A class that is responsible for cleaning up "dead" items in game
  */
@@ -107,37 +103,20 @@ public final class GarbageCollector implements Listener {
      *
      * @param inventory the inventory that will be cleaned
      * @param async     a boolean that is true when this method should be scheduled to fire async
-     * @param player    a player that the inventory revolves around
      */
-    public void cleanInventory(@NotNull Inventory inventory, boolean async, @Nullable Player player) {
+    public void cleanInventory(@NotNull Inventory inventory, boolean async) {
         if (!this.enabled) {
             LogUtil.log(LogUtil.Level.WARNING, "The garbage collector tried to run while disabled!");
             return;
         }
 
-        List<ItemStack> items = new ArrayList<>(Arrays.asList(inventory.getContents()));
-
-        if (player != null) {
-            items.add(player.getItemOnCursor());
-        }
-
         if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanup(items, inventory.getType(), inventory.getLocation()));
+            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> this.cleanup(inventory.getContents(), inventory.getType(), inventory.getLocation()));
         } else if (!Bukkit.isPrimaryThread()) { //code below runs if "!async && !Bukkit.isPrimaryThread()"
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> this.cleanup(items, inventory.getType(), inventory.getLocation()));
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> this.cleanup(inventory.getContents(), inventory.getType(), inventory.getLocation()));
         } else { //code below runs if "!async && Bukkit.isPrimaryThread()"
-            this.cleanup(items, inventory.getType(), inventory.getLocation());
+            this.cleanup(inventory.getContents(), inventory.getType(), inventory.getLocation());
         }
-    }
-
-    /**
-     * A method that will clean an inventory based on the options set in the garbage collector
-     *
-     * @param inventory the inventory that will be cleaned
-     * @param async     a boolean that is true when this method should be scheduled to fire async
-     */
-    public void cleanInventory(@NotNull Inventory inventory, boolean async) {
-        this.cleanInventory(inventory, async, null);
     }
 
     /**
@@ -151,63 +130,63 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), this::cleanupAll);
-        } else {
-            this.cleanupAll();
-        }
-    }
-
-    /**
-     * A method used to clean all player inventories
-     */
-    private void cleanupAll() {
         LogUtil.log(LogUtil.Level.INFO, "Starting player inventory cleanup...");
         for (Player player : Bukkit.getOnlinePlayers()) {
-            this.cleanInventory(player.getInventory(), false);
+            this.cleanInventory(player.getInventory(), async);
         }
         LogUtil.log(LogUtil.Level.INFO, "Player inventory cleanup complete!");
     }
 
     /**
-     * A utility method that will correct all custom items inside this list of itemstacks
+     * A utility method that will correct the provided item to be updated based on the cache
      *
-     * @param items    the list of itemstacks
-     * @param type     the type of inventory this item collection of item represents
-     * @param location the location of the inventory
+     * @param item      the itemstack to update
+     * @param type      the type of inventory this item collection of item represents
+     * @param location  the location of the inventory
      */
-    private void cleanup(@NotNull List<ItemStack> items, @NotNull InventoryType type, @NotNull Location location) {
+    private void cleanup(@Nullable ItemStack item, @NotNull InventoryType type, @NotNull Location location) {
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+
+        NBTItem nbt = new NBTItem(item);
+
+        if (!nbt.hasKey("innovativeplugin-customitem")) {
+            return;
+        }
+
+        String identifier = nbt.getString("innovativeplugin-customitem-id");
+        CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(identifier);
+
+        if (this.shouldDelete && customItem == null) {
+            LogUtil.log(LogUtil.Level.NOISE, "Deleting custom item " + identifier + " in " + type.name() + " at " + location.toString());
+            item.setAmount(0); //delete itemstack
+            return;
+        }
+
+        if (!this.shouldUpdate || customItem == null || bruteCompare(customItem, item)) {
+            return;
+        }
+
+        ItemStack customItemData = customItem.getItemStack();
+
+        item.setType(customItemData.getType());
+        item.setData(customItemData.getData());
+        item.setItemMeta(customItemData.getItemMeta());
+
+        LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + type.name() + " at " + location.toString());
+    }
+
+    /**
+     * A utility method that will correct all custom items inside this array of itemstacks
+     *
+     * @param items     the array of itemstacks
+     * @param type      the type of inventory this item collection of item represents
+     * @param location  the location of the inventory
+     */
+    private void cleanup(@NotNull ItemStack[] items, @NotNull InventoryType type, @NotNull Location location) {
         for (ItemStack item : items) {
-            if (item == null || item.getType() == Material.AIR) {
-                continue;
-            }
-
-            NBTItem nbt = new NBTItem(item);
-
-            if (!nbt.hasKey("innovativeplugin-customitem")) {
-                continue;
-            }
-
-            String identifier = nbt.getString("innovativeplugin-customitem-id");
-            CustomItem customItem = InnovativeItems.getInstance().getItemCache().getItem(identifier);
-
-            if (this.shouldDelete && customItem == null) {
-                LogUtil.log(LogUtil.Level.NOISE, "Deleting custom item " + identifier + " in " + type.name() + " at " + location.toString());
-                item.setAmount(0); //delete itemstack
-                continue;
-            }
-
-            if (!this.shouldUpdate || customItem == null || bruteCompare(customItem, item)) {
-                continue;
-            }
-
-            ItemStack customItemData = customItem.getItemStack();
-
-            item.setType(customItemData.getType());
-            item.setData(customItemData.getData());
-            item.setItemMeta(customItemData.getItemMeta());
-
-            LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + type.name() + " at " + location.toString());
+            this.cleanup(item, type, location);
         }
     }
 
@@ -220,7 +199,7 @@ public final class GarbageCollector implements Listener {
 
         LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they joined the game!");
 
-        this.cleanInventory(player.getInventory(), true, player);
+        this.cleanInventory(player.getInventory(), true);
     }
 
     /**
@@ -260,7 +239,7 @@ public final class GarbageCollector implements Listener {
 
         LogUtil.log(LogUtil.Level.NOISE, "Cleaning up " + player.getName() + "'s inventory because they picked up a custom item!");
 
-        this.cleanInventory(inventory, true, player);
+        this.cleanInventory(inventory, true);
     }
 
     /**

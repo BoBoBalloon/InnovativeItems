@@ -382,7 +382,7 @@ public final class ConfigManager {
 
             garbageCollector.setEnabled(true);
 
-            garbageCollector.cleanAllPlayerInventories(false);
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> garbageCollector.cleanAllPlayerInventories(true));
 
             LogUtil.log(LogUtil.Level.INFO, "Updating item defender to match config...");
 

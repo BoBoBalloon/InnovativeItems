@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class ConsumeContext extends RuntimeContext implements ItemContext {
     private final CustomItem item;
 
-    public ConsumeContext(Player player, Ability ability, CustomItem item) {
+    public ConsumeContext(@NotNull Player player, @NotNull Ability ability, @NotNull CustomItem item) {
         super(player, ability);
         this.item = item;
     }

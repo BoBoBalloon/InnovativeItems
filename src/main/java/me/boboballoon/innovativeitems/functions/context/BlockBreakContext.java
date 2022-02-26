@@ -15,7 +15,7 @@ public class BlockBreakContext extends RuntimeContext implements BlockContext, I
     private final Block block;
     private final CustomItem item;
 
-    public BlockBreakContext(Player player, Ability ability, Block block, CustomItem item) {
+    public BlockBreakContext(@NotNull Player player, @NotNull Ability ability, @NotNull Block block, @NotNull CustomItem item) {
         super(player, ability);
         this.block = block;
         this.item = item;

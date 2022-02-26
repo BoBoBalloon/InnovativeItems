@@ -41,8 +41,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    0. Make adddurability keyword that adds durability to an equipment slot
-    1. Make a "right-click-entity" trigger using PlayerInteractEntityEvent
+    0. Add an setnbt and hasnbt keyword and condition
+    1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers
     3. Make a new projectile hit trigger
     4. Add option for abilities to consume mana cost (hook into MMOCore developer api)
@@ -60,7 +60,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return false;
+        return true;
     }
 
     @Override
@@ -97,7 +97,7 @@ public final class InnovativeItems extends JavaPlugin {
 
         this.functionManager.registerTriggers(new BlockBreakTrigger(), new ConsumeItemTrigger(), new CrouchTrigger(), new DamageDealtTrigger(),
                 new DamageTakenTrigger(), new LeftClickBlockTrigger(), new LeftClickTrigger(), new NoneTrigger(),
-                new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger());
+                new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger(), new RightClickEntityTrigger());
     }
 
     @Override

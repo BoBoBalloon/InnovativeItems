@@ -4,9 +4,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
-import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.util.InventoryUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -68,14 +68,16 @@ public class InnovativeItemsCommand extends BaseCommand {
             try {
                 amount = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
+                amount = 0;
+            }
+
+            if (amount <= 0 || amount >= 1000) {
                 TextUtil.sendMessage(player, "&r&cYou have entered an invalid amount!");
                 return;
             }
         }
 
-        for (int i = 0; i < amount; i++) {
-            player.getInventory().addItem(customItem.getItemStack());
-        }
+        InventoryUtil.giveItem(player, customItem.getItemStack(), amount);
 
         TextUtil.sendMessage(player, "&r&aAdded " + amount + " " + customItem.getIdentifier() + " to your inventory!");
     }
@@ -120,9 +122,7 @@ public class InnovativeItemsCommand extends BaseCommand {
 
         boolean silent = (args.length > 3 && args[3].equalsIgnoreCase("-s"));
 
-        for (int i = 0; i < amount; i++) {
-            target.getInventory().addItem(customItem.getItemStack());
-        }
+        InventoryUtil.giveItem(target, customItem.getItemStack(), amount);
 
         if (!silent) {
             TextUtil.sendMessage(target, "&r&aAdded " + amount + " " + customItem.getIdentifier() + " to your inventory!");
@@ -207,10 +207,8 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        RuntimeContext context = new RuntimeContext(target, ability);
-
         Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
-            if (ability.execute(context)) {
+            if (ability.execute(target)) {
                 TextUtil.sendMessage(sender, "&r&aYou have successfully executed the " + ability.getIdentifier() + " ability!");
             } else {
                 TextUtil.sendMessage(sender, "&r&aThere was an issue trying to execute the " + ability.getIdentifier() + " ability! This could be due to a condition not being met to incompatible triggers...");
@@ -227,6 +225,7 @@ public class InnovativeItemsCommand extends BaseCommand {
         if (args.length != 1) {
             TextUtil.sendMessage(sender, "&r&aCleaning up all players inventories!");
             InnovativeItems.getInstance().getGarbageCollector().cleanAllPlayerInventories(true);
+            return;
         }
 
         Player target = Bukkit.getPlayerExact(args[0]);
@@ -237,6 +236,6 @@ public class InnovativeItemsCommand extends BaseCommand {
         }
 
         TextUtil.sendMessage(target, "&r&aCleaning up the inventory of a player by the name of " + target.getName() + "!");
-        InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true, target);
+        InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true);
     }
 }

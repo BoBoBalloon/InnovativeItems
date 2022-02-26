@@ -3,15 +3,15 @@ package me.boboballoon.innovativeitems.functions.keyword.builtin;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.util.InventoryUtil;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +24,7 @@ public class GiveCustomItemKeyword extends Keyword {
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.STRING, "innovative item name"),
                 new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "item amount", object -> {
                     int integer = (int) object;
-                    return integer > 0;
+                    return integer > 0 && integer < 1000;
                 }));
     }
 
@@ -58,10 +58,7 @@ public class GiveCustomItemKeyword extends Keyword {
 
         int amount = (int) arguments.get(2);
 
-        ItemStack item = customItem.getItemStack().clone();
-        item.setAmount(amount);
-
-        target.getInventory().addItem(item);
+        InventoryUtil.giveItem(target, customItem.getItemStack(), amount);
     }
 
     @Override

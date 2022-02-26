@@ -13,7 +13,7 @@ public class DamageContext extends RuntimeContext implements EntityContext {
     private final LivingEntity entity;
     private final boolean playerDamager;
 
-    public DamageContext(Player player, Ability ability, LivingEntity entity, boolean playerDamager) {
+    public DamageContext(@NotNull Player player, @NotNull Ability ability, @NotNull LivingEntity entity, boolean playerDamager) {
         super(player, ability);
         this.entity = entity;
         this.playerDamager = playerDamager;

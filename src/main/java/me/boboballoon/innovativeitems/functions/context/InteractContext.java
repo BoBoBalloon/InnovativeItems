@@ -4,6 +4,7 @@ import me.boboballoon.innovativeitems.items.ability.Ability;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that represents context where the item was clicked that can assist execution that cannot be cached and must be parsed during runtime separately
@@ -12,7 +13,7 @@ public class InteractContext extends RuntimeContext {
     private final Action action;
     private final EquipmentSlot hand;
 
-    public InteractContext(Player player, Ability ability, Action action, EquipmentSlot hand) {
+    public InteractContext(@NotNull Player player, @NotNull Ability ability, @NotNull Action action, @NotNull EquipmentSlot hand) {
         super(player, ability);
         this.action = action;
         this.hand = hand;

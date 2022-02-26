@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import me.boboballoon.innovativeitems.util.InventoryUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -51,7 +52,7 @@ public class GiveItemKeyword extends Keyword {
 
         ItemStack item = new ItemStack(material, amount);
 
-        target.getInventory().addItem(item);
+        InventoryUtil.giveItem(target, item, 1);
     }
 
     @Override

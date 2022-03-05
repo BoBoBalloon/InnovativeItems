@@ -85,7 +85,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),
                 new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
-                new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition());
+                new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition());
 
         //dependent functions
 

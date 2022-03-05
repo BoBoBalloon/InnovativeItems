@@ -58,7 +58,7 @@ public class ExpectedEnum<T extends Enum<T>> implements ExpectedArguments {
 
     @Override
     @Nullable
-    public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
+    public T getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
         T value = Enum.valueOf(this.clazz, rawValue.toUpperCase());
 
         return this.condition.test(value) ? value : null;

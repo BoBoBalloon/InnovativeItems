@@ -274,7 +274,7 @@ public final class AbilityParser {
         }
 
         if (function.getClass().isAnnotationPresent(Deprecated.class)) {
-            LogUtil.log(LogUtil.Level.INFO, "While loading " + abilityName + " the usage of the " + type + " by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
+            LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the " + type + " by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
         }
 
         String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');

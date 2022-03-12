@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * A class that contains all listeners for custom item field options
  */
-public class ItemFieldListeners implements Listener {
+public final class ItemFieldListeners implements Listener {
     private final Map<UUID, List<ItemStack>> soulboundItems;
 
     public ItemFieldListeners() {

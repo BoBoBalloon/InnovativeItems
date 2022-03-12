@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class that represents a keyword in an ability config file that executes a mythicmob skill
  */
+@Deprecated
 public class MythicMobSkillKeyword extends Keyword {
     public MythicMobSkillKeyword() {
         super("mythicmobsskill",

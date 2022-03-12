@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.functions.context;
 
-import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
@@ -11,20 +10,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class that represents context where a block was broken and can assist execution that cannot be cached and must be parsed during runtime separately
  */
-public class BlockBreakContext extends RuntimeContext implements BlockContext, ItemContext {
-    private final Block block;
+public class BlockBreakContext extends BlockContext implements ItemContext {
     private final CustomItem item;
 
     public BlockBreakContext(@NotNull Player player, @NotNull Ability ability, @NotNull Block block, @NotNull CustomItem item) {
-        super(player, ability);
-        this.block = block;
+        super(player, ability, block);
         this.item = item;
-    }
-
-    @Override
-    @NotNull
-    public Block getBlock() {
-        return this.block;
     }
 
     @Override

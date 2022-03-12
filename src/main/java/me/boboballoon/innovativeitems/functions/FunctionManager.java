@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.ManuallyRegister;
+import me.boboballoon.innovativeitems.items.ability.trigger.RegisterBukkitEvents;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
@@ -292,6 +293,10 @@ public final class FunctionManager {
      * @param trigger the ability trigger to register
      */
     private static <T extends Event> void registerTriggerEvent(@NotNull AbilityTrigger<T, ?> trigger) {
+        if (trigger.getClass().isAnnotationPresent(RegisterBukkitEvents.class)) {
+            Bukkit.getPluginManager().registerEvents(trigger, InnovativeItems.getInstance());
+        }
+
         if (trigger.getClass().isAnnotationPresent(ManuallyRegister.class)) {
             return;
         }
@@ -311,6 +316,10 @@ public final class FunctionManager {
             Player player = trigger.fromEvent(event);
 
             for (CustomItem item : trigger.getIterator().getItems(event, player)) {
+                if (item == null) {
+                    continue;
+                }
+
                 Ability ability = item.getAbility();
 
                 if (ability == null || ability.getTrigger() != trigger) {

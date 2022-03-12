@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 @FunctionalInterface
 public interface InventoryIterator<T extends Event> {
     /**
-     * A method that returns an iterable object that can iterate over custom items from the provided event
+     * A method that returns an iterable object that can iterate over custom items from the provided event (individual elements can be null)
      *
      * @param event  the provided event
      * @param player the player involved with this methods execution
@@ -57,6 +57,7 @@ public interface InventoryIterator<T extends Event> {
      */
     final class Constants {
         private static final InventoryIterator<?> ARMOR = fromFunction((event, inventory) -> Arrays.asList(inventory.getArmorContents()));
+        private static final InventoryIterator<?> MAIN_HAND = fromFunctionSingleton((event, inventory) -> inventory.getItemInMainHand());
         private static final InventoryIterator<?> BOTH_HANDS = fromFunction((event, inventory) -> Arrays.asList(inventory.getItemInMainHand(), inventory.getItemInOffHand()));
         private static final InventoryIterator<?> ARMOR_AND_HANDS = fromFunction((event, inventory) -> {
             List<ItemStack> items = new ArrayList<>();
@@ -81,6 +82,17 @@ public interface InventoryIterator<T extends Event> {
         @NotNull
         public static <T extends Event> InventoryIterator<T> armor() {
             return (InventoryIterator<T>) ARMOR;
+        }
+
+        /**
+         * A method used to return the main hand iterator constant
+         *
+         * @param <T> the type of inventory
+         * @return the main hand iterator constant
+         */
+        @NotNull
+        public static <T extends Event> InventoryIterator<T> mainHand() {
+            return (InventoryIterator<T>) MAIN_HAND;
         }
 
         /**

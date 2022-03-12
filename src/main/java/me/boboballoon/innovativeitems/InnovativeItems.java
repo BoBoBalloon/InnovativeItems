@@ -13,6 +13,9 @@ import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.*;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowFireListener;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowHitBlockTrigger;
+import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowHitEntityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerTrigger;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
@@ -41,13 +44,12 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    0. Add an setnbt and hasnbt keyword and condition
     1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers
-    3. Make a new projectile hit trigger
-    4. Add option for abilities to consume mana cost (hook into MMOCore developer api)
-    5. Make custom durability options for custom items
-    6. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
+    4. Make custom durability options for custom items
+    5. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    6. Support variables and replace the ExpectedTargeters return type as the expected return type from the context into a new list and pass that in the ActiveFunction class
      */
 
     /*
@@ -60,7 +62,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return true;
+        return false;
     }
 
     @Override
@@ -89,7 +91,9 @@ public final class InnovativeItems extends JavaPlugin {
 
         //dependent functions
 
-        this.functionManager.registerKeywords("MythicMobs", new MythicMobSkillKeyword());
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null && Integer.parseInt(Bukkit.getPluginManager().getPlugin("MythicMobs").getDescription().getVersion().substring(0, 1)) < 5) {
+            this.functionManager.registerKeywords(new MythicMobSkillKeyword());
+        }
 
         this.functionManager.registerConditions("WorldGuard", new IsInRegionCondition());
 
@@ -97,7 +101,8 @@ public final class InnovativeItems extends JavaPlugin {
 
         this.functionManager.registerTriggers(new BlockBreakTrigger(), new ConsumeItemTrigger(), new CrouchTrigger(), new DamageDealtTrigger(),
                 new DamageTakenTrigger(), new LeftClickBlockTrigger(), new LeftClickTrigger(), new NoneTrigger(),
-                new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger(), new RightClickEntityTrigger());
+                new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger(), new RightClickEntityTrigger(),
+                new ArrowHitEntityTrigger(), new ArrowHitBlockTrigger());
     }
 
     @Override
@@ -145,7 +150,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");
 
-        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener());
+        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener());
         this.functionManager.registerCachedTriggers();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");

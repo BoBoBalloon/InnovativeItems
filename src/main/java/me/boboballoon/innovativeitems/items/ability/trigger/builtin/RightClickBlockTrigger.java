@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability.trigger.builtin;
 
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.context.InteractContextBlock;
+import me.boboballoon.innovativeitems.functions.context.InteractBlockContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.InventoryIterator;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class that represents the "right-click-block" ability trigger
  */
-public class RightClickBlockTrigger extends AbilityTrigger<PlayerInteractEvent, InteractContextBlock> {
+public class RightClickBlockTrigger extends AbilityTrigger<PlayerInteractEvent, InteractBlockContext> {
     public RightClickBlockTrigger() {
-        super("right-click-block", null, PlayerInteractEvent.class, InteractContextBlock.class, InventoryIterator.fromFunctionSingleton((event, inventory) -> event.getItem()), event -> event.hasBlock() && event.getAction() == Action.RIGHT_CLICK_BLOCK, FunctionTargeter.BLOCK);
+        super("right-click-block", null, PlayerInteractEvent.class, InteractBlockContext.class, InventoryIterator.fromFunctionSingleton((event, inventory) -> event.getItem()), event -> event.hasBlock() && event.getAction() == Action.RIGHT_CLICK_BLOCK, FunctionTargeter.BLOCK);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class RightClickBlockTrigger extends AbilityTrigger<PlayerInteractEvent, 
 
     @NotNull
     @Override
-    public InteractContextBlock trigger(@NotNull PlayerInteractEvent event, @NotNull CustomItem item, @NotNull Ability ability) {
-        return new InteractContextBlock(event.getPlayer(), ability, event.getAction(), event.getHand(), event.getClickedBlock());
+    public InteractBlockContext trigger(@NotNull PlayerInteractEvent event, @NotNull CustomItem item, @NotNull Ability ability) {
+        return new InteractBlockContext(event.getPlayer(), ability, event.getAction(), event.getHand(), event.getClickedBlock());
     }
 }

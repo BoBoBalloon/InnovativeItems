@@ -62,7 +62,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return false;
+        return true;
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
                 new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
-                new SetEquipmentSlotKeyword(), new LungeKeyword());
+                new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

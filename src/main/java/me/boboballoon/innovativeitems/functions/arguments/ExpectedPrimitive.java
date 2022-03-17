@@ -20,8 +20,8 @@ public class ExpectedPrimitive implements ExpectedArguments {
 
     public ExpectedPrimitive(@NotNull PrimitiveType primitive, @Nullable Consumer<FunctionContext> onError, @Nullable Predicate<Object> condition) {
         this.primitive = primitive;
-        this.onError = onError;
-        this.condition = condition;
+        this.onError = onError != null ? onError : ExpectedArguments.DEFAULT_ERROR;
+        this.condition = condition != null ? condition : value -> true;
     }
 
     public ExpectedPrimitive(@NotNull PrimitiveType primitive, @Nullable Consumer<FunctionContext> onError) {
@@ -61,7 +61,7 @@ public class ExpectedPrimitive implements ExpectedArguments {
     @NotNull
     @Override
     public Consumer<FunctionContext> getOnError() {
-        return this.onError != null ? this.onError : ExpectedArguments.DEFAULT_ERROR;
+        return this.onError;
     }
 
     /**
@@ -84,124 +84,19 @@ public class ExpectedPrimitive implements ExpectedArguments {
     @Nullable
     @Override
     public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
+        Object value;
+
         if (this.primitive == PrimitiveType.STRING) {
-            return this.parseString(rawValue, context);
+            value = TextUtil.format(rawValue);
+        } else if (this.primitive == PrimitiveType.CHAR) {
+            value = InitializationUtil.initChar(rawValue);
+        } else if (this.primitive == PrimitiveType.BOOLEAN) {
+            value = InitializationUtil.initBoolean(rawValue);
+        } else { //since the enum is a constant, anything else must be a number
+            value = InitializationUtil.initNumber(rawValue, (Class<? extends Number>) this.primitive.getRepresentingClass());
         }
 
-        if (this.primitive == PrimitiveType.CHAR) {
-            return this.parseChar(rawValue, context);
-        }
-
-        if (this.primitive == PrimitiveType.BOOLEAN) {
-            return this.parseBoolean(rawValue, context);
-        }
-
-        if (this.primitive == PrimitiveType.BYTE ||
-                this.primitive == PrimitiveType.SHORT ||
-                this.primitive == PrimitiveType.INTEGER ||
-                this.primitive == PrimitiveType.LONG ||
-                this.primitive == PrimitiveType.FLOAT ||
-                this.primitive == PrimitiveType.DOUBLE) {
-            return this.parseNumber(rawValue, context);
-        }
-
-        throw new UnsupportedOperationException("The following parsing was unable to be completed for ability " + context.getAbilityName() + "!");
-    }
-
-    /**
-     * A method used to parse the provided number unsafely
-     *
-     * @param rawValue the raw value of the number
-     * @param context the context in which the argument is being parsed
-     * @return the number that is represented by the provided rawValue
-     */
-    private Number parseNumber(String rawValue, FunctionContext context) {
-        try {
-            Number value = InitializationUtil.initNumber(rawValue, (Class<? extends Number>) this.primitive.getRepresentingClass());
-
-            if (this.condition != null && !this.condition.test(value)) {
-                this.throwError(context);
-                return null;
-            }
-
-            return value;
-        } catch (Throwable ee) {
-            this.throwError(context);
-            return null;
-        }
-    }
-
-    /**
-     * A method used to parse the provided char
-     *
-     * @param rawValue the raw value of the char
-     * @param context the context in which the argument is being parsed
-     * @return the number that is represented by the provided rawValue
-     */
-    private Character parseChar(String rawValue, FunctionContext context) {
-        try {
-            char value = InitializationUtil.initChar(rawValue);
-
-            if (this.condition != null && !this.condition.test(value)) {
-                this.throwError(context);
-                return null;
-            }
-
-            return value;
-        } catch (Throwable e) {
-            this.throwError(context);
-            return null;
-        }
-    }
-
-    /**
-     * A method used to parse the provided boolean
-     *
-     * @param rawValue the raw value of the boolean
-     * @param context the context in which the argument is being parsed
-     * @return the number that is represented by the provided rawValue
-     */
-    private Boolean parseBoolean(String rawValue, FunctionContext context) {
-        try {
-            boolean value = InitializationUtil.initBoolean(rawValue);
-
-            if (this.condition != null && !this.condition.test(value)) {
-                this.throwError(context);
-                return null;
-            }
-
-            return value;
-        } catch (Throwable e) {
-            this.throwError(context);
-            return null;
-        }
-    }
-
-    /**
-     * A method used to parse the provided string
-     *
-     * @param rawValue the raw value of the string
-     * @param context the context in which the argument is being parsed
-     * @return the string that is represented by the provided rawValue
-     */
-    private String parseString(String rawValue, FunctionContext context) {
-        if (this.condition != null && !this.condition.test(rawValue)) {
-            this.throwError(context);
-            return null;
-        }
-
-        return TextUtil.format(rawValue);
-    }
-
-    /**
-     * A method used to check if the onError field is null and if not, throw the custom error
-     *
-     * @param context the context in which the argument is being parsed
-     */
-    private void throwError(FunctionContext context) {
-        if (this.onError != null) {
-            this.onError.accept(context);
-        }
+        return this.condition.test(value) ? value : null;
     }
 
     /**

@@ -44,6 +44,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    0. Add to docs and post new update with changes
     1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers
     3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
@@ -81,7 +82,8 @@ public final class InnovativeItems extends JavaPlugin {
                 new VelocityKeyword(), new SwitcherooKeyword(), new ActionbarKeyword(), new TitleMessageKeyword(),
                 new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
-                new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword());
+                new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
+                new SetBlockAtKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),

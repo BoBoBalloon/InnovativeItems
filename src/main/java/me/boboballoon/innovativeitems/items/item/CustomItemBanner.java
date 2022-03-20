@@ -22,7 +22,11 @@ import java.util.Map;
  */
 public class CustomItemBanner extends CustomItem {
     public CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, @Nullable List<Pattern> patterns) {
-        super(identifier, ability, CustomItemBanner.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, patterns));
+        this(identifier, ability, CustomItemBanner.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, patterns));
+    }
+
+    protected CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item) {
+        super(identifier, ability, item);
     }
 
     /**

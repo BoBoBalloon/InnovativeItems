@@ -10,7 +10,9 @@ import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,8 +41,13 @@ public class SudoKeyword extends Keyword {
 
         String command = (String) arguments.get(1);
 
+        if (context instanceof EntityContext) {
+            LivingEntity entity = ((EntityContext) context).getEntity();
+            command = command.replace("?entity", entity instanceof Player ? entity.getName() : entity.getUniqueId().toString());
+        }
+
         try {
-            Bukkit.dispatchCommand(target, command);
+            Bukkit.dispatchCommand(target, command.replace("?player", context.getPlayer().getName()));
         } catch (CommandException e) {
             LogUtil.log(LogUtil.Level.WARNING, "There was an error trying to execute the command with the name and arguments of " + command + " on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
         }

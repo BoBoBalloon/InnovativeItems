@@ -88,13 +88,13 @@ public final class ItemParser {
         //leather armor item
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name));
+            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name).getColor());
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name), ItemParser.getPotionEffects(potionSection, name));
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name).getColor(), ItemParser.getPotionEffects(potionSection, name));
         }
 
         //banner item
@@ -107,6 +107,12 @@ public final class ItemParser {
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
             return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+        }
+
+        //shield item
+        if (section.isConfigurationSection("shield") && material == Material.SHIELD) {
+            ConfigurationSection shieldSection = section.getConfigurationSection("shield");
+            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
         }
         
         //generic item
@@ -289,16 +295,16 @@ public final class ItemParser {
     /**
      * Get the color from color name value field from an item config section
      */
-    private static Color getColor(ConfigurationSection section, String itemName) {
+    private static DyeColor getColor(ConfigurationSection section, String itemName) {
         if (!section.isString("color")) {
             return null;
         }
 
         String rawColor = section.getString("color").toUpperCase();
 
-        Color color;
+        DyeColor color;
         try {
-            color = DyeColor.valueOf(rawColor).getColor();
+            color = DyeColor.valueOf(rawColor);
         } catch (IllegalArgumentException ignore) {
             LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing the color of " + itemName + "! Please make sure that the value you entered was a real color!");
             return null;

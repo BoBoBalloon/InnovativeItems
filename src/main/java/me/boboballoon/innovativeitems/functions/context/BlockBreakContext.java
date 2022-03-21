@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class that represents context where a block was broken and can assist execution that cannot be cached and must be parsed during runtime separately
  */
-public class BlockBreakContext extends BlockContext implements ItemContext {
+public class BlockBreakContext extends GenericBlockContext implements ItemContext {
     private final CustomItem item;
 
     public BlockBreakContext(@NotNull Player player, @NotNull Ability ability, @NotNull Block block, @NotNull CustomItem item) {

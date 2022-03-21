@@ -44,7 +44,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    0. Add to docs and post new update with changes
     1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers
     3. Add option for abilities to consume mana cost (hook into MMOCore developer api)

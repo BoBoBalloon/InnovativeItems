@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -8,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class that represents context where a block was involved
  */
-public class BlockContext extends RuntimeContext implements me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext {
+public class GenericBlockContext extends RuntimeContext implements BlockContext {
     private final Block block;
 
-    public BlockContext(@NotNull Player player, @NotNull Ability ability, @NotNull Block block) {
+    public GenericBlockContext(@NotNull Player player, @NotNull Ability ability, @NotNull Block block) {
         super(player, ability);
         this.block = block;
     }

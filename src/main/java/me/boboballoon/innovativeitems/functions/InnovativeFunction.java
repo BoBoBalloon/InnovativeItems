@@ -77,38 +77,12 @@ public abstract class InnovativeFunction<T> {
             return this.call(arguments, context);
         }
 
-        Future<T> future = Bukkit.getScheduler().callSyncMethod(InnovativeItems.getInstance(), () -> {
-            T value = this.call(arguments, context);
-            this.unpause();
-            return value;
-        });
-
-        while (!future.isDone()) {
-            this.pause(); //fires before unpause due to time it takes to go through bukkit scheduler
-        }
+        Future<T> future = Bukkit.getScheduler().callSyncMethod(InnovativeItems.getInstance(), () -> this.call(arguments, context));
 
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new ExecutionException("The value of " + this.getIdentifier() + " was unable to be initialized in time.", e);
-        }
-    }
-
-    /**
-     * A util method to unpause the current thread
-     */
-    private synchronized void unpause() {
-        this.notify();
-    }
-
-    /**
-     * A util method to pause the current thread
-     */
-    private synchronized void pause() {
-        try {
-            this.wait(10000); //timeout of 10 seconds (time provided in milliseconds)
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
+            throw new ExecutionException("The value of " + this.identifier + " was unable to be initialized in time.", e);
         }
     }
 }

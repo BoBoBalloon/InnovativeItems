@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
-import me.boboballoon.innovativeitems.functions.context.BlockContext;
+import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;

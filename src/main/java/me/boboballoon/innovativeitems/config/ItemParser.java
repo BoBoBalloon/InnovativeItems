@@ -88,13 +88,15 @@ public final class ItemParser {
         //leather armor item
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, ItemParser.getRGB(leatherArmorSection, name), ItemParser.getColor(leatherArmorSection, name).getColor());
+            DyeColor color = ItemParser.getColor(leatherArmorSection, name);
+            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getRGB(potionSection, name), ItemParser.getColor(potionSection, name).getColor(), ItemParser.getPotionEffects(potionSection, name));
+            DyeColor color = ItemParser.getColor(potionSection, name);
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
         }
 
         //banner item

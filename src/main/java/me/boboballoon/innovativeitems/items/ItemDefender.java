@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
@@ -83,9 +84,9 @@ public final class ItemDefender implements Listener {
         }
 
         InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
-        Inventory inventory = event.getClickedInventory();
+        Inventory clicked = event.getClickedInventory();
 
-        if (inventory == null || (!this.contains(inventory.getClass()) && !this.contains(event.getView().getTopInventory().getClass())) || (cache.fromItemStack(event.getCurrentItem()) == null && cache.fromItemStack(event.getCursor()) == null)) {
+        if (clicked == null || !(this.contains(clicked.getClass()) || (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && this.contains(event.getInventory().getClass()))) || (cache.fromItemStack(event.getCurrentItem()) == null && cache.fromItemStack(event.getCursor()) == null)) {
             return;
         }
 

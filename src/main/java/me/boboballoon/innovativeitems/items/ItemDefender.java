@@ -89,7 +89,7 @@ public final class ItemDefender implements Listener {
             return;
         }
 
-        if (!event.getClick().isShiftClick() && !this.contains(inventory.getClass())) {
+        if (event.getClick().isShiftClick() || this.contains(inventory.getClass())) {
             return;
         }
 

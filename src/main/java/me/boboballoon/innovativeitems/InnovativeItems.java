@@ -44,6 +44,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    -1. Fix issue where players cannot shift-click items into containers
+    0. Add new item option (item to item basis) called "lenient" that defaults to false and if true the garbage collector will ignore all changes in the item name and enchantments of custom item and when updating other stuff will keep said changes (also will allow some inventories to the item defender)
     1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers
     3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
@@ -82,13 +84,14 @@ public final class InnovativeItems extends JavaPlugin {
                 new TeleportKeyword(), new TeleportToKeyword(), new TimeKeyword(), new SudoKeyword(),
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
-                new SetBlockAtKeyword());
+                new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsHoldingItemCondition(), new IsHoldingCustomItemCondition(),
                 new IsWearingItemCondition(), new IsWearingCustomItemCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
-                new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition());
+                new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition(),
+                new IsUsingItemCondition(), new IsUsingCustomItemCondition(), new IsExperienceAtCondition());
 
         //dependent functions
 

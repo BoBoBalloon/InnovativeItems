@@ -2,27 +2,27 @@ package me.boboballoon.innovativeitems.functions.condition.builtin;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
-import me.boboballoon.innovativeitems.functions.arguments.ExpectedEnum;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
-import org.bukkit.Material;
+import me.boboballoon.innovativeitems.util.ExperienceUtil;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class that represents a condition in an ability config file that checks if the target is holding a vanilla item
+ * Class that represents a condition in an ability config file that checks if the target has enough experience
  */
-@Deprecated
-public class IsHoldingItemCondition extends Condition {
-    public IsHoldingItemCondition() {
-        super("isholdingitem",
+public class IsExperienceAtCondition extends Condition {
+    public IsExperienceAtCondition() {
+        super("isexperienceat",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedEnum<>(Material.class, "material"),
-                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "item amount"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "experience amount"),
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.CHAR, "operation", object -> {
+                    char value = (char) object;
+                    return value == '>' || value == '<' || value == '=';
+                }));
     }
 
     @Override
@@ -44,12 +44,11 @@ public class IsHoldingItemCondition extends Condition {
             target = (Player) entityContext.getEntity();
         }
 
-        Material material = (Material) arguments.get(1);
-        int amount = (int) arguments.get(2);
+        int total = ExperienceUtil.getExp(target);
+        int experience = (int) arguments.get(1);
+        char operator = (char) arguments.get(2);
 
-        ItemStack item = target.getInventory().getItemInMainHand();
-
-        return item.getType() == material && item.getAmount() >= amount;
+        return operator == '>' ? total > experience : operator == '<' ? total < experience : operator == '=' ? total == experience : false;
     }
 
     @Override

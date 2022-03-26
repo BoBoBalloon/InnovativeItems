@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class that represents a condition in an ability config file that checks if the target is wearing a custom item
  */
+@Deprecated
 public class IsWearingCustomItemCondition extends Condition {
     public IsWearingCustomItemCondition() {
         super("iswearingcustomitem",

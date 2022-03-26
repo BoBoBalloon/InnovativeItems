@@ -44,7 +44,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    -1. Fix issue where players cannot shift-click items into containers
     0. Add new item option (item to item basis) called "lenient" that defaults to false and if true the garbage collector will ignore all changes in the item name and enchantments of custom item and when updating other stuff will keep said changes (also will allow some inventories to the item defender)
     1. Make adddurability keyword that adds durability to an equipment slot
     2. Make a "double-right-click" and "double-left-click" triggers

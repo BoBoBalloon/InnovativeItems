@@ -85,11 +85,7 @@ public final class ItemDefender implements Listener {
         InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
         Inventory inventory = event.getClickedInventory();
 
-        if (inventory == null || (cache.fromItemStack(event.getCurrentItem()) == null && cache.fromItemStack(event.getCursor()) == null)) {
-            return;
-        }
-
-        if (event.getClick().isShiftClick() || this.contains(inventory.getClass())) {
+        if (inventory == null || (!this.contains(inventory.getClass()) && !this.contains(event.getView().getTopInventory().getClass())) || (cache.fromItemStack(event.getCurrentItem()) == null && cache.fromItemStack(event.getCursor()) == null)) {
             return;
         }
 

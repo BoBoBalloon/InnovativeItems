@@ -8,7 +8,6 @@ import me.boboballoon.innovativeitems.functions.FunctionManager;
 import me.boboballoon.innovativeitems.functions.condition.builtin.*;
 import me.boboballoon.innovativeitems.functions.condition.builtin.dependent.IsInRegionCondition;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
-import me.boboballoon.innovativeitems.functions.keyword.builtin.dependent.MythicMobSkillKeyword;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
@@ -46,11 +45,10 @@ public final class InnovativeItems extends JavaPlugin {
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     0. Add new item option (item to item basis) called "lenient" that defaults to false and if true the garbage collector will ignore all changes in the item name and enchantments of custom item and when updating other stuff will keep said changes (also will allow some inventories to the item defender)
     1. Make adddurability keyword that adds durability to an equipment slot
-    2. Make a "double-right-click" and "double-left-click" triggers
-    3. Add option for abilities to consume mana cost (hook into MMOCore developer api)
-    4. Make custom durability options for custom items
-    5. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
-    6. Support variables and replace the ExpectedTargeters return type as the expected return type from the context into a new list and pass that in the ActiveFunction class
+    2. Add option for abilities to consume mana cost (hook into MMOCore developer api)
+    3. Make custom durability options for custom items
+    4. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    5. Support variables and replace the ExpectedTargeters return type as the expected return type from the context into a new list and pass that in the ActiveFunction class
      */
 
     /*
@@ -94,10 +92,6 @@ public final class InnovativeItems extends JavaPlugin {
 
         //dependent functions
 
-        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null && Integer.parseInt(Bukkit.getPluginManager().getPlugin("MythicMobs").getDescription().getVersion().substring(0, 1)) < 5) {
-            this.functionManager.registerKeywords(new MythicMobSkillKeyword());
-        }
-
         this.functionManager.registerConditions("WorldGuard", new IsInRegionCondition());
 
         //ability triggers
@@ -105,7 +99,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.functionManager.registerTriggers(new BlockBreakTrigger(), new ConsumeItemTrigger(), new CrouchTrigger(), new DamageDealtTrigger(),
                 new DamageTakenTrigger(), new LeftClickBlockTrigger(), new LeftClickTrigger(), new NoneTrigger(),
                 new RightClickBlockTrigger(), new RightClickTrigger(), new TimerTrigger(), new RightClickEntityTrigger(),
-                new ArrowHitEntityTrigger(), new ArrowHitBlockTrigger());
+                new ArrowHitEntityTrigger(), new ArrowHitBlockTrigger(), new DoubleLeftClickTrigger(), new DoubleRightClickTrigger());
     }
 
     @Override

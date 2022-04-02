@@ -6,7 +6,7 @@
 
     <groupId>me.boboballoon</groupId>
     <artifactId>InnovativeItems</artifactId>
-    <version>5.11.5</version>
+    <version>5.12</version>
     <packaging>jar</packaging>
     <name>InnovativeItems</name>
 
@@ -99,11 +99,6 @@
             <url>https://papermc.io/repo/repository/maven-releases/</url>
         </repository>
         <repository>
-            <id>nexus</id>
-            <name>Lumine Releases</name>
-            <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
@@ -141,13 +136,6 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.25</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- MythicMobs -->
-        <dependency>
-            <groupId>io.lumine.xikage</groupId>
-            <artifactId>MythicMobs</artifactId>
-            <version>4.9.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- WorldEdit -->

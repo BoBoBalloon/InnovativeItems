@@ -50,9 +50,7 @@ public class GiveItemKeyword extends Keyword {
         Material material = (Material) arguments.get(1);
         int amount = (int) arguments.get(2);
 
-        ItemStack item = new ItemStack(material, amount);
-
-        InventoryUtil.giveItem(target, item, 1);
+        InventoryUtil.giveItem(target, new ItemStack(material), amount);
     }
 
     @Override

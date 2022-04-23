@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,13 +35,7 @@ public class SetHealthKeyword extends Keyword {
             target = entityContext.getEntity();
         }
 
-        double amount = (double) arguments.get(1);
-
-        if (amount > target.getMaxHealth()) {
-            amount = target.getMaxHealth();
-        } else if (amount < 0) {
-            amount = 0;
-        }
+        double amount = Math.max(Math.min((double) arguments.get(1), target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()), 0);
 
         target.setHealth(amount);
     }

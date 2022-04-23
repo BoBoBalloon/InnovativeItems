@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ public class DamagePercentKeyword extends Keyword {
 
         double percent = (double) arguments.get(1) / 100; //convert to decimal
 
-        double amount = target.getMaxHealth() * percent;
+        double amount = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * percent;
 
         target.damage(amount);
     }

@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedPrimitive;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,14 +36,9 @@ public class HealPercentKeyword extends Keyword {
         }
 
         double percent = (double) arguments.get(1) / 100; //convert to decimal
+        double max = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 
-        double amount = target.getHealth() + (target.getMaxHealth() * percent);
-
-        if (amount > target.getMaxHealth()) {
-            amount = target.getMaxHealth();
-        } else if (amount < 0) {
-            amount = 0;
-        }
+        double amount = Math.max(Math.min(target.getHealth() + (max * percent), max), 0);
 
         target.setHealth(amount);
     }

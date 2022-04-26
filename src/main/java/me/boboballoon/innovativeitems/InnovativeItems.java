@@ -43,6 +43,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    0. Equipped custom armor have durability reset on every clean even without editing them MUST FIX
     1. Add new item option (item to item basis) called "lenient" that defaults to false and if true the garbage collector will ignore all changes in the item name and enchantments of custom item and when updating other stuff will keep said changes (also will allow some inventories to the item defender)
     2. Add option for abilities to consume mana cost (hook into MMOCore developer api)
     3. Make custom durability options for custom items

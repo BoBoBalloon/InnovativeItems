@@ -23,7 +23,6 @@ public final class InventoryUtil {
      * @param amount the amount of times to add the itemstack to the inventory
      */
     public static void giveItem(@NotNull Player player, @NotNull ItemStack item, int amount) {
-        boolean mainThread = Bukkit.isPrimaryThread();
         Runnable add = () -> {
             for (int i = 0; i < amount; i++) {
                 if (player.getInventory().firstEmpty() != -1) {
@@ -32,23 +31,17 @@ public final class InventoryUtil {
                 }
 
                 int difference = amount - i;
-                Runnable drop = () -> {
+
+                Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
                     for (int j = 0; j < difference; j++) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item);
                     }
-                };
-
-
-                if (!mainThread) {
-                    Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), drop);
-                } else {
-                    drop.run();
-                }
+                });
                 return;
             }
         };
 
-        if (mainThread) {
+        if (Bukkit.isPrimaryThread()) {
             Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), add);
         } else {
             add.run();

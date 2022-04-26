@@ -542,8 +542,8 @@ public final class ConfigManager {
                 }
 
                 if (!InnovativeItems.isPluginPremium() && cache.getItemAmount() >= maxCount) {
-                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the item identified as: " + key);
-                    continue;
+                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the file named: " + home.getName());
+                    break;
                 }
 
                 CustomItem item = ItemParser.parseItem(section, name);

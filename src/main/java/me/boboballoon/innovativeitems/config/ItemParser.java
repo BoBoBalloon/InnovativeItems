@@ -223,6 +223,7 @@ public final class ItemParser {
             }
 
             ConfigurationSection modifierSection = attributeSection.getConfigurationSection(slotName);
+            byte counter = -128;
             for (String attributeName : modifierSection.getKeys(false)) {
                 Attribute attribute;
                 try {
@@ -233,10 +234,16 @@ public final class ItemParser {
                 }
 
                 if (slot != RevisedEquipmentSlot.ANY) {
-                    attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot.getSlot()));
+                    byte[] array = Arrays.copyOf(itemName.getBytes(), itemName.getBytes().length + 1);
+                    array[itemName.getBytes().length] = counter;
+                    attributes.put(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(array), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot.getSlot()));
+                    counter++;
                 } else {
                     for (EquipmentSlot everySlot : EquipmentSlot.values()) {
-                        attributes.put(attribute, new AttributeModifier(UUID.randomUUID(), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, everySlot));
+                        byte[] array = Arrays.copyOf(itemName.getBytes(), itemName.getBytes().length + 1);
+                        array[itemName.getBytes().length] = counter;
+                        attributes.put(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(array), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, everySlot));
+                        counter++;
                     }
                 }
             }

@@ -8,17 +8,13 @@ import me.boboballoon.innovativeitems.items.item.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -79,6 +75,8 @@ public final class ItemParser {
 
         boolean wearable = section.isBoolean("wearable") ? section.getBoolean("wearable") : true;
 
+        int maxDurability = section.isInt("max-durability") ? section.getInt("max-durability") : material.getMaxDurability();
+
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
@@ -89,36 +87,36 @@ public final class ItemParser {
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
             DyeColor color = ItemParser.getColor(leatherArmorSection, name);
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
+            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, maxDurability, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
             DyeColor color = ItemParser.getColor(potionSection, name);
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
         }
 
         //banner item
         if (section.isConfigurationSection("banner") && CustomItemBanner.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, ItemParser.getBannerPatterns(bannerSection, name));
+            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, maxDurability, ItemParser.getBannerPatterns(bannerSection, name));
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
         }
 
         //shield item
         if (section.isConfigurationSection("shield") && material == Material.SHIELD) {
             ConfigurationSection shieldSection = section.getConfigurationSection("shield");
-            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
+            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, maxDurability, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
         }
         
         //generic item
-        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable);
+        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable, maxDurability);
     }
 
     /**
@@ -218,12 +216,12 @@ public final class ItemParser {
             try {
                 slot = RevisedEquipmentSlot.valueOf(slotName.toUpperCase());
             } catch (IllegalArgumentException e) {
-                LogUtil.log(LogUtil.Level.WARNING, "Unknown equipment slot provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                LogUtil.log(LogUtil.Level.WARNING, "The unknown equipment slot " + slotName.toUpperCase() + " was provided in the attribute section while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
                 continue;
             }
 
             ConfigurationSection modifierSection = attributeSection.getConfigurationSection(slotName);
-            byte counter = -128;
+            byte counter = Byte.MIN_VALUE;
             for (String attributeName : modifierSection.getKeys(false)) {
                 Attribute attribute;
                 try {
@@ -233,19 +231,10 @@ public final class ItemParser {
                     continue;
                 }
 
-                if (slot != RevisedEquipmentSlot.ANY) {
-                    byte[] array = Arrays.copyOf(itemName.getBytes(), itemName.getBytes().length + 1);
-                    array[itemName.getBytes().length] = counter;
-                    attributes.put(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(array), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot.getSlot()));
-                    counter++;
-                } else {
-                    for (EquipmentSlot everySlot : EquipmentSlot.values()) {
-                        byte[] array = Arrays.copyOf(itemName.getBytes(), itemName.getBytes().length + 1);
-                        array[itemName.getBytes().length] = counter;
-                        attributes.put(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(array), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, everySlot));
-                        counter++;
-                    }
-                }
+                byte[] array = Arrays.copyOf(itemName.getBytes(), itemName.getBytes().length + 1);
+                array[itemName.getBytes().length] = counter;
+                attributes.put(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(array), "test-value", modifierSection.getDouble(attributeName), AttributeModifier.Operation.ADD_NUMBER, slot.getSlot()));
+                counter++;
             }
         }
 

@@ -1,16 +1,19 @@
 package me.boboballoon.innovativeitems.listeners;
 
-import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.util.DurabilityUtil;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorEquipEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,15 +38,9 @@ public final class ItemFieldListeners implements Listener {
             return;
         }
 
-        ItemStack item = event.getItemInHand();
+        CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(event.getItemInHand());
 
-        if (item.getType() == Material.AIR) {
-            return;
-        }
-
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (!nbtItem.hasKey("innovativeplugin-customitem") || nbtItem.getBoolean("innovativeplugin-customitem-placeable")) {
+        if (item == null || item.isPlaceable()) {
             return;
         }
 
@@ -68,15 +65,10 @@ public final class ItemFieldListeners implements Listener {
         List<ItemStack> drops = event.getDrops();
 
         for (int i = 0; i < drops.size(); i++) {
-            ItemStack item = drops.get(i);
+            ItemStack stack = drops.get(i);
+            CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
 
-            if (item.getType() == Material.AIR) {
-                continue;
-            }
-
-            NBTItem nbtItem = new NBTItem(item);
-
-            if (!nbtItem.hasKey("innovativeplugin-customitem") || !nbtItem.getBoolean("innovativeplugin-customitem-soulbound")) {
+            if (item == null || !item.isSoulbound()) {
                 continue;
             }
 
@@ -86,7 +78,7 @@ public final class ItemFieldListeners implements Listener {
                 this.soulboundItems.put(uuid, new ArrayList<>());
             }
 
-            this.soulboundItems.get(uuid).add(item);
+            this.soulboundItems.get(uuid).add(stack);
             drops.remove(i);
             i--; //to make sure that we move one index back because we just removed an index
         }
@@ -118,16 +110,36 @@ public final class ItemFieldListeners implements Listener {
             return;
         }
 
-        ItemStack item = event.getNewArmorPiece();
+        CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(event.getNewArmorPiece());
 
-        if (item == null || item.getType() == Material.AIR || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+        if (item == null || item.isWearable() || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
             return; //will not cancel event if item is null or player is in creative mode
         }
 
-        NBTItem nbt = new NBTItem(item);
+        event.setCancelled(true);
+    }
 
-        if (!nbt.hasKey("innovativeplugin-customitem") || nbt.getBoolean("innovativeplugin-customitem-wearable")) {
-            return; //will not cancel if item is not a custom item or is, in fact, wearable
+    /**
+     * Listener used to determine when to calculate durability level on item
+     * (unbreaking is already accounted for due to the event wont event fire if unbreaking is triggered)
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        ItemStack stack = event.getItem();
+        CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
+
+        if (item == null || stack.getItemMeta().isUnbreakable()) {
+            return;
+        }
+
+        DurabilityUtil.setDurability(stack, DurabilityUtil.getDurability(stack) - 1);
+
+        if (stack.getType() == Material.AIR) { //if item was deleted since it became broken
+            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
         }
 
         event.setCancelled(true);

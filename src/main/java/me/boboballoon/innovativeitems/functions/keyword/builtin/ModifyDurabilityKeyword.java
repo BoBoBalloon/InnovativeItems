@@ -8,11 +8,10 @@ import me.boboballoon.innovativeitems.functions.arguments.ExpectedTargeters;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import me.boboballoon.innovativeitems.util.DurabilityUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,11 +50,7 @@ public class ModifyDurabilityKeyword extends Keyword {
         boolean set = (boolean) arguments.get(3);
 
         for (ItemStack item : slot.getFromPlayer(target)) {
-            if (item.getItemMeta() instanceof Damageable) {
-                Damageable damageable = (Damageable) item.getItemMeta();
-                damageable.setDamage(set ? item.getType().getMaxDurability() - Math.max(Math.min(item.getType().getMaxDurability(), amount), 0) : item.getType().getMaxDurability() - Math.max(Math.min(item.getType().getMaxDurability(), (item.getType().getMaxDurability() - damageable.getDamage()) + amount), 0));
-                item.setItemMeta((ItemMeta) damageable);
-            }
+            DurabilityUtil.setDurability(item, set ? amount : DurabilityUtil.getDurability(item) + amount);
         }
     }
 

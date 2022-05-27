@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,7 +148,7 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        NBTItem nbt = new NBTItem(item);
+        NBTItem nbt = new NBTItem(item, true);
 
         if (!nbt.hasKey("innovativeplugin-customitem")) {
             return;
@@ -173,6 +172,10 @@ public final class GarbageCollector implements Listener {
         item.setType(customItemData.getType());
         item.setData(customItemData.getData());
         item.setItemMeta(customItemData.getItemMeta());
+
+        if (nbt.getInteger("innovativeplugin-customitem-durability") > customItem.getMaxDurability()) {
+            nbt.setInteger("innovativeplugin-customitem-durability", customItem.getMaxDurability());
+        }
 
         LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + type.name() + " at " + location.toString());
     }
@@ -248,28 +251,18 @@ public final class GarbageCollector implements Listener {
     private static boolean bruteCompare(@NotNull CustomItem item, @NotNull ItemStack two) {
         ItemStack one = item.getItemStack();
 
-        if (one.getType() != two.getType() || !two.hasItemMeta()) {
+        if (one.getType() != two.getType() || !two.hasItemMeta() || (one.getItemMeta() instanceof Damageable != two.getItemMeta() instanceof Damageable && one.getItemMeta() instanceof Damageable)) {
             return false;
         }
 
-        ItemMeta metaOne = one.getItemMeta();
-        ItemMeta metaTwo = two.getItemMeta();
+        NBTItem nbtOne = new NBTItem(one);
+        NBTItem nbtTwo = new NBTItem(two);
 
-        boolean customDamageable = metaOne instanceof Damageable;
-        boolean stackDamageable = metaTwo instanceof Damageable;
+        nbtOne.setInteger("Damage", 1); //vanilla durability
+        nbtTwo.setInteger("Damage", 1);
+        nbtOne.setInteger("innovativeplugin-customitem-durability", 1);
+        nbtTwo.setInteger("innovativeplugin-customitem-durability", 1);
 
-        if (customDamageable != stackDamageable) {
-            return false;
-        }
-
-        if (customDamageable) { //already passed condition above, so if this is true, both are true
-            metaOne = metaOne.clone();
-            metaTwo = metaTwo.clone();
-
-            ((Damageable) metaOne).setDamage(1);
-            ((Damageable) metaTwo).setDamage(1);
-        }
-
-        return Bukkit.getItemFactory().equals(metaOne, metaTwo);
+        return nbtOne.equals(nbtTwo);
     }
 }

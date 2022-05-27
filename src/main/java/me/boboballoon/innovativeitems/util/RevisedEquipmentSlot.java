@@ -49,7 +49,7 @@ public enum RevisedEquipmentSlot {
         ItemStack[] array = new ItemStack[6];
         RevisedEquipmentSlot[] values = RevisedEquipmentSlot.values();
 
-        for (int i = 0; i < values.length - 1; i++) {
+        for (int i = 0; i < values.length - 1; i++) { //this works because the values() method returns the enums in order and since ANY is last and we subtract one from the loop it skips ANY
             array[i] = player.getInventory().getItem(values[i].getSlot());
         }
 

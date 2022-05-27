@@ -93,7 +93,7 @@ public final class LogUtil {
      * @param fieldName the name of field to be initialized
      */
     public static void logFunctionError(@NotNull Level level, @NotNull FunctionContext context, @NotNull String fieldName) {
-        String functionType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";
+        String functionType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "function";
         LogUtil.logFunctionError(level, fieldName, context.getFunction().getIdentifier(), functionType, context.getAbilityName());
     }
 

@@ -18,7 +18,7 @@ public interface ExpectedArguments {
      * A constant field that is used as the default error response to a mismatched data type or error while parsing
      */
     Consumer<FunctionContext> DEFAULT_ERROR = context -> {
-        String argumentType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "unknown";
+        String argumentType = context.getFunction() instanceof Keyword ? "keyword" : context.getFunction() instanceof Condition ? "condition" : "function";
         LogUtil.log(LogUtil.Level.WARNING, "Line number " + context.getLineNumber() + " on " + argumentType + " " +  context.getFunction().getIdentifier() + " on ability " + context.getAbilityName() + " was unable to be parsed... Are you sure you provided the correct data type?");
     };
 

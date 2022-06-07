@@ -25,8 +25,8 @@ import java.util.UUID;
  * A class that represents a custom item that is a player skull
  */
 public class CustomItemSkull extends CustomItem {
-    public CustomItemSkull(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, @Nullable String skullName, @Nullable String base64) {
-        super(identifier, ability, CustomItemSkull.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, skullName, base64), placeable, soulbound, wearable, 0);
+    public CustomItemSkull(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, boolean updateItem, @Nullable String skullName, @Nullable String base64) {
+        super(identifier, ability, CustomItemSkull.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, skullName, base64), placeable, soulbound, wearable, 0, updateItem);
     }
 
     /**

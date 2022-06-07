@@ -22,8 +22,8 @@ import java.util.Map;
  * A class that represents a custom item that is a shield that can have banner pattens
  */
 public class CustomItemShield extends CustomItemBanner {
-    public CustomItemShield(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, boolean wearable, int maxDurability, @Nullable List<Pattern> patterns, @Nullable DyeColor baseColor) {
-        super(identifier, ability, CustomItemShield.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, maxDurability, patterns, baseColor), false, soulbound, wearable, maxDurability);
+    public CustomItemShield(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable List<Pattern> patterns, @Nullable DyeColor baseColor) {
+        super(identifier, ability, CustomItemShield.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, maxDurability, patterns, baseColor), false, soulbound, wearable, maxDurability, updateItem);
     }
 
     /**

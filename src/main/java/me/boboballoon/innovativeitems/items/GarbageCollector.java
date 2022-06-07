@@ -163,7 +163,7 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        if (!this.shouldUpdate || customItem == null || bruteCompare(customItem, item)) {
+        if (!this.shouldUpdate || customItem == null || !customItem.shouldUpdateItem() || bruteCompare(customItem, item)) {
             return;
         }
 

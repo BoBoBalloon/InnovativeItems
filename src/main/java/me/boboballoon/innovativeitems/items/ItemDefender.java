@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.items;
 
 import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -88,7 +89,10 @@ public final class ItemDefender implements Listener {
         Inventory clicked = event.getClickedInventory();
         Inventory top = event.getInventory();
 
-        if (clicked == null || !(this.contains(clicked.getClass()) || (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && top.getType() != InventoryType.CRAFTING && this.contains(top.getClass()))) || (cache.fromItemStack(event.getCurrentItem()) == null && cache.fromItemStack(event.getCursor()) == null)) {
+        CustomItem slot = cache.fromItemStack(event.getCurrentItem());
+        CustomItem cursor = cache.fromItemStack(event.getCursor());
+
+        if (clicked == null || ((slot != null && !slot.shouldUpdateItem()) || (cursor != null && !cursor.shouldUpdateItem())) || !(this.contains(clicked.getClass()) || (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && top.getType() != InventoryType.CRAFTING && this.contains(top.getClass()))) || (slot == null && cursor == null)) {
             return;
         }
 

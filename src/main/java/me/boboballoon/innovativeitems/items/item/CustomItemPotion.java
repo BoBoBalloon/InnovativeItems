@@ -22,8 +22,8 @@ import java.util.Map;
  * A class that represents a custom item that is a potion
  */
 public class CustomItemPotion extends CustomItem {
-    public CustomItemPotion(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
-        super(identifier, ability, CustomItemPotion.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, rgb, color, effects), false, soulbound, false, 0);
+    public CustomItemPotion(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, boolean updateItem, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+        super(identifier, ability, CustomItemPotion.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, rgb, color, effects), false, soulbound, false, 0, updateItem);
     }
 
     /**

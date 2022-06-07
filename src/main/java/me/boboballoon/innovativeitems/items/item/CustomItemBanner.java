@@ -21,12 +21,12 @@ import java.util.Map;
  * A class that represents a custom item that is a banner
  */
 public class CustomItemBanner extends CustomItem {
-    public CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, @Nullable List<Pattern> patterns) {
-        this(identifier, ability, CustomItemBanner.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, maxDurability, patterns), placeable, soulbound, wearable, maxDurability);
+    public CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable List<Pattern> patterns) {
+        this(identifier, ability, CustomItemBanner.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, maxDurability, patterns), placeable, soulbound, wearable, maxDurability, updateItem);
     }
 
-    protected CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability) {
-        super(identifier, ability, item, placeable, soulbound, wearable, maxDurability);
+    protected CustomItemBanner(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem) {
+        super(identifier, ability, item, placeable, soulbound, wearable, maxDurability, updateItem);
     }
 
     /**

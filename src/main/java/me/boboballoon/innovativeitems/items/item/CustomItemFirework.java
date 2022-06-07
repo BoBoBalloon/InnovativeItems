@@ -20,8 +20,8 @@ import java.util.Map;
  * A class that represents a custom item that is a firework rocket
  */
 public class CustomItemFirework extends CustomItem {
-    public CustomItemFirework(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, @Nullable List<FireworkEffect> fireworkEffects, @Nullable Integer power) {
-        super(identifier, ability, CustomItemFirework.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, fireworkEffects, power), true, soulbound, false, 0);
+    public CustomItemFirework(@NotNull String identifier, @Nullable Ability ability, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean soulbound, boolean updateItem, @Nullable List<FireworkEffect> fireworkEffects, @Nullable Integer power) {
+        super(identifier, ability, CustomItemFirework.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, fireworkEffects, power), true, soulbound, false, 0, updateItem);
     }
 
     /**

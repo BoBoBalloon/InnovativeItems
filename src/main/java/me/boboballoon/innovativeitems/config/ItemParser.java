@@ -77,46 +77,48 @@ public final class ItemParser {
 
         int maxDurability = section.isInt("max-durability") ? section.getInt("max-durability") : material.getMaxDurability();
 
+        boolean updateItem = section.isBoolean("update-item") ? section.getBoolean("update-item") : true;
+
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, updateItem, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
         if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
             DyeColor color = ItemParser.getColor(leatherArmorSection, name);
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, maxDurability, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
+            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, maxDurability, updateItem, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
         }
 
         //potion item
         if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
             DyeColor color = ItemParser.getColor(potionSection, name);
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
+            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, updateItem, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
         }
 
         //banner item
         if (section.isConfigurationSection("banner") && CustomItemBanner.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, maxDurability, ItemParser.getBannerPatterns(bannerSection, name));
+            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, maxDurability, updateItem, ItemParser.getBannerPatterns(bannerSection, name));
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, updateItem, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
         }
 
         //shield item
         if (section.isConfigurationSection("shield") && material == Material.SHIELD) {
             ConfigurationSection shieldSection = section.getConfigurationSection("shield");
-            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, maxDurability, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
+            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, maxDurability, updateItem, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
         }
         
         //generic item
-        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable, maxDurability);
+        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable, maxDurability, updateItem);
     }
 
     /**

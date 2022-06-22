@@ -2,10 +2,10 @@ fairy-fullset:
   trigger: 'timer:5'
   conditions:
     - '!istime(NIGHT)'
-    - 'iswearingcustomitem(?player, fairy-helmet, HEAD)'
-    - 'iswearingcustomitem(?player, fairy-chestplate, CHEST)'
-    - 'iswearingcustomitem(?player, fairy-leggings, LEGS)'
-    - 'iswearingcustomitem(?player, fairy-boots, FEET)'
+    - 'isusingcustomitem(?player, fairy-helmet, 1, HEAD)'
+    - 'isusingcustomitem(?player, fairy-chestplate, 1, CHEST)'
+    - 'isusingcustomitem(?player, fairy-leggings, 1, LEGS)'
+    - 'isusingcustomitem(?player, fairy-boots, 1, FEET)'
   keywords:
     - 'ability(fairy-fullset-buff)'
     - 'ability(fairy-fullset-safety)'

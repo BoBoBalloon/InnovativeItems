@@ -30,7 +30,7 @@ public abstract class AbilityTrigger<T extends Event, S extends RuntimeContext> 
     private final Predicate<T> predicate;
     private final ImmutableSet<FunctionTargeter> targeters;
 
-    public AbilityTrigger(@NotNull String identifier, @Nullable String regex, @NotNull Class<T> eventClass, @NotNull Class<S> contextClass, @NotNull InventoryIterator<T> iterator, @Nullable Predicate<T> predicate, @NotNull ImmutableSet<FunctionTargeter> targeters) {
+    private AbilityTrigger(@NotNull String identifier, @Nullable String regex, @NotNull Class<T> eventClass, @NotNull Class<S> contextClass, @NotNull InventoryIterator<T> iterator, @Nullable Predicate<T> predicate, @NotNull ImmutableSet<FunctionTargeter> targeters) {
         this.identifier = identifier;
         this.regex = regex != null ? regex : identifier;
         this.eventClass = eventClass;
@@ -119,22 +119,6 @@ public abstract class AbilityTrigger<T extends Event, S extends RuntimeContext> 
     }
 
     /**
-     * A method used to check if the current ability trigger is compatible with the specified ability trigger
-     *
-     * @param trigger the specified ability trigger
-     * @return a boolean that is true when the current ability trigger is compatible with the specified ability trigger
-     */
-    public final boolean isCompatible(@NotNull AbilityTrigger<?, ?> trigger) {
-        for (FunctionTargeter allowedTargeter : trigger.getTargeters()) {
-            if (!this.targeters.contains(allowedTargeter)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * A method used to get an instance of the player object from the provided event
      *
      * @param event the provided event
@@ -174,5 +158,23 @@ public abstract class AbilityTrigger<T extends Event, S extends RuntimeContext> 
         }
 
         return ImmutableSet.copyOf(targeters);
+    }
+
+    /**
+     * A method used to check if the current ability trigger is compatible with the specified ability trigger
+     * This will only return true if this trigger can use at least every targeter of the provided trigger ()
+     *
+     * @param origin the ability trigger you are starting from
+     * @param target the ability trigger you wish to execute next
+     * @return a boolean that is true when the origin ability trigger is compatible with the target ability trigger
+     */
+    public static boolean isCompatible(@NotNull AbilityTrigger<?, ?> origin, @NotNull AbilityTrigger<?, ?> target) {
+        for (FunctionTargeter targeter : target.getTargeters()) {
+            if (!origin.getTargeters().contains(targeter)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

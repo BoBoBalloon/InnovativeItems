@@ -195,6 +195,11 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
+        if (ability.getTrigger().getTargeters().size() > 1 && InnovativeItems.getInstance().getConfigManager().isStrict()) {
+            TextUtil.sendMessage(sender, "&r&cYou have entered an ability that is not compatible with the &l'none'&r&c trigger!");
+            return;
+        }
+
         Player target;
         if (args.length == 2) {
             target = Bukkit.getPlayerExact(args[1]);

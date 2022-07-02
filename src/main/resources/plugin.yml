@@ -5,7 +5,7 @@ api-version: 1.16
 prefix: 'InnovativeItems'
 authors: [BoBoBalloon]
 depend: [NBTAPI]
-softdepend: [MythicMobs, WorldGuard]
+softdepend: [WorldGuard]
 description: 'A customizable item plugin that allows server owners to build custom items without any Java experience!'
 
 permissions:

@@ -87,7 +87,7 @@ public class Ability {
      * @return a boolean that is true when the ability executed successfully
      */
     public boolean execute(@NotNull RuntimeContext context) {
-        if (this != context.getAbility()) {
+        if (this != context.getAbility()) { //this does NOT mean that the context is the same, just means that it has the same target ability
             throw new IllegalArgumentException("An instance of RuntimeContext has been passed to an ability that does not reflect the context!");
         }
 
@@ -97,7 +97,7 @@ public class Ability {
 
         if (this.shouldWrapContext(context)) {
             context = FlexibleContext.wrap(context);
-        } else if (!this.trigger.getContextClass().isInstance(context)) {
+        } else if (!AbilityTrigger.isCompatible(context.getAbilityTrigger(), this.trigger)) {
             LogUtil.log(LogUtil.Level.NOISE, "Ability: " + this.identifier + " failed to execute due to an incompatible runtime context. (if safety is not an issue try setting the strict field in the main config file to false)");
             return false;
         }

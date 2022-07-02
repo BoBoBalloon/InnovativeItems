@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
+import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class RandomAbilityKeyword extends Keyword {
                 return;
             }
 
-            if (InnovativeItems.getInstance().getConfigManager().isStrict() && !context.getAbilityTrigger().isCompatible(ability.getTrigger())) {
+            if (InnovativeItems.getInstance().getConfigManager().isStrict() && !AbilityTrigger.isCompatible(context.getAbilityTrigger(), ability.getTrigger())) {
                 LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same targeters as the " + context.getAbilityName() + " ability!");
                 return;
             }

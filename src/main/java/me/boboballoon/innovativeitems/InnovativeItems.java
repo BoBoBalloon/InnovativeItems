@@ -43,7 +43,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    1. Add implementation of ExpectedArguments that the class is final (cant be extended) and is called ExpectedVarArg (adds var arg as last argument and returns an array of said objects, is an edge case for the parser and should be hardcoded in)
+    2. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
      */
 
     /*
@@ -59,6 +60,9 @@ public final class InnovativeItems extends JavaPlugin {
         return true;
     }
 
+    /**
+     * The method that loads up the plugin before bukkit is initialized; used to register functions and triggers for this plugin's API
+     */
     @Override
     public void onLoad() {
         //instance init
@@ -77,7 +81,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
-                new JsonMessageKeyword());
+                new JsonMessageKeyword(), new GillsKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
@@ -98,6 +102,9 @@ public final class InnovativeItems extends JavaPlugin {
                 new ArrowHitEntityTrigger(), new ArrowHitBlockTrigger(), new DoubleLeftClickTrigger(), new DoubleRightClickTrigger());
     }
 
+    /**
+     * Method that loads up plugin features and systems that depend on bukkit/spigot to work; this method finishes plugin initialization
+     */
     @Override
     public void onEnable() {
         LogUtil.logUnblocked(LogUtil.Level.INFO, "Loading up the " + (InnovativeItems.isPluginPremium() ? "premium" : "free") + " version of the plugin...");
@@ -148,6 +155,8 @@ public final class InnovativeItems extends JavaPlugin {
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }
+
+
 
     /**
      * A method used to return the active instance of the plugin

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A class used to represent an event that is called when an ability is executed
- * Is not a subclass of {@link org.bukkit.event.player.PlayerEvent} due to the fact that it is not possible to make it async without reflection and that's dumb
+ * Is not a subclass of {@link org.bukkit.event.player.PlayerEvent} due to the fact that it is not possible to make it async without reflection (yuck)
  */
 public class AbilityExecuteEvent extends Event implements Cancellable {
     private final RuntimeContext context;

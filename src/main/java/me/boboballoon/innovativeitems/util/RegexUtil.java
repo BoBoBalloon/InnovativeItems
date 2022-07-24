@@ -33,16 +33,23 @@ public final class RegexUtil {
      */
     @NotNull
     public static String[] splitLiteralWithEscape(@NotNull String text, char literal) {
+        return RegexUtil.splitLiteralWithEscape(text, literal, 0);
+    }
+
+    /**
+     * A method that returns an array of strings that were split using the literal with escape and removes the escape characters
+     *
+     * @param text the text you wish to split
+     * @param literal the literal you wish to target
+     * @param limit the max amount of elements in the split array
+     * @return an array of strings that were split using the provided literal with escape and removes the escape characters
+     */
+    @NotNull
+    public static String[] splitLiteralWithEscape(@NotNull String text, char literal, int limit) {
         String regex = RegexUtil.literalWithEscape(literal);
 
-        String[] split = text.split(regex);
+        String[] split = text.split(regex, limit);
         String literalAsString = "" + literal;
-
-        /*
-        for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].replace("\\" + literal, literalAsString);
-        }
-         */
 
         return Arrays.stream(split).map(value -> value.replace("\\" + literal, literalAsString)).toArray(String[]::new);
     }

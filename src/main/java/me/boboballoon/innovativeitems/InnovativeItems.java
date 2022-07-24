@@ -43,7 +43,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Add implementation of ExpectedArguments that the class is final (cant be extended) and is called ExpectedVarArg (adds var arg as last argument and returns an array of said objects, is an edge case for the parser and should be hardcoded in)
+    1. Make sure to remove the nested for loop and array shit in RandomAbilityKeyword in a few updates after everyone has moved over to var-arg syntax
     2. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
      */
 

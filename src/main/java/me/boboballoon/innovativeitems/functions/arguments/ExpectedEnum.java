@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * A class that represents an enum that can be parsed for a keywords arguments
+ * A class that represents an enum that can be parsed for a functions arguments
  */
 public class ExpectedEnum<T extends Enum<T>> implements ExpectedArguments {
     private final Class<T> clazz;

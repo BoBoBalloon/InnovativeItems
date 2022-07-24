@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * A class that represents a "primitive" type that can be parsed for a keywords arguments
+ * A class that represents a "primitive" type that can be parsed for a functions arguments
  */
 public class ExpectedPrimitive implements ExpectedArguments {
     private final PrimitiveType primitive;

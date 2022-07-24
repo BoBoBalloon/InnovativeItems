@@ -5,6 +5,7 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.FunctionContext;
 import me.boboballoon.innovativeitems.functions.InnovativeFunction;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedArguments;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedVarArg;
 import me.boboballoon.innovativeitems.functions.condition.ActiveCondition;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.keyword.ActiveKeyword;
@@ -277,7 +278,9 @@ public final class AbilityParser {
             LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the " + type + " by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
         }
 
-        String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',');
+        boolean hasVararg = function.getArguments().get(function.getArguments().size() - 1) instanceof ExpectedVarArg;
+
+        String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',', hasVararg ? function.getArguments().size() : 0);
 
         rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
 
@@ -286,18 +289,18 @@ public final class AbilityParser {
             rawArguments = new String[0];
         }
 
-        if (rawArguments.length != function.getArguments().size()) {
+        if (rawArguments.length != function.getArguments().size() && !hasVararg) {
             LogUtil.log(LogUtil.Level.WARNING, "There are currently an invalid amount of arguments provided on the " + function.getIdentifier() + " " + type + " on line " + (i + 1) + " of the " + abilityName + " ability!");
             return null;
         }
 
-        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1));
+        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1), hasVararg);
     }
 
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context) {
+    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context, boolean hasVararg) {
         List<Object> parsedArguments = new ArrayList<>();
 
         for (int i = 0; i < rawArguments.length; i++) {

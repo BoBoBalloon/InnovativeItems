@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * A class used to wrap the ExpectedManual interface to provided support for error messages
+ * A class used to wrap the ExpectedFunction interface that has the same structure as the ExpectedArguments interface to provided support for error messages
  */
 public class ExpectedManual implements ExpectedArguments {
     private final ExpectedFunction manual;

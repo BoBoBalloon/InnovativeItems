@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.functions;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.functions.arguments.ExpectedVarArg;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
 import me.boboballoon.innovativeitems.functions.context.RuntimeContext;
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
@@ -13,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +51,12 @@ public final class FunctionManager {
             return;
         }
 
+        if (!this.hasValidArguments(keyword)) {
+            //unblocked because debug level may be null at this point
+            LogUtil.logUnblocked(LogUtil.Level.DEV, "Keyword with the identifier of " + identifier + " is not valid due to incorrect usage of var-args! Skipping...");
+            return;
+        }
+
         this.keywords.put(identifier, keyword);
     }
 
@@ -80,6 +86,12 @@ public final class FunctionManager {
         if (this.isInvalidIdentifier(identifier)) {
             //unblocked because debug level may be null at this point
             LogUtil.logUnblocked(LogUtil.Level.DEV, "Condition with the identifier of " + identifier + " is not valid! Skipping...");
+            return;
+        }
+
+        if (!this.hasValidArguments(condition)) {
+            //unblocked because debug level may be null at this point
+            LogUtil.logUnblocked(LogUtil.Level.DEV, "Condition with the identifier of " + identifier + " is not valid due to incorrect usage of var-args! Skipping...");
             return;
         }
 
@@ -165,9 +177,7 @@ public final class FunctionManager {
 
         this.triggers.put(trigger.getIdentifier(), trigger);
 
-        Plugin plugin = InnovativeItems.getInstance();
-
-        if (plugin.isEnabled()) {
+        if (InnovativeItems.getInstance().isEnabled()) {
             FunctionManager.registerTriggerEvent(trigger);
         }
     }
@@ -284,6 +294,22 @@ public final class FunctionManager {
         for (AbilityTrigger<?, ?> trigger : this.triggers.values()) {
             FunctionManager.registerTriggerEvent(trigger);
         }
+    }
+
+    /**
+     * A method that checks if a function has var-args in places other than the last element
+     *
+     * @param function the function to check
+     * @return true if the function is valid
+     */
+    private boolean hasValidArguments(@NotNull InnovativeFunction<?> function) {
+        for (int i = 0; i < function.getArguments().size(); i++) {
+            if (function.getArguments().get(i) instanceof ExpectedVarArg && i != function.getArguments().size() - 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

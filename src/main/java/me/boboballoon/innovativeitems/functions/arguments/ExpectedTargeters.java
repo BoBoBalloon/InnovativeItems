@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
- * A class used to contain all possible keyword targeters used in a keyword argument
+ * A class used to contain all possible keyword targeters used in a function argument
  */
 public class ExpectedTargeters implements ExpectedArguments {
     private final ImmutableSet<FunctionTargeter> targeters;

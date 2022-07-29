@@ -278,7 +278,7 @@ public final class AbilityParser {
             LogUtil.log(LogUtil.Level.WARNING, "While loading " + abilityName + " the usage of the " + type + " by the name of " + function.getIdentifier() + " was detected... It is not recommended to use this " + type + " and should be removed as soon as possible!");
         }
 
-        boolean hasVararg = function.getArguments().get(function.getArguments().size() - 1) instanceof ExpectedVarArg;
+        boolean hasVararg = function.getArguments().size() != 0 && function.getArguments().get(function.getArguments().size() - 1) instanceof ExpectedVarArg;
 
         String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',', hasVararg ? function.getArguments().size() : 0);
 
@@ -294,13 +294,13 @@ public final class AbilityParser {
             return null;
         }
 
-        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1), hasVararg);
+        return AbilityParser.parseArguments(rawArguments, new FunctionContext(function, rawArguments, abilityName, trigger, i + 1));
     }
 
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context, boolean hasVararg) {
+    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context) {
         List<Object> parsedArguments = new ArrayList<>();
 
         for (int i = 0; i < rawArguments.length; i++) {

@@ -41,11 +41,11 @@ public final class ExpectedVarArg implements ExpectedArguments {
             Object parse;
             try {
                 parse = this.parse.getValue(raw, context);
-            } catch (Exception e) {
-                return null;
-            }
 
-            if (parse == null) {
+                if (parse == null) {
+                    return null;
+                }
+            } catch (Exception e) {
                 return null;
             }
 

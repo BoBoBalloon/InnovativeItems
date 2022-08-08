@@ -6,6 +6,7 @@ import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +23,8 @@ import java.util.Set;
  * A class used to make sure that custom items are not use in vanilla minecraft mechanics
  */
 public final class ItemDefender implements Listener {
-    private final Set<Class<? extends Inventory>> blacklistedInventories = Sets.newHashSet(AnvilInventory.class, BeaconInventory.class, BrewerInventory.class, CartographyInventory.class, CraftingInventory.class, EnchantingInventory.class, FurnaceInventory.class, GrindstoneInventory.class, LoomInventory.class, MerchantInventory.class, SmithingInventory.class, StonecutterInventory.class);
+    private final Set<Class<? extends Inventory>> blacklistedInventories = Sets.newHashSet(AnvilInventory.class, BeaconInventory.class, BrewerInventory.class, CartographyInventory.class, EnchantingInventory.class, FurnaceInventory.class, GrindstoneInventory.class, LoomInventory.class, MerchantInventory.class, SmithingInventory.class, StonecutterInventory.class);
+    //CraftingInventory.class,
     private boolean enabled;
     private boolean closeInventories;
 
@@ -100,7 +102,13 @@ public final class ItemDefender implements Listener {
 
         if (this.closeInventories) {
             TextUtil.sendMessage(event.getWhoClicked(), "&r&cPlease do not place a custom item in this inventory, it could be destroyed...");
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> event.getWhoClicked().closeInventory());
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
+                HumanEntity player = event.getWhoClicked();
+                ItemStack cursorStack = player.getItemOnCursor();
+                player.setItemOnCursor(null);
+                player.getInventory().addItem(cursorStack).values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
+                event.getWhoClicked().closeInventory();
+            });
         }
     }
 

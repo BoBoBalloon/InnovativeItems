@@ -17,6 +17,7 @@ import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.A
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowHitEntityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerTrigger;
+import me.boboballoon.innovativeitems.listeners.CraftingListener;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
@@ -43,8 +44,9 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make sure to remove the nested for loop and array shit in RandomAbilityKeyword in 3* updates
-    2. Make new implementation of the ExpectedArguments interface (called ExpectedCollective) that is provided a vararg of ExpectedArguments (keep it as an array, zero null elements) this will be provided the raw string and will parse it using any of the provided implementations, will return an object and switch statement to check for each case
+    1. Make sure to remove the nested for loop and array shit in RandomAbilityKeyword in 1 update
+    2. Cancel crafting event if custom item was used instead of closing inventory (test CraftItemEvent and PrepareItemCraftEvent) also test throwing extra items on ground, see line 104 in ItemDefender
+    3. Make custom crafting a premium feature by taking keys parsing as a map and using a 3x3 grid in a config to instruct the parser to register a custom crafting recipe (first look for keys, next for materials, lastly look for custom items)
      */
 
     /*
@@ -150,13 +152,11 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");
 
-        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener());
+        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener(), new CraftingListener());
         this.functionManager.registerCachedTriggers();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }
-
-
 
     /**
      * A method used to return the active instance of the plugin

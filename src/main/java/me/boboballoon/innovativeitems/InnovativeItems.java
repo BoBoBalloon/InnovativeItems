@@ -2,7 +2,6 @@ package me.boboballoon.innovativeitems;
 
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
-import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
@@ -167,23 +166,21 @@ public final class InnovativeItems extends JavaPlugin {
     @Override
     public void onDisable() {
         for (String id : this.cache.getItemIdentifiers()) {
-            ImmutableList<Recipe> recipes = this.cache.getItem(id).getRecipes();
+            Recipe recipe = this.cache.getItem(id).getRecipe();
 
-            if (recipes == null) {
+            if (recipe == null) {
                 continue;
             }
 
-            for (Recipe recipe : recipes) {
-                if (!(recipe instanceof Keyed)) {
-                    LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
-                    continue;
-                }
+            if (!(recipe instanceof Keyed)) {
+                LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
+                continue;
+            }
 
-                Keyed keyed = (Keyed) recipe;
+            Keyed keyed = (Keyed) recipe;
 
-                if (!Bukkit.removeRecipe(keyed.getKey())) {
-                    LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
-                }
+            if (!Bukkit.removeRecipe(keyed.getKey())) {
+                LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
             }
         }
     }

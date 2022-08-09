@@ -55,14 +55,14 @@ public final class InnovativeCache {
 
         this.items.put(name, item);
 
-        if (item.getRecipes() == null) {
+        if (item.getRecipe() == null) {
             return;
         }
 
         if (Bukkit.isPrimaryThread()) {
-            item.getRecipes().forEach(Bukkit::addRecipe);
+            Bukkit.addRecipe(item.getRecipe());
         } else {
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> item.getRecipes().forEach(Bukkit::addRecipe));
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> Bukkit.addRecipe(item.getRecipe()));
         }
     }
 

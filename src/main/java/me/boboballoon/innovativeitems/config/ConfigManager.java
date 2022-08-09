@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.config;
 
-import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
@@ -372,24 +371,22 @@ public final class ConfigManager {
             InnovativeCache cache = plugin.getItemCache();
 
             for (String id : cache.getItemIdentifiers()) {
-                ImmutableList<Recipe> recipes = cache.getItem(id).getRecipes();
+                Recipe recipe = cache.getItem(id).getRecipe();
 
-                if (recipes == null) {
+                if (recipe == null) {
                     continue;
                 }
 
                 Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
-                    for (Recipe recipe : recipes) {
-                        if (!(recipe instanceof Keyed)) {
-                            LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
-                            continue;
-                        }
+                    if (!(recipe instanceof Keyed)) {
+                        LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, the recipe registered on the " + id + " item does not implement the keyed interface!");
+                        return;
+                    }
 
-                        Keyed keyed = (Keyed) recipe;
+                    Keyed keyed = (Keyed) recipe;
 
-                        if (!Bukkit.removeRecipe(keyed.getKey())) {
-                            LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
-                        }
+                    if (!Bukkit.removeRecipe(keyed.getKey())) {
+                        LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
                     }
                 });
             }
@@ -706,36 +703,28 @@ public final class ConfigManager {
         public void findDependantItems(@NotNull InnovativeCache cache, @NotNull LinkedList<ItemNode> nodes) {
             Set<String> dependantItems = new HashSet<>();
 
-            if (!this.section.isConfigurationSection("recipes")) {
+            if (!this.section.isConfigurationSection("recipe")) {
                 this.dependantItems = dependantItems;
                 return;
             }
 
-            ConfigurationSection recipes = this.section.getConfigurationSection("recipes");
+            ConfigurationSection recipe = this.section.getConfigurationSection("recipe");
 
-            for (String sectionName : recipes.getKeys(false)) {
-                if (!recipes.isConfigurationSection(sectionName)) {
+            if (!recipe.isList("keys") || !recipe.isList("shape")) {
+                return;
+            }
+
+            List<String> keys = recipe.getStringList("keys");
+
+            for (String key : keys) {
+                if (key.startsWith("~")) {
                     continue;
                 }
 
-                ConfigurationSection recipe = recipes.getConfigurationSection(sectionName);
+                String rawId = key.split(":")[1];
 
-                if (!recipe.isList("keys") || !recipe.isList("shape")) {
-                    continue;
-                }
-
-                List<String> keys = recipe.getStringList("keys");
-
-                for (String key : keys) {
-                    if (key.startsWith("~")) {
-                        continue;
-                    }
-
-                    String rawId = key.split(":")[1];
-
-                    if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
-                        dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
-                    }
+                if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
+                    dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
                 }
             }
 

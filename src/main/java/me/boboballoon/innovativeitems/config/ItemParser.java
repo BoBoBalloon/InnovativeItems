@@ -1,7 +1,6 @@
 package me.boboballoon.innovativeitems.config;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -104,9 +103,9 @@ public final class ItemParser {
 
         ItemStack underlying = ItemParser.createUnderlyingItemStack(section, name, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability);
 
-        ImmutableList<Recipe> recipes = parseRecipe && section.isConfigurationSection("recipes") ? ItemParser.getRecipes(section, name, underlying) : null;
+        Recipe recipe = parseRecipe && section.isConfigurationSection("recipe") ? ItemParser.getRecipe(section, name, underlying) : null;
 
-        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipes);
+        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipe);
     }
 
     /**
@@ -549,118 +548,107 @@ public final class ItemParser {
     }
 
     /**
-     * Get and parse the custom recipes BUT DOES NOT REGISTER IT, that is done when the item is registered
+     * Get and parse the custom recipe BUT DOES NOT REGISTER IT, that is done when the item is registered
      */
-    private static ImmutableList<Recipe> getRecipes(ConfigurationSection section, String itemName, ItemStack underlying) {
+    @Nullable
+    private static Recipe getRecipe(@NotNull ConfigurationSection section, @NotNull String itemName, @NotNull ItemStack underlying) {
         if (!InnovativeItems.isPluginPremium()) {
             LogUtil.logUnblocked(LogUtil.Level.WARNING, "You cannot create a custom crafting recipe using the free version of the plugin! Skipping the recipe of the item identified as: " + itemName);
             return null;
         }
 
-        ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
-        List<Recipe> recipes = new ArrayList<>();
+        ConfigurationSection recipeSection = section.getConfigurationSection("recipe");
 
-        for (String sectionName : recipesSection.getKeys(false)) {
-            if (!recipesSection.isConfigurationSection(sectionName)) {
-                continue;
-            }
-
-            ConfigurationSection recipeSection = recipesSection.getConfigurationSection(sectionName);
-
-            if (!recipeSection.isList("keys")) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
-                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-            }
-
-            List<String> keys = recipeSection.getStringList("keys");
-
-            if (!keys.stream().allMatch(text -> text.matches("~?\\w:.+"))) { //regex = ^~?\w:.+$
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The proper syntax of a unique character followed by a colon followed by a material or custom item is required! Please review the documentation for the correct syntax...");
-                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-            }
-
-            Map<Character, RecipeChoice> keyMap = new HashMap<>();
-
-            for (String text : keys) {
-                String[] parsed = text.split(":");
-
-                boolean assertMaterial = parsed[0].startsWith("~");
-                char key = assertMaterial ? parsed[0].charAt(1) : parsed[0].charAt(0);
-
-                if (keyMap.containsKey(key)) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": You have already registered this character as a key, keys must be unique! Please review the documentation for the correct syntax...");
-                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-                }
-
-                Material material = null;
-                try {
-                    material = Material.valueOf(parsed[1].toUpperCase());
-                } catch (IllegalArgumentException e) {
-                }
-
-                if (assertMaterial && material != null) {
-                    keyMap.put(key, new RecipeChoice.MaterialChoice(material));
-                } else if (assertMaterial) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
-                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-                }
-
-                CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
-
-                if (material == null && item == null) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The object you provided for the key of " + key + " was invalid!");
-                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-                }
-
-                //one must be valid as the boolean above ensures
-                keyMap.put(key, item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material));
-            }
-
-            if (!recipeSection.isList("shape")) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": A shape grid is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
-                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-            }
-
-            List<String> shape = recipeSection.getStringList("shape");
-
-            if (shape.size() > 3 || shape.size() < 1 || shape.stream().anyMatch(text -> text.length() > 3 || text.length() < 1)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must not be greater than three, but must at least have a length of one! The contents of the grid must be three characters long, each being valid keys!");
-                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-            }
-
-            Set<Character> presentKeys = new HashSet<>();
-            int lastSize = -1;
-            for (String row : shape) {
-                if (lastSize != -1 && lastSize != row.length()) {
-                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must be rectangular");
-                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-                }
-                lastSize = row.length();
-
-                for (char character : row.toCharArray()) {
-                    if (character != ' ') {
-                        presentKeys.add(character);
-                    }
-                }
-            }
-
-            if (!presentKeys.equals(keyMap.keySet())) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must both contain all specified keys in the key section and must not contain any unidentified keys with the exception of whitespace which is equal to air!");
-                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
-            }
-
-            ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem." + itemName + "." + sectionName), underlying);
-
-            recipe.shape(shape.toArray(new String[0]));
-
-            for (Map.Entry<Character, RecipeChoice> entry : keyMap.entrySet()) {
-                recipe.setIngredient(entry.getKey(), entry.getValue());
-            }
-
-            recipes.add(recipe);
+        if (!recipeSection.isList("keys")) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+            return null;
         }
 
-        return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+        List<String> keys = recipeSection.getStringList("keys");
+
+        if (!keys.stream().allMatch(text -> text.matches("~?\\w:.+"))) { //regex = ^~?\w:.+$
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The proper syntax of a unique character followed by a colon followed by a material or custom item is required! Please review the documentation for the correct syntax...");
+            return null;
+        }
+
+        Map<Character, RecipeChoice> keyMap = new HashMap<>();
+
+        for (String text : keys) {
+            String[] parsed = text.split(":");
+
+            boolean assertMaterial = parsed[0].startsWith("~");
+            char key = assertMaterial ? parsed[0].charAt(1) : parsed[0].charAt(0);
+
+            if (keyMap.containsKey(key)) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": You have already registered this character as a key, keys must be unique!");
+                return null;
+            }
+
+            Material material = null;
+            try {
+                material = Material.valueOf(parsed[1].toUpperCase());
+            } catch (IllegalArgumentException e) {}
+
+            if (assertMaterial && material != null) {
+                keyMap.put(key, new RecipeChoice.MaterialChoice(material));
+            } else if (assertMaterial) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
+                return null;
+            }
+
+            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
+
+            if (material == null && item == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The object you provided for the key of " + key + " was invalid!");
+                return null;
+            }
+
+            //one must be valid as the boolean above ensures
+            keyMap.put(key, item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material));
+        }
+
+        if (!recipeSection.isList("shape")) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": A shape grid is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+            return null;
+        }
+
+        List<String> shape = recipeSection.getStringList("shape");
+
+        if (shape.size() > 3 || shape.size() < 1 || shape.stream().anyMatch(text -> text.length() > 3 || text.length() < 1)) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must not be greater than three, but must at least have a length of one! The contents of the grid must be three characters long, each being valid keys!");
+            return null;
+        }
+
+        Set<Character> presentKeys = new HashSet<>();
+        int lastSize = -1;
+        for (String row : shape) {
+            if (lastSize != -1 && lastSize != row.length()) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must be rectangular");
+                return null;
+            }
+            lastSize = row.length();
+
+            for (char character : row.toCharArray()) {
+                if (character != ' ') {
+                    presentKeys.add(character);
+                }
+            }
+        }
+
+        if (!presentKeys.equals(keyMap.keySet())) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must both contain all specified keys in the key section and must not contain any unidentified keys with the exception of whitespace which is equal to air!");
+            return null;
+        }
+
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + itemName), underlying);
+
+        recipe.shape(shape.toArray(new String[0]));
+
+        for (Map.Entry<Character, RecipeChoice> entry : keyMap.entrySet()) {
+            recipe.setIngredient(entry.getKey(), entry.getValue());
+        }
+
+        return recipe;
     }
 
     /**

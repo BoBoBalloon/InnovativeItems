@@ -1,5 +1,6 @@
-package me.boboballoon.innovativeitems.items.item;
+package me.boboballoon.innovativeitems.items;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
@@ -9,6 +10,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +21,7 @@ import java.util.Map;
 /**
  * A class that is the superclass of all custom items
  */
-public class CustomItem {
+public final class CustomItem {
     private final String identifier;
     private final Ability ability;
     private final ItemStack item;
@@ -28,12 +30,13 @@ public class CustomItem {
     private final boolean wearable;
     private final int maxDurability;
     private final boolean updateItem;
+    private final ImmutableList<Recipe> recipes;
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem) {
-        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability > 0 ? maxDurability : material.getMaxDurability()), placeable, soulbound, wearable, maxDurability, updateItem);
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
+        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability > 0 ? maxDurability : material.getMaxDurability()), placeable, soulbound, wearable, maxDurability, updateItem, recipes);
     }
 
-    protected CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem) {
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
         this.identifier = identifier;
         this.ability = ability;
         this.item = item;
@@ -42,6 +45,7 @@ public class CustomItem {
         this.wearable = wearable;
         this.maxDurability = maxDurability > 0 ? maxDurability : item.getType().getMaxDurability();
         this.updateItem = updateItem;
+        this.recipes = recipes;
     }
 
     /**
@@ -116,6 +120,16 @@ public class CustomItem {
      */
     public boolean shouldUpdateItem() {
         return this.updateItem;
+    }
+
+    /**
+     * A method used to get the crafting recipes that can be used to create this custom item or null if none exist
+     *
+     * @return the crafting recipes that can be used to create this custom item or null if none exist
+     */
+    @Nullable
+    public ImmutableList<Recipe> getRecipes() {
+        return this.recipes;
     }
 
     /**

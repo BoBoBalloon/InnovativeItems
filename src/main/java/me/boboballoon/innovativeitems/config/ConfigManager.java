@@ -1,24 +1,29 @@
 package me.boboballoon.innovativeitems.config;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 /**
  * A class used to cache and parse config files
@@ -364,7 +369,32 @@ public final class ConfigManager {
 
             LogUtil.log(LogUtil.Level.INFO, "Starting cache invalidation...");
 
-            plugin.getItemCache().clearCache();
+            InnovativeCache cache = plugin.getItemCache();
+
+            for (String id : cache.getItemIdentifiers()) {
+                ImmutableList<Recipe> recipes = cache.getItem(id).getRecipes();
+
+                if (recipes == null) {
+                    continue;
+                }
+
+                Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
+                    for (Recipe recipe : recipes) {
+                        if (!(recipe instanceof Keyed)) {
+                            LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
+                            continue;
+                        }
+
+                        Keyed keyed = (Keyed) recipe;
+
+                        if (!Bukkit.removeRecipe(keyed.getKey())) {
+                            LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                        }
+                    }
+                });
+            }
+
+            cache.clearCache();
             plugin.getAbilityTimerManager().clearCache();
 
             LogUtil.log(LogUtil.Level.INFO, "Cache invalidation complete!");
@@ -492,7 +522,7 @@ public final class ConfigManager {
             }
 
 
-            int maxCount = (this.generateDefaultConfigs) ? 6 : 3;
+            int maxCount = (this.generateDefaultConfigs) ? 13 : 10;
             for (String key : configuration.getKeys(false)) {
                 if (!InnovativeItems.isPluginPremium() && cache.getAbilitiesAmount() >= maxCount) {
                     LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of abilities for the free version of the plugin! Skipping the ability identified as: " + key);
@@ -517,7 +547,15 @@ public final class ConfigManager {
     private void loadItems(@NotNull File home, @NotNull InnovativeCache cache) {
         LogUtil.log(LogUtil.Level.INFO, "Starting item initialization and parsing...");
 
+        LinkedList<ItemNode> nodes = new LinkedList<>();
+        int maxCount = (this.generateDefaultConfigs) ? 18 : 12;
+        int currentCount = 0;
+
         for (File file : home.listFiles()) {
+            if (!InnovativeItems.isPluginPremium() && currentCount >= maxCount) {
+                break;
+            }
+
             YamlConfiguration configuration = new YamlConfiguration();
 
             try {
@@ -530,7 +568,6 @@ public final class ConfigManager {
                 continue;
             }
 
-            int maxCount = (this.generateDefaultConfigs) ? 16 : 10;
             for (String key : configuration.getKeys(false)) {
                 ConfigurationSection section = configuration.getConfigurationSection(key);
 
@@ -541,22 +578,168 @@ public final class ConfigManager {
                     continue;
                 }
 
-                if (!InnovativeItems.isPluginPremium() && cache.getItemAmount() >= maxCount) {
-                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin! Skipping the file named: " + home.getName());
+                if (!InnovativeItems.isPluginPremium() && currentCount >= maxCount) {
+                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin!");
                     break;
                 }
 
-                CustomItem item = ItemParser.parseItem(section, name);
+                nodes.add(new ItemNode(section));
+                currentCount++;
+            }
+        }
 
-                if (item == null) {
-                    //error message was already sent from parseItem method, no need to put in here
-                    continue;
-                }
+        for (ItemNode node : nodes) {
+            node.findDependantItems(cache, nodes);
+        }
 
+        while (!nodes.isEmpty()) {
+            Optional<ItemNode> current = nodes.stream().filter(node -> node.getDependantItems().size() <= 0).findAny();
+
+            if (!current.isPresent()) {
+                LogUtil.logUnblocked(LogUtil.Level.SEVERE, "A cycle has been found in the heap of custom items! You are not allowed to have two items that depend on each other or an item that depends on itself as that would cause an infinite loop!");
+                break;
+            }
+
+            ItemNode node = current.get();
+
+            for (ItemNode parent : nodes) {
+                parent.getDependantItems().remove(node.getIdentifier());
+            }
+
+            nodes.remove(node);
+
+            LogUtil.log(LogUtil.Level.NOISE, "Parsing item: " + node.getIdentifier());
+
+            CustomItem item = ItemParser.parseItem(node.getConfigurationSection(), node.getIdentifier());
+
+            if (item != null) {
                 cache.registerItem(item);
+                LogUtil.log(LogUtil.Level.NOISE, "Registered item: " + node.getIdentifier());
+            } else {
+                LogUtil.log(LogUtil.Level.NOISE, "Failed to register item: " + node.getIdentifier());
+            }
+        }
+
+        if (nodes.isEmpty()) { //always true unless cycle was found
+            LogUtil.log(LogUtil.Level.INFO, "Item initialization and parsing complete!");
+            return;
+        }
+
+        LogUtil.logUnblocked(LogUtil.Level.SEVERE, "As a cycle was detected all items will be loaded without custom crafting recipes!");
+
+        for (ItemNode node : nodes) {
+            CustomItem item = ItemParser.parseItem(node.getConfigurationSection(), node.getIdentifier(), false);
+
+            if (item != null) {
+                cache.registerItem(item);
+                LogUtil.log(LogUtil.Level.NOISE, "Registered item: " + node.getIdentifier());
+            } else {
+                LogUtil.log(LogUtil.Level.NOISE, "Failed to register item: " + node.getIdentifier());
             }
         }
 
         LogUtil.log(LogUtil.Level.INFO, "Item initialization and parsing complete!");
+    }
+
+
+
+    /**
+     * A class used to read but not parse items that contain recipes to get a snapshot of what they contain
+     */
+    private static final class ItemNode {
+        private final ConfigurationSection section;
+        private final String identifier;
+        private Set<String> dependantItems;
+
+        public ItemNode(@NotNull ConfigurationSection section) {
+            this.section = section;
+            this.identifier = section.getName();
+            this.dependantItems = null;
+        }
+
+        /**
+         * Method used to get the configuration section that this reader is reading
+         *
+         * @return the configuration section that this reader is reading
+         */
+        @NotNull
+        public ConfigurationSection getConfigurationSection() {
+            return this.section;
+        }
+
+        /**
+         * Method used to get the identifier of the item that this reader is reading from
+         *
+         * @return the identifier of the item that this reader is reading from
+         */
+        @NotNull
+        public String getIdentifier() {
+            return this.identifier;
+        }
+
+        /**
+         * Method used to get all the items that are dependant on this item
+         *
+         * @return all the items that are dependant on this item
+         */
+        @Nullable
+        public Set<String> getDependantItems() {
+            return this.dependantItems;
+        }
+
+        /**
+         * Method used to determine if any items are dependant on this item
+         *
+         * @return if any items are dependant on this item
+         */
+        public boolean isIndependent() {
+            if (this.dependantItems == null) {
+                throw new IllegalStateException("The dependantItems have not been initialized yet");
+            }
+
+            return !this.dependantItems.isEmpty();
+        }
+
+        /**
+         * A method used to calculate and set the getDependantItems method to @NotNull
+         */
+        public void findDependantItems(@NotNull InnovativeCache cache, @NotNull LinkedList<ItemNode> nodes) {
+            Set<String> dependantItems = new HashSet<>();
+
+            if (!this.section.isConfigurationSection("recipes")) {
+                this.dependantItems = dependantItems;
+                return;
+            }
+
+            ConfigurationSection recipes = this.section.getConfigurationSection("recipes");
+
+            for (String sectionName : recipes.getKeys(false)) {
+                if (!recipes.isConfigurationSection(sectionName)) {
+                    continue;
+                }
+
+                ConfigurationSection recipe = recipes.getConfigurationSection(sectionName);
+
+                if (!recipe.isList("keys") || !recipe.isList("shape")) {
+                    continue;
+                }
+
+                List<String> keys = recipe.getStringList("keys");
+
+                for (String key : keys) {
+                    if (key.startsWith("~")) {
+                        continue;
+                    }
+
+                    String rawId = key.split(":")[1];
+
+                    if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
+                        dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
+                    }
+                }
+            }
+
+            this.dependantItems = dependantItems;
+        }
     }
 }

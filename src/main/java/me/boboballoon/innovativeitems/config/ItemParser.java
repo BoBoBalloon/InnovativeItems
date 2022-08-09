@@ -1,25 +1,33 @@
 package me.boboballoon.innovativeitems.config;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.item.*;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -29,17 +37,32 @@ public final class ItemParser {
     /**
      * Constructor to prevent people from using this util class in an object oriented way
      */
-    private ItemParser() {}
+    private ItemParser() {
+    }
 
     /**
      * A util method used to parse a custom item from a config section
-     * 
-     * @param section the config section
-     * @param name the name of the item
+     *
+     * @param section     the config section
+     * @param name        the name of the item
      * @return the custom item (null if an error occurred)
      */
     @Nullable
-    public static CustomItem parseItem(ConfigurationSection section, String name) {
+    public static CustomItem parseItem(@NotNull ConfigurationSection section, @NotNull String name) {
+        return ItemParser.parseItem(section, name, true);
+    }
+
+
+    /**
+     * A util method used to parse a custom item from a config section
+     *
+     * @param section     the config section
+     * @param name        the name of the item
+     * @param parseRecipe if the recipe of the custom item should be parsed
+     * @return the custom item (null if an error occurred)
+     */
+    @Nullable
+    public static CustomItem parseItem(@NotNull ConfigurationSection section, @NotNull String name, boolean parseRecipe) {
         if (!section.isString("material")) {
             LogUtil.log(LogUtil.Level.WARNING, "Could not find material field while parsing the item by the name of " + name + "!");
             return null;
@@ -79,46 +102,57 @@ public final class ItemParser {
 
         boolean updateItem = section.isBoolean("update-item") ? section.getBoolean("update-item") : true;
 
+        ItemStack underlying = ItemParser.createUnderlyingItemStack(section, name, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability);
+
+        ImmutableList<Recipe> recipes = parseRecipe && section.isConfigurationSection("recipes") ? ItemParser.getRecipes(section, name, underlying) : null;
+
+        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipes);
+    }
+
+    /**
+     * Create the underlying itemstack of a custom item
+     */
+    private static ItemStack createUnderlyingItemStack(ConfigurationSection section, @NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, int durability) {
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return new CustomItemSkull(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, updateItem, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            return SkullItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
-        if (section.isConfigurationSection("leather-armor") && CustomItemLeatherArmor.isLeatherArmor(material)) {
+        if (section.isConfigurationSection("leather-armor") && LeatherArmorItemStack.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
-            DyeColor color = ItemParser.getColor(leatherArmorSection, name);
-            return new CustomItemLeatherArmor(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, soulbound, wearable, maxDurability, updateItem, ItemParser.getRGB(leatherArmorSection, name), color != null ? color.getColor() : null);
+            DyeColor color = ItemParser.getColor(leatherArmorSection, itemName);
+            return LeatherArmorItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, durability, ItemParser.getRGB(leatherArmorSection, itemName), color != null ? color.getColor() : null);
         }
 
         //potion item
-        if (section.isConfigurationSection("potion") && CustomItemPotion.isPotion(material)) {
+        if (section.isConfigurationSection("potion") && PotionItemStack.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
-            DyeColor color = ItemParser.getColor(potionSection, name);
-            return new CustomItemPotion(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, updateItem, ItemParser.getRGB(potionSection, name), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, name));
+            DyeColor color = ItemParser.getColor(potionSection, itemName);
+            return PotionItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getRGB(potionSection, itemName), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, itemName));
         }
 
         //banner item
-        if (section.isConfigurationSection("banner") && CustomItemBanner.isBanner(material)) {
+        if (section.isConfigurationSection("banner") && BannerItemStack.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return new CustomItemBanner(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, placeable, soulbound, wearable, maxDurability, updateItem, ItemParser.getBannerPatterns(bannerSection, name));
+            return BannerItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(bannerSection, itemName));
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return new CustomItemFirework(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, updateItem, ItemParser.getFireworkEffects(fireworkSection, name), ItemParser.getFireworkPower(fireworkSection, name));
+            return FireworkItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getFireworkEffects(fireworkSection, itemName), ItemParser.getFireworkPower(fireworkSection, itemName));
         }
 
         //shield item
         if (section.isConfigurationSection("shield") && material == Material.SHIELD) {
             ConfigurationSection shieldSection = section.getConfigurationSection("shield");
-            return new CustomItemShield(name, ability, displayName, lore, enchantments, flags, attributes, customModelData, soulbound, wearable, maxDurability, updateItem, ItemParser.getBannerPatterns(shieldSection, name), ItemParser.getColor(shieldSection, name));
+            return ShieldItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(shieldSection, itemName), ItemParser.getColor(shieldSection, itemName));
         }
-        
+
         //generic item
-        return new CustomItem(name, ability, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, placeable, soulbound, wearable, maxDurability, updateItem);
+        return CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, durability);
     }
 
     /**
@@ -512,5 +546,432 @@ public final class ItemParser {
         }
 
         return power;
+    }
+
+    /**
+     * Get and parse the custom recipes BUT DOES NOT REGISTER IT, that is done when the item is registered
+     */
+    private static ImmutableList<Recipe> getRecipes(ConfigurationSection section, String itemName, ItemStack underlying) {
+        if (!InnovativeItems.isPluginPremium()) {
+            LogUtil.logUnblocked(LogUtil.Level.WARNING, "You cannot create a custom crafting recipe using the free version of the plugin! Skipping the recipe of the item identified as: " + itemName);
+            return null;
+        }
+
+        ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
+        List<Recipe> recipes = new ArrayList<>();
+
+        for (String sectionName : recipesSection.getKeys(false)) {
+            if (!recipesSection.isConfigurationSection(sectionName)) {
+                continue;
+            }
+
+            ConfigurationSection recipeSection = recipesSection.getConfigurationSection(sectionName);
+
+            if (!recipeSection.isList("keys")) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+            }
+
+            List<String> keys = recipeSection.getStringList("keys");
+
+            if (!keys.stream().allMatch(text -> text.matches("~?\\w:.+"))) { //regex = ^~?\w:.+$
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The proper syntax of a unique character followed by a colon followed by a material or custom item is required! Please review the documentation for the correct syntax...");
+                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+            }
+
+            Map<Character, RecipeChoice> keyMap = new HashMap<>();
+
+            for (String text : keys) {
+                String[] parsed = text.split(":");
+
+                boolean assertMaterial = parsed[0].startsWith("~");
+                char key = assertMaterial ? parsed[0].charAt(1) : parsed[0].charAt(0);
+
+                if (keyMap.containsKey(key)) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": You have already registered this character as a key, keys must be unique! Please review the documentation for the correct syntax...");
+                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+                }
+
+                Material material = null;
+                try {
+                    material = Material.valueOf(parsed[1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                }
+
+                if (assertMaterial && material != null) {
+                    keyMap.put(key, new RecipeChoice.MaterialChoice(material));
+                } else if (assertMaterial) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
+                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+                }
+
+                CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
+
+                if (material == null && item == null) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The object you provided for the key of " + key + " was invalid!");
+                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+                }
+
+                //one must be valid as the boolean above ensures
+                keyMap.put(key, item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material));
+            }
+
+            if (!recipeSection.isList("shape")) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": A shape grid is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+            }
+
+            List<String> shape = recipeSection.getStringList("shape");
+
+            if (shape.size() > 3 || shape.size() < 1 || shape.stream().anyMatch(text -> text.length() > 3 || text.length() < 1)) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must not be greater than three, but must at least have a length of one! The contents of the grid must be three characters long, each being valid keys!");
+                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+            }
+
+            Set<Character> presentKeys = new HashSet<>();
+            int lastSize = -1;
+            for (String row : shape) {
+                if (lastSize != -1 && lastSize != row.length()) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must be rectangular");
+                    return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+                }
+                lastSize = row.length();
+
+                for (char character : row.toCharArray()) {
+                    if (character != ' ') {
+                        presentKeys.add(character);
+                    }
+                }
+            }
+
+            if (!presentKeys.equals(keyMap.keySet())) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + sectionName + " on item " + itemName + ": The shape grid must both contain all specified keys in the key section and must not contain any unidentified keys with the exception of whitespace which is equal to air!");
+                return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+            }
+
+            ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem." + itemName + "." + sectionName), underlying);
+
+            recipe.shape(shape.toArray(new String[0]));
+
+            for (Map.Entry<Character, RecipeChoice> entry : keyMap.entrySet()) {
+                recipe.setIngredient(entry.getKey(), entry.getValue());
+            }
+
+            recipes.add(recipe);
+        }
+
+        return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+    }
+
+    /**
+     * A class that is used to create the custom banner item
+     */
+    private static final class BannerItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param material        the material of the itemstack
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param durability      durability of the item
+         * @param patterns        the patterns to be applied on the banner itemstack
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, int durability, @Nullable List<Pattern> patterns) {
+            //if not banner
+            if (!BannerItemStack.isBanner(material)) {
+                LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a banner!");
+                throw new IllegalArgumentException("Illegal material provided in CustomItemBanner constructor");
+            }
+
+            ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, false, durability);
+            BannerMeta meta = (BannerMeta) item.getItemMeta();
+
+            if (patterns != null) {
+                meta.setPatterns(patterns);
+            }
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        /**
+         * Util method to check if a material is a banner
+         *
+         * @param material the material you want to check
+         * @return a boolean that is true if the material provided is a banner
+         */
+        public static boolean isBanner(Material material) {
+            return (material == Material.BLACK_BANNER ||
+                    material == Material.BLUE_BANNER ||
+                    material == Material.BROWN_BANNER ||
+                    material == Material.CYAN_BANNER ||
+                    material == Material.GRAY_BANNER ||
+                    material == Material.GREEN_BANNER ||
+                    material == Material.LIGHT_BLUE_BANNER ||
+                    material == Material.LIGHT_GRAY_BANNER ||
+                    material == Material.LIME_BANNER ||
+                    material == Material.PINK_BANNER ||
+                    material == Material.MAGENTA_BANNER ||
+                    material == Material.WHITE_BANNER ||
+                    material == Material.ORANGE_BANNER ||
+                    material == Material.RED_BANNER ||
+                    material == Material.YELLOW_BANNER ||
+                    material == Material.PURPLE_BANNER);
+        }
+    }
+
+    /**
+     * A class that is used to create the custom firework item
+     */
+    private static final class FireworkItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param fireworkEffects the effects of the firework
+         * @param power           the amount of time until it is launched until it fires the provided effects
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable List<FireworkEffect> fireworkEffects, @Nullable Integer power) {
+            ItemStack item = CustomItem.generateItem(identifier, Material.FIREWORK_ROCKET, itemName, lore, enchantments, flags, attributes, customModelData, false, 0);
+            FireworkMeta meta = (FireworkMeta) item.getItemMeta();
+
+            if (fireworkEffects != null) {
+                meta.addEffects(fireworkEffects);
+            }
+
+            if (power != null) {
+                meta.setPower(power);
+            }
+
+            item.setItemMeta(meta);
+            return item;
+        }
+    }
+
+    /**
+     * A class that is used to create the custom leather armor item
+     */
+    private static final class LeatherArmorItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param material        the material of the itemstack
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param unbreakable     if the custom item is unbreakable
+         * @param durability      durability
+         * @param rgb             color of the leather armor via rgb
+         * @param color           color of the leather armor via color name
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, int durability, @Nullable Color rgb, @Nullable Color color) {
+            //if not leather armor
+            if (!LeatherArmorItemStack.isLeatherArmor(material)) {
+                LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of leather armor!");
+                throw new IllegalArgumentException("Illegal material provided in CustomItemLeatherArmor constructor");
+            }
+
+            ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, durability);
+            LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+
+            if (rgb != null) {
+                meta.setColor(rgb);
+            }
+
+            if (color != null && rgb == null) {
+                meta.setColor(color);
+            }
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        /**
+         * Util method to check if a material is leather armor
+         *
+         * @param material the material you want to check
+         * @return a boolean that is true if the material provided is leather armor
+         */
+        public static boolean isLeatherArmor(Material material) {
+            return (material == Material.LEATHER_HELMET ||
+                    material == Material.LEATHER_CHESTPLATE ||
+                    material == Material.LEATHER_LEGGINGS ||
+                    material == Material.LEATHER_BOOTS);
+        }
+    }
+
+    /**
+     * A class that is used to create the custom potion item
+     */
+    private static final class PotionItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param material        the material of the itemstack
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param rgb             color of the potion via rgb
+         * @param color           color of the potion via color name
+         * @param effects         all the custom potion effects applied on this item
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
+            //if not potion
+            if (!PotionItemStack.isPotion(material)) {
+                LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a potion!");
+                throw new IllegalArgumentException("Illegal material provided in CustomItemPotion constructor");
+            }
+
+            ItemStack item = CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, false, 0);
+            PotionMeta meta = (PotionMeta) item.getItemMeta();
+
+            if (rgb != null) {
+                meta.setColor(rgb);
+            }
+
+            if (color != null && rgb == null) {
+                meta.setColor(color);
+            }
+
+            if (effects != null) {
+                for (PotionEffect effect : effects) {
+                    meta.addCustomEffect(effect, true);
+                }
+            }
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        /**
+         * Util method to check if a material is a potion
+         *
+         * @param material the material you want to check
+         * @return a boolean that is true if the material provided is a potion
+         */
+        public static boolean isPotion(Material material) {
+            return (material == Material.POTION ||
+                    material == Material.LINGERING_POTION ||
+                    material == Material.SPLASH_POTION);
+        }
+    }
+
+    /**
+     * A class that is used to create the custom shield item
+     */
+    private static final class ShieldItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param durability      the max durability of the item
+         * @param patterns        the patterns to be applied on the banner itemstack
+         * @param baseColor       the base color of the shield
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, int durability, @Nullable List<Pattern> patterns, @Nullable DyeColor baseColor) {
+            ItemStack item = CustomItem.generateItem(identifier, Material.SHIELD, itemName, lore, enchantments, flags, attributes, customModelData, false, durability);
+            BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
+            Banner banner = (Banner) meta.getBlockState();
+
+            if (baseColor != null) {
+                banner.setBaseColor(baseColor);
+            }
+
+            if (patterns != null) {
+                banner.setPatterns(patterns);
+            }
+
+            banner.update();
+
+            meta.setBlockState(banner);
+            item.setItemMeta(meta);
+            return item;
+        }
+    }
+
+    /**
+     * A class that is used to create the custom skull item
+     */
+    private static final class SkullItemStack {
+        /**
+         * A method used to generate an itemstack based on this items internal values
+         *
+         * @param identifier      the internal name of the custom item
+         * @param itemName        the display name of the itemstack
+         * @param lore            the lore of the itemstack
+         * @param enchantments    the enchantments on the itemstack
+         * @param flags           the item flags on the itemstack
+         * @param attributes      all attributes for this item
+         * @param customModelData the custom model data on the itemstack
+         * @param skullName       the name of the player whose skin you wish to place on a player skull (if applicable)
+         * @param base64          a base64 encoded string of the skin you wish to place on a player skull (if applicable)
+         * @return the itemstack
+         */
+        public static ItemStack generateItem(@NotNull String identifier, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable String skullName, @Nullable String base64) {
+            ItemStack item = CustomItem.generateItem(identifier, Material.PLAYER_HEAD, itemName, lore, enchantments, flags, attributes, customModelData, false, 0);
+            SkullMeta meta = (SkullMeta) item.getItemMeta();
+
+            if (base64 != null) {
+                SkullItemStack.setSkinViaBase64(meta, base64);
+            }
+
+            if (skullName != null && base64 == null) {
+                meta.setOwner(skullName);
+            }
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        /**
+         * A method used to set the skin of a player skull via a base64 encoded string
+         *
+         * @param meta   the skull meta to modify
+         * @param base64 the base64 encoded string
+         */
+        private static void setSkinViaBase64(SkullMeta meta, String base64) {
+            try {
+                Method setProfile = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+                setProfile.setAccessible(true);
+
+                GameProfile profile = new GameProfile(UUID.randomUUID(), "skull-texture");
+                profile.getProperties().put("textures", new Property("textures", base64));
+
+                setProfile.invoke(meta, profile);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                LogUtil.log(LogUtil.Level.SEVERE, "There was a severe internal reflection error when attempting to set the skin of a player skull via base64!");
+                e.printStackTrace();
+            }
+        }
     }
 }

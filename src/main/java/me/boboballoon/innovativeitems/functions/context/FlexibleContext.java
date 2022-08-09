@@ -4,9 +4,9 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.ItemContext;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -89,7 +89,7 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
         }
 
         //no items exist to make a new dummy item that only exists in memory and register it
-        CustomItem dummyItem = new CustomItem("dummy-item", null, Material.DIRT, null, null, null, null, null, null, false, false, false, true, 0, false);
+        CustomItem dummyItem = new CustomItem("dummy-item", null, Material.DIRT, null, null, null, null, null, null, false, false, false, false, 0, false, null);
         cache.registerItem(dummyItem);
         LogUtil.logUnblocked(LogUtil.Level.INFO, "The player " + this.getPlayer().getName() + " (" + this.getPlayer().getUniqueId() + ") used the ability " + this.getAbility().getIdentifier() + ", which relied on a custom item targeter that had no fallback, so a new dummy fallback item was registered (will only exist in memory).");
         return dummyItem;

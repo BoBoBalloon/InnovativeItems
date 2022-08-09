@@ -2,9 +2,9 @@ package me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile;
 
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.context.DamageContext;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;

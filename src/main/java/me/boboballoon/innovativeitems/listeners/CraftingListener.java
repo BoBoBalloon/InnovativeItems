@@ -1,8 +1,8 @@
 package me.boboballoon.innovativeitems.listeners;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
-import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -36,7 +36,7 @@ public final class CraftingListener implements Listener {
 
         CustomItem result = cache.fromItemStack(event.getInventory().getResult());
 
-        if (result != null && event.isRepair()) {
+        if (result != null || result != null && event.isRepair()) {
             return;
         }
 

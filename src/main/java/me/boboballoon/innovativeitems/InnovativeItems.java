@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems;
 
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.command.InnovativeItemsCommand;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.functions.FunctionManager;
@@ -24,8 +25,10 @@ import me.boboballoon.innovativeitems.util.UpdateChecker;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorListener;
 import me.boboballoon.innovativeitems.util.armorevent.DispenserArmorListener;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -44,13 +47,13 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make sure to remove the nested for loop and array shit in RandomAbilityKeyword in 1 update
-    2. Cancel crafting event if custom item was used instead of closing inventory (test CraftItemEvent and PrepareItemCraftEvent) also test throwing extra items on ground, see line 104 in ItemDefender
-    3. Make custom crafting a premium feature by taking keys parsing as a map and using a 3x3 grid in a config to instruct the parser to register a custom crafting recipe (first look for keys, next for materials, lastly look for custom items)
      */
 
     /*
     CHANGE LIST:
+    1. Custom crafting (premium)
+    2. +7 abilities and +2 items (free)
+    3. removed deprecated functionality of randomability keyword
      */
 
     /**
@@ -156,6 +159,33 @@ public final class InnovativeItems extends JavaPlugin {
         this.functionManager.registerCachedTriggers();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
+    }
+
+    /**
+     * Method that executes when plugin is shutting down
+     */
+    @Override
+    public void onDisable() {
+        for (String id : this.cache.getItemIdentifiers()) {
+            ImmutableList<Recipe> recipes = this.cache.getItem(id).getRecipes();
+
+            if (recipes == null) {
+                continue;
+            }
+
+            for (Recipe recipe : recipes) {
+                if (!(recipe instanceof Keyed)) {
+                    LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
+                    continue;
+                }
+
+                Keyed keyed = (Keyed) recipe;
+
+                if (!Bukkit.removeRecipe(keyed.getKey())) {
+                    LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                }
+            }
+        }
     }
 
     /**

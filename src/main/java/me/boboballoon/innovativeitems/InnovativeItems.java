@@ -54,6 +54,7 @@ public final class InnovativeItems extends JavaPlugin {
     1. Custom crafting (premium)
     2. +7 abilities and +2 items (free)
     3. removed deprecated functionality of randomability keyword
+    4. Removed the close inventory option of the item defender system
      */
 
     /**
@@ -150,7 +151,7 @@ public final class InnovativeItems extends JavaPlugin {
         this.garbageCollector = new GarbageCollector(this.configManager.shouldUpdateItems(), this.configManager.shouldDeleteItems());
 
         //init item defender
-        this.itemDefender = new ItemDefender(this.configManager.isItemDefenderEnabled(), this.configManager.shouldCloseInventories());
+        this.itemDefender = new ItemDefender(this.configManager.isItemDefenderEnabled());
 
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");

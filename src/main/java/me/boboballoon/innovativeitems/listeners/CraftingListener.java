@@ -3,16 +3,23 @@ package me.boboballoon.innovativeitems.listeners;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Campfire;
+import org.bukkit.block.Furnace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCookEvent;
-import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CampfireRecipe;
 import org.bukkit.inventory.FurnaceInventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class that contains that listeners for crafting support
@@ -54,32 +61,65 @@ public final class CraftingListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockCook(BlockCookEvent event) {
-        Bukkit.broadcastMessage("fired: " + event.getClass().getSimpleName());
-
         InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
 
-        if (cache.fromItemStack(event.getSource()) == null || cache.fromItemStack(event.getResult()) == null) {
+        if (cache.fromItemStack(event.getSource()) == null || cache.fromItemStack(event.getResult()) != null) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        if (event.getBlock().getState() instanceof Furnace) {
+            Furnace furnace = (Furnace) event.getBlock().getState();
+
+            furnace.setCookTime((short) 0);
+            furnace.setCookTimeTotal(Integer.MAX_VALUE);
+            furnace.update();
+        } else if (event.getBlock().getState() instanceof Campfire) {
+            Campfire campfire = (Campfire) event.getBlock().getState();
+            Location location = campfire.getLocation().clone().add(0, 1, 0);
+            for (int i = 0; i < campfire.getSize(); i++) {
+                ItemStack stack = campfire.getItem(i);
+                CustomItem item = cache.fromItemStack(stack);
+                if (item != null && (item.getRecipes() == null || item.getRecipes().stream().noneMatch(recipe -> recipe instanceof CampfireRecipe && ((CampfireRecipe) recipe).getInputChoice().test(stack)))) {
+                    campfire.setItem(i, null);
+                    location.getWorld().dropItem(location, stack);
+                    campfire.update();
+                    i--;
+                }
+            }
+        }
+    }
+
+    /**
+     * Listener used to check if a fuel source being placed in a furnace is a custom item
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+        InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+
+        if ((event.getClickedInventory() instanceof FurnaceInventory && event.getRawSlot() == 1 && cache.fromItemStack(event.getCursor()) != null) ||
+                (event.getClickedInventory() instanceof PlayerInventory && event.getView().getTopInventory() instanceof FurnaceInventory && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && cache.fromItemStack(event.getCurrentItem()) != null && this.canMoveToFuel((FurnaceInventory) event.getView().getTopInventory(), event.getCurrentItem()))) {
+            event.setCancelled(true); //1 is the fuel slot of a furnace inventory
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getInventory() instanceof FurnaceInventory)) { //the instanceof check also checks if the object is null so we good
+            return;
+        }
+
+        if (!event.getRawSlots().contains(1) || InnovativeItems.getInstance().getItemCache().fromItemStack(event.getOldCursor()) == null) { //one is the fuel slot of a furnace inventory
             return;
         }
 
         event.setCancelled(true);
     }
 
-    /**
-     * Listener used to check if the result of a furnace recipe is a vanilla item with a custom item as an ingredient
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onFurnaceBurn(FurnaceBurnEvent event) {
-        if (InnovativeItems.getInstance().getItemCache().fromItemStack(event.getFuel()) == null) {
-            return;
-        }
+    private boolean canMoveToFuel(@NotNull FurnaceInventory inventory, @NotNull ItemStack stack) {
+        ItemStack fuel = inventory.getFuel();
 
-        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) event.getBlock().getBlockData()).getInventory();
-
-        inventory.setFuel(null);
-        event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), event.getFuel());
-
-        event.setBurning(false);
-        event.setCancelled(true);
+        return (fuel == null || fuel.getType() == Material.AIR) || (stack.getType() == fuel.getType() && fuel.getAmount() + stack.getAmount() <= fuel.getType().getMaxStackSize());
     }
 }

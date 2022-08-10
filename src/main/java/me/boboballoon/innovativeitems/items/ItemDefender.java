@@ -4,19 +4,18 @@ import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
-import me.boboballoon.innovativeitems.util.TextUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,13 +23,10 @@ import java.util.Set;
  */
 public final class ItemDefender implements Listener {
     private final Set<Class<? extends Inventory>> blacklistedInventories = Sets.newHashSet(AnvilInventory.class, BeaconInventory.class, BrewerInventory.class, CartographyInventory.class, EnchantingInventory.class, GrindstoneInventory.class, LoomInventory.class, MerchantInventory.class, SmithingInventory.class, StonecutterInventory.class);
-    private boolean enabled;//FurnaceInventory.class
-    private boolean closeInventories;
+    private boolean enabled;
 
-    public ItemDefender(boolean enabled, boolean closeInventories) {
+    public ItemDefender(boolean enabled) {
         this.enabled = enabled;
-        this.closeInventories = closeInventories;
-
         LogUtil.log(LogUtil.Level.INFO, "New item defender initialized!");
     }
 
@@ -62,24 +58,6 @@ public final class ItemDefender implements Listener {
         this.enabled = enabled;
     }
 
-    /**
-     * A method used to get if the item defender should forcibly close inventories
-     *
-     * @return if the item defender should forcibly close inventories
-     */
-    public boolean shouldCloseInventories() {
-        return this.closeInventories;
-    }
-
-    /**
-     * A method used to set if the item defender should forcibly close inventories
-     *
-     * @param shouldCloseInventories if the item defender should forcibly close inventories
-     */
-    public void setShouldCloseInventories(boolean shouldCloseInventories) {
-        this.closeInventories = shouldCloseInventories;
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!this.enabled) {
@@ -98,16 +76,29 @@ public final class ItemDefender implements Listener {
         }
 
         event.setCancelled(true);
+    }
 
-        if (this.closeInventories) {
-            TextUtil.sendMessage(event.getWhoClicked(), "&r&cPlease do not place a custom item in this inventory, it could be destroyed...");
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
-                HumanEntity player = event.getWhoClicked();
-                ItemStack cursorStack = player.getItemOnCursor();
-                player.setItemOnCursor(null);
-                player.getInventory().addItem(cursorStack).values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
-                event.getWhoClicked().closeInventory();
-            });
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!this.enabled) {
+            return;
+        }
+
+        InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+        Inventory inventory = event.getInventory();
+        CustomItem cursor = cache.fromItemStack(event.getOldCursor());
+
+        if (cursor == null || (cursor != null && !cursor.shouldUpdateItem()) || !this.contains(inventory.getClass())) {
+            return;
+        }
+
+        Set<Inventory> inventories = new HashSet<>();
+        for (int slot : event.getRawSlots()) {
+            inventories.add(event.getView().getInventory(slot));
+        }
+
+        if (inventories.size() > 1 || this.contains((Class<? extends Inventory>) inventories.toArray()[0].getClass())) {
+            event.setCancelled(true);
         }
     }
 

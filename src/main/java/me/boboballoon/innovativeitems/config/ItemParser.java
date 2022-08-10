@@ -562,6 +562,7 @@ public final class ItemParser {
         ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
         List<Recipe> recipes = new ArrayList<>();
 
+        int counter = 0;
         for (String recipeName : recipesSection.getKeys(false)) {
             if (!recipesSection.isConfigurationSection(recipeName)) {
                 continue;
@@ -584,11 +585,9 @@ public final class ItemParser {
 
             Recipe recipe;
             if (type == RecipeType.SHAPED) {
-                recipe = ItemParser.parseShapedRecipe(recipeSection, itemName, recipeName, underlying);
-            } else if (type == RecipeType.SHAPELESS) {
-                recipe = ItemParser.parseShapelessRecipe(recipeSection, itemName, recipeName, underlying);
+                recipe = ItemParser.parseShapedRecipe(recipeSection, itemName, recipeName, underlying, counter);
             } else if (type == RecipeType.FURNACE || type == RecipeType.BLAST_FURNACE || type == RecipeType.SMOKER || type == RecipeType.CAMPFIRE) {
-                recipe = ItemParser.parseCookingRecipe(recipeSection, itemName, recipeName, underlying, type);
+                recipe = ItemParser.parseCookingRecipe(recipeSection, itemName, recipeName, underlying, type, counter);
             } else {
                 LogUtil.log(LogUtil.Level.DEV, "Warning on recipe " + recipeName + " on item " + itemName + ": A valid recipe type without a proper implementation has been detected... Please report this to the developer of the plugin immediately!");
                 continue;
@@ -600,6 +599,7 @@ public final class ItemParser {
             }
 
             recipes.add(recipe);
+            counter++;
         }
 
         return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
@@ -609,7 +609,7 @@ public final class ItemParser {
      * A method used to parse a configuration section to create a {@link ShapedRecipe}
      */
     @Nullable
-    private static ShapedRecipe parseShapedRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying) {
+    private static ShapedRecipe parseShapedRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying, int count) {
         if (!recipeSection.isList("keys")) {
             LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
             return null;
@@ -635,13 +635,15 @@ public final class ItemParser {
                 return null;
             }
 
-            Material material = null;
+            Material material;
             try {
                 material = Material.valueOf(parsed[1].toUpperCase());
-            } catch (IllegalArgumentException e) {}
+            } catch (IllegalArgumentException e) {
+                material = null;
+            }
 
             if (assertMaterial && material != null) {
-                keyMap.put(key, new RecipeChoice.MaterialChoice(material));
+                keyMap.put(key, new RecipeChoice.ExactChoice(new ItemStack(material)));
             } else if (assertMaterial) {
                 LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
                 return null;
@@ -655,7 +657,7 @@ public final class ItemParser {
             }
 
             //one must be valid as the boolean above ensures
-            keyMap.put(key, item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material));
+            keyMap.put(key, new RecipeChoice.ExactChoice(item != null ? item.getItemStack() : new ItemStack(material)));
         }
 
         if (!recipeSection.isList("shape")) {
@@ -691,7 +693,7 @@ public final class ItemParser {
             return null;
         }
 
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString()), underlying);
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-" + itemName + "-recipe." + count), underlying);
 
         recipe.shape(shape.toArray(new String[0]));
 
@@ -703,70 +705,10 @@ public final class ItemParser {
     }
 
     /**
-     * A method used to parse a configuration section to create a {@link ShapelessRecipe}
-     */
-    @Nullable
-    private static ShapelessRecipe parseShapelessRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying) {
-        if (!recipeSection.isList("keys")) {
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
-            return null;
-        }
-
-        List<String> keys = recipeSection.getStringList("keys");
-
-        if (!keys.stream().allMatch(text -> text.matches("~?(([1-5][0-9])|([1-6][0-4])|([1-9])):.+"))) { //regex = ^~?(([1-5][0-9])|([1-6][0-4])|([1-9])):.+$
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The proper syntax is a number between 1-64 followed by a colon followed by a material or custom item! Please review the documentation for the correct syntax...");
-            return null;
-        }
-
-        Set<RecipeChoice> choices = new HashSet<>();
-
-        for (String text : keys) {
-            String[] parsed = text.split(":");
-
-            boolean assertMaterial = parsed[0].startsWith("~");
-            int amount = Integer.parseInt(assertMaterial ? parsed[0].substring(1) : parsed[0]); //no need for try catch as they all passed the regular expression
-
-            Material material = null;
-            try {
-                material = Material.valueOf(parsed[1].toUpperCase());
-            } catch (IllegalArgumentException e) {}
-
-            if (assertMaterial && material != null) {
-                choices.add(new RecipeChoice.ExactChoice(new ItemStack(material, amount)));
-            } else if (assertMaterial) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
-                return null;
-            }
-
-            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
-
-            if (material == null && item == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The object you provided for one of the keys was invalid!");
-                return null;
-            }
-
-            ItemStack stack = item != null ? item.getItemStack().clone() : new ItemStack(material);
-            stack.setAmount(amount);
-
-            //one must be valid as the boolean above ensures
-            choices.add(new RecipeChoice.ExactChoice(stack));
-        }
-
-        ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString()), underlying);
-
-        for (RecipeChoice choice : choices) {
-            recipe.addIngredient(choice);
-        }
-
-        return recipe;
-    }
-
-    /**
      * A method used to parse a configuration section to create a {@link CookingRecipe}
      */
     @Nullable
-    private static CookingRecipe<?> parseCookingRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying, @NotNull RecipeType type) {
+    private static CookingRecipe<?> parseCookingRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying, @NotNull RecipeType type, int count) {
         if (type != RecipeType.FURNACE && type != RecipeType.BLAST_FURNACE && type != RecipeType.SMOKER && type != RecipeType.CAMPFIRE) {
             return null;
         }
@@ -784,13 +726,15 @@ public final class ItemParser {
             rawKey = rawKey.substring(1);
         }
 
-        Material material = null;
+        Material material;
         try {
             material = Material.valueOf(rawKey);
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            material = null;
+        }
 
         if (assertMaterial && material != null) {
-            key = new RecipeChoice.MaterialChoice(material);
+            key = new RecipeChoice.ExactChoice(new ItemStack(material));
         } else if (assertMaterial) {
             LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
             return null;
@@ -804,12 +748,12 @@ public final class ItemParser {
         }
 
         if (key == null) {
-            key = item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material);
+            key = new RecipeChoice.ExactChoice(item != null ? item.getItemStack() : new ItemStack(material));
         }
 
         float experience = (float) recipeSection.getDouble("experience", 0);
         int time = recipeSection.getInt("cooking-time", 60);
-        NamespacedKey namespace = new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString());
+        NamespacedKey namespace = new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-" + itemName + "-recipe." + count);
 
         CookingRecipe<?> recipe;
         if (type == RecipeType.FURNACE) {

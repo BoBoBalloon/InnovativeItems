@@ -59,7 +59,6 @@ public final class ConfigManager {
 
     //item defender
     private boolean itemDefenderEnabledLocal;
-    private boolean closeInventoriesLocal;
 
     public ConfigManager() {
         this.reloadMainConfigValues();
@@ -151,16 +150,6 @@ public final class ConfigManager {
             config.set("item-defender.enabled", true);
         }
         this.setIsItemDefenderEnabled(enabled);
-
-        //if the item defender should close inventories (results in items being dropped)
-        boolean closeInventories;
-        if (config.isBoolean("item-defender.close-inventories")) {
-            closeInventories = config.getBoolean("item-defender.close-inventories");
-        } else {
-            closeInventories = true;
-            config.set("item-defender.close-inventories", true);
-        }
-        this.setShouldCloseInventories(closeInventories);
 
         plugin.saveConfig();
     }
@@ -289,26 +278,6 @@ public final class ConfigManager {
 
     /**
      * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method used to get if the item defender should forcibly close inventories
-     *
-     * @return if the item defender should forcibly close inventories
-     */
-    public boolean shouldCloseInventories() {
-        return this.closeInventoriesLocal;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
-     * A method used to set if the item defender should forcibly close inventories
-     *
-     * @param shouldCloseInventories a boolean that is true if the item defender should forcibly close inventories
-     */
-    public void setShouldCloseInventories(boolean shouldCloseInventories) {
-        this.closeInventoriesLocal = shouldCloseInventories;
-    }
-
-    /**
-     * (VALUE IS LOCAL AND DOES NOT ALWAYS MATCH THE ACTIVE INSTANCE OF THE BOOLEAN)
      * A method that returns a boolean that is true when the garbage collector is set to update item mismatches
      *
      * @return a boolean that is true when the garbage collector is set to update item mismatches
@@ -419,7 +388,6 @@ public final class ConfigManager {
 
             ItemDefender itemDefender = plugin.getItemDefender();
             itemDefender.setEnabled(this.itemDefenderEnabledLocal);
-            itemDefender.setShouldCloseInventories(this.closeInventoriesLocal);
 
             LogUtil.log(LogUtil.Level.INFO, "Item defender settings now match config!");
 
@@ -721,13 +689,12 @@ public final class ConfigManager {
 
                 boolean isCookingRecipe = type == RecipeType.FURNACE || type == RecipeType.BLAST_FURNACE || type == RecipeType.SMOKER || type == RecipeType.CAMPFIRE;
 
-                if (((type == RecipeType.SHAPED || type == RecipeType.SHAPELESS) && !recipe.isList("keys")) ||
-                        (type == RecipeType.SHAPED && (!recipe.isList("keys") || !recipe.isList("shape"))) ||
+                if ((type == RecipeType.SHAPED && (!recipe.isList("keys") || !recipe.isList("shape"))) ||
                         (isCookingRecipe && !recipe.isString("key"))) {
                     continue;
                 }
 
-                List<String> keys = type == RecipeType.SHAPED || type == RecipeType.SHAPELESS ? recipe.getStringList("keys") : isCookingRecipe ? Collections.singletonList(recipe.getString("key")) : null;
+                List<String> keys = type == RecipeType.SHAPED ? recipe.getStringList("keys") : isCookingRecipe ? Collections.singletonList(recipe.getString("key")) : null;
 
                 if (keys == null) {
                     LogUtil.log(LogUtil.Level.DEV, "Error on item " + this.identifier + " on recipe " + recipeName + ": An unknown RecipeType was found with no implementation on creating a snapshot with the purpose of creating a list of dependant items!");
@@ -739,7 +706,13 @@ public final class ConfigManager {
                         continue;
                     }
 
-                    String rawId = !isCookingRecipe ? key.split(":")[1] : key;
+                    String regex = type == RecipeType.SHAPED ? "\\w:.+" : null;
+
+                    if (regex != null && !key.matches(regex)) {
+                        continue;
+                    }
+
+                    String rawId = type == RecipeType.SHAPED ? key.split(":")[1] : key;
 
                     if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
                         dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
@@ -748,6 +721,17 @@ public final class ConfigManager {
             }
 
             this.dependantItems = dependantItems;
+
+            /*
+            if (this.dependantItems.size() >= 1) {
+                LogUtil.logUnblocked(LogUtil.Level.DEV, "---------------------------------------------------");
+                LogUtil.logUnblocked(LogUtil.Level.DEV, "dependant items for " + this.identifier + ":");
+                for (String item : this.dependantItems) {
+                    LogUtil.logUnblocked(LogUtil.Level.DEV, item);
+                }
+                LogUtil.logUnblocked(LogUtil.Level.DEV, "---------------------------------------------------");
+            }
+             */
         }
     }
 }

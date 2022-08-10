@@ -13,11 +13,6 @@ public enum RecipeType {
     SHAPED(ShapedRecipe.class),
 
     /**
-     * Crafting that has no shape, order is irrelevant {@link org.bukkit.inventory.ShapelessRecipe}
-     */
-    SHAPELESS(ShapelessRecipe.class),
-
-    /**
      * Smelting via furnace {@link org.bukkit.inventory.FurnaceRecipe}
      */
     FURNACE(FurnaceRecipe.class),

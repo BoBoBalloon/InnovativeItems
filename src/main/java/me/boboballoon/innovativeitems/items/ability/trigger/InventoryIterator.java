@@ -2,7 +2,7 @@ package me.boboballoon.innovativeitems.items.ability.trigger;
 
 
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;

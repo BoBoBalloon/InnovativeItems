@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.items;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.ability.Ability;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -55,14 +56,14 @@ public final class InnovativeCache {
 
         this.items.put(name, item);
 
-        if (item.getRecipe() == null) {
+        if (item.getRecipes() == null) {
             return;
         }
 
         if (Bukkit.isPrimaryThread()) {
-            Bukkit.addRecipe(item.getRecipe());
+            item.getRecipes().forEach(Bukkit::addRecipe);
         } else {
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> Bukkit.addRecipe(item.getRecipe()));
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> item.getRecipes().forEach(Bukkit::addRecipe));
         }
     }
 

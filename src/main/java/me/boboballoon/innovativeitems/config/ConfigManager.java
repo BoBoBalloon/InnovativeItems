@@ -1,10 +1,12 @@
 package me.boboballoon.innovativeitems.config;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.items.item.RecipeType;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -371,22 +373,24 @@ public final class ConfigManager {
             InnovativeCache cache = plugin.getItemCache();
 
             for (String id : cache.getItemIdentifiers()) {
-                Recipe recipe = cache.getItem(id).getRecipe();
+                ImmutableList<Recipe> recipes = cache.getItem(id).getRecipes();
 
-                if (recipe == null) {
+                if (recipes == null) {
                     continue;
                 }
 
                 Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
-                    if (!(recipe instanceof Keyed)) {
-                        LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, the recipe registered on the " + id + " item does not implement the keyed interface!");
-                        return;
-                    }
+                    for (Recipe recipe : recipes) {
+                        if (!(recipe instanceof Keyed)) {
+                            LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, the recipe registered on the " + id + " item does not implement the keyed interface!");
+                            return;
+                        }
 
-                    Keyed keyed = (Keyed) recipe;
+                        Keyed keyed = (Keyed) recipe;
 
-                    if (!Bukkit.removeRecipe(keyed.getKey())) {
-                        LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                        if (!Bukkit.removeRecipe(keyed.getKey())) {
+                            LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                        }
                     }
                 });
             }
@@ -685,46 +689,61 @@ public final class ConfigManager {
         }
 
         /**
-         * Method used to determine if any items are dependant on this item
-         *
-         * @return if any items are dependant on this item
-         */
-        public boolean isIndependent() {
-            if (this.dependantItems == null) {
-                throw new IllegalStateException("The dependantItems have not been initialized yet");
-            }
-
-            return !this.dependantItems.isEmpty();
-        }
-
-        /**
          * A method used to calculate and set the getDependantItems method to @NotNull
          */
         public void findDependantItems(@NotNull InnovativeCache cache, @NotNull LinkedList<ItemNode> nodes) {
             Set<String> dependantItems = new HashSet<>();
 
-            if (!this.section.isConfigurationSection("recipe")) {
+            if (!this.section.isConfigurationSection("recipes")) {
                 this.dependantItems = dependantItems;
                 return;
             }
 
-            ConfigurationSection recipe = this.section.getConfigurationSection("recipe");
+            ConfigurationSection recipes = this.section.getConfigurationSection("recipes");
 
-            if (!recipe.isList("keys") || !recipe.isList("shape")) {
-                return;
-            }
-
-            List<String> keys = recipe.getStringList("keys");
-
-            for (String key : keys) {
-                if (key.startsWith("~")) {
+            for (String recipeName : recipes.getKeys(false)) {
+                if (!recipes.isConfigurationSection(recipeName)) {
                     continue;
                 }
 
-                String rawId = key.split(":")[1];
+                ConfigurationSection recipe = recipes.getConfigurationSection(recipeName);
 
-                if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
-                    dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
+                if (!recipe.isString("type")) {
+                    continue;
+                }
+
+                RecipeType type;
+                try {
+                    type = RecipeType.valueOf(recipe.getString("type").toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
+
+                boolean isCookingRecipe = type == RecipeType.FURNACE || type == RecipeType.BLAST_FURNACE || type == RecipeType.SMOKER || type == RecipeType.CAMPFIRE;
+
+                if (((type == RecipeType.SHAPED || type == RecipeType.SHAPELESS) && !recipe.isList("keys")) ||
+                        (type == RecipeType.SHAPED && (!recipe.isList("keys") || !recipe.isList("shape"))) ||
+                        (isCookingRecipe && !recipe.isString("key"))) {
+                    continue;
+                }
+
+                List<String> keys = type == RecipeType.SHAPED || type == RecipeType.SHAPELESS ? recipe.getStringList("keys") : isCookingRecipe ? Collections.singletonList(recipe.getString("key")) : null;
+
+                if (keys == null) {
+                    LogUtil.log(LogUtil.Level.DEV, "Error on item " + this.identifier + " on recipe " + recipeName + ": An unknown RecipeType was found with no implementation on creating a snapshot with the purpose of creating a list of dependant items!");
+                    continue;
+                }
+
+                for (String key : keys) {
+                    if (key.startsWith("~")) {
+                        continue;
+                    }
+
+                    String rawId = !isCookingRecipe ? key.split(":")[1] : key;
+
+                    if (cache.getItem(rawId) != null || nodes.stream().anyMatch(node -> node.getIdentifier().equals(rawId))) {
+                        dependantItems.add(rawId); //items are prioritized in parsing when an assert is not present so this a-ok
+                    }
                 }
             }
 

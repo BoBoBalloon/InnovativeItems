@@ -1,5 +1,6 @@
-package me.boboballoon.innovativeitems.items;
+package me.boboballoon.innovativeitems.items.item;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
@@ -29,13 +30,13 @@ public final class CustomItem {
     private final boolean wearable;
     private final int maxDurability;
     private final boolean updateItem;
-    private final Recipe recipe;
+    private final ImmutableList<Recipe> recipes;
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable Recipe recipe) {
-        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability > 0 ? maxDurability : material.getMaxDurability()), placeable, soulbound, wearable, maxDurability, updateItem, recipe);
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
+        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability > 0 ? maxDurability : material.getMaxDurability()), placeable, soulbound, wearable, maxDurability, updateItem, recipes);
     }
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable Recipe recipe) {
+    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
         this.identifier = identifier;
         this.ability = ability;
         this.item = item;
@@ -44,7 +45,7 @@ public final class CustomItem {
         this.wearable = wearable;
         this.maxDurability = maxDurability > 0 ? maxDurability : item.getType().getMaxDurability();
         this.updateItem = updateItem;
-        this.recipe = recipe;
+        this.recipes = recipes;
     }
 
     /**
@@ -127,8 +128,8 @@ public final class CustomItem {
      * @return the crafting recipe that can be used to create this custom item or null if none exist
      */
     @Nullable
-    public Recipe getRecipe() {
-        return this.recipe;
+    public ImmutableList<Recipe> getRecipes() {
+        return this.recipes;
     }
 
     /**

@@ -1,12 +1,14 @@
 package me.boboballoon.innovativeitems.config;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.items.item.RecipeType;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
@@ -42,8 +44,8 @@ public final class ItemParser {
     /**
      * A util method used to parse a custom item from a config section
      *
-     * @param section     the config section
-     * @param name        the name of the item
+     * @param section the config section
+     * @param name    the name of the item
      * @return the custom item (null if an error occurred)
      */
     @Nullable
@@ -103,9 +105,9 @@ public final class ItemParser {
 
         ItemStack underlying = ItemParser.createUnderlyingItemStack(section, name, material, displayName, lore, enchantments, flags, attributes, customModelData, unbreakable, maxDurability);
 
-        Recipe recipe = parseRecipe && section.isConfigurationSection("recipe") ? ItemParser.getRecipe(section, name, underlying) : null;
+        ImmutableList<Recipe> recipes = parseRecipe && section.isConfigurationSection("recipes") ? ItemParser.getRecipe(section, name, underlying) : null;
 
-        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipe);
+        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipes);
     }
 
     /**
@@ -548,26 +550,75 @@ public final class ItemParser {
     }
 
     /**
-     * Get and parse the custom recipe BUT DOES NOT REGISTER IT, that is done when the item is registered
+     * Get and parse the custom recipes BUT DOES NOT REGISTER IT, that is done when the item is registered
      */
     @Nullable
-    private static Recipe getRecipe(@NotNull ConfigurationSection section, @NotNull String itemName, @NotNull ItemStack underlying) {
+    private static ImmutableList<Recipe> getRecipe(@NotNull ConfigurationSection section, @NotNull String itemName, @NotNull ItemStack underlying) {
         if (!InnovativeItems.isPluginPremium()) {
             LogUtil.logUnblocked(LogUtil.Level.WARNING, "You cannot create a custom crafting recipe using the free version of the plugin! Skipping the recipe of the item identified as: " + itemName);
             return null;
         }
 
-        ConfigurationSection recipeSection = section.getConfigurationSection("recipe");
+        ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
+        List<Recipe> recipes = new ArrayList<>();
 
+        for (String recipeName : recipesSection.getKeys(false)) {
+            if (!recipesSection.isConfigurationSection(recipeName)) {
+                continue;
+            }
+
+            ConfigurationSection recipeSection = recipesSection.getConfigurationSection(recipeName);
+
+            if (!recipeSection.isString("type")) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": Every recipe must contain the type field to specific the type of crafting recipe! Refer to the documentation for valid options...");
+                continue;
+            }
+
+            RecipeType type;
+            try {
+                type = RecipeType.valueOf(recipeSection.getString("type").toUpperCase());
+            } catch (IllegalArgumentException e) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have entered an invalid type of crafting recipe! Refer to the documentation for valid options...");
+                continue;
+            }
+
+            Recipe recipe;
+            if (type == RecipeType.SHAPED) {
+                recipe = ItemParser.parseShapedRecipe(recipeSection, itemName, recipeName, underlying);
+            } else if (type == RecipeType.SHAPELESS) {
+                recipe = ItemParser.parseShapelessRecipe(recipeSection, itemName, recipeName, underlying);
+            } else if (type == RecipeType.FURNACE || type == RecipeType.BLAST_FURNACE || type == RecipeType.SMOKER || type == RecipeType.CAMPFIRE) {
+                recipe = ItemParser.parseCookingRecipe(recipeSection, itemName, recipeName, underlying, type);
+            } else {
+                LogUtil.log(LogUtil.Level.DEV, "Warning on recipe " + recipeName + " on item " + itemName + ": A valid recipe type without a proper implementation has been detected... Please report this to the developer of the plugin immediately!");
+                continue;
+            }
+
+            if (recipe == null) {
+                //error was already sent
+                continue;
+            }
+
+            recipes.add(recipe);
+        }
+
+        return !recipes.isEmpty() ? ImmutableList.copyOf(recipes) : null;
+    }
+
+    /**
+     * A method used to parse a configuration section to create a {@link ShapedRecipe}
+     */
+    @Nullable
+    private static ShapedRecipe parseShapedRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying) {
         if (!recipeSection.isList("keys")) {
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
             return null;
         }
 
         List<String> keys = recipeSection.getStringList("keys");
 
         if (!keys.stream().allMatch(text -> text.matches("~?\\w:.+"))) { //regex = ^~?\w:.+$
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The proper syntax of a unique character followed by a colon followed by a material or custom item is required! Please review the documentation for the correct syntax...");
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The proper syntax is a unique character followed by a colon followed by a material or custom item is required! Please review the documentation for the correct syntax...");
             return null;
         }
 
@@ -580,7 +631,7 @@ public final class ItemParser {
             char key = assertMaterial ? parsed[0].charAt(1) : parsed[0].charAt(0);
 
             if (keyMap.containsKey(key)) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": You have already registered this character as a key, keys must be unique!");
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have already registered this character as a key, keys must be unique!");
                 return null;
             }
 
@@ -592,14 +643,14 @@ public final class ItemParser {
             if (assertMaterial && material != null) {
                 keyMap.put(key, new RecipeChoice.MaterialChoice(material));
             } else if (assertMaterial) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
                 return null;
             }
 
             CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
 
             if (material == null && item == null) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The object you provided for the key of " + key + " was invalid!");
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The object you provided for the key of " + key + " was invalid!");
                 return null;
             }
 
@@ -608,14 +659,14 @@ public final class ItemParser {
         }
 
         if (!recipeSection.isList("shape")) {
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": A shape grid is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": A shape grid is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
             return null;
         }
 
         List<String> shape = recipeSection.getStringList("shape");
 
         if (shape.size() > 3 || shape.size() < 1 || shape.stream().anyMatch(text -> text.length() > 3 || text.length() < 1)) {
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must not be greater than three, but must at least have a length of one! The contents of the grid must be three characters long, each being valid keys!");
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The shape grid must not be greater than three, but must at least have a length of one! The contents of the grid must be three characters long, each being valid keys!");
             return null;
         }
 
@@ -623,7 +674,7 @@ public final class ItemParser {
         int lastSize = -1;
         for (String row : shape) {
             if (lastSize != -1 && lastSize != row.length()) {
-                LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must be rectangular");
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The shape grid must be rectangular");
                 return null;
             }
             lastSize = row.length();
@@ -636,16 +687,142 @@ public final class ItemParser {
         }
 
         if (!presentKeys.equals(keyMap.keySet())) {
-            LogUtil.log(LogUtil.Level.WARNING, "Warning on item " + itemName + ": The shape grid must both contain all specified keys in the key section and must not contain any unidentified keys with the exception of whitespace which is equal to air!");
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The shape grid must both contain all specified keys in the key section and must not contain any unidentified keys with the exception of whitespace which is equal to air!");
             return null;
         }
 
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + itemName), underlying);
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString()), underlying);
 
         recipe.shape(shape.toArray(new String[0]));
 
         for (Map.Entry<Character, RecipeChoice> entry : keyMap.entrySet()) {
             recipe.setIngredient(entry.getKey(), entry.getValue());
+        }
+
+        return recipe;
+    }
+
+    /**
+     * A method used to parse a configuration section to create a {@link ShapelessRecipe}
+     */
+    @Nullable
+    private static ShapelessRecipe parseShapelessRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying) {
+        if (!recipeSection.isList("keys")) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": A list of keys is required when making a custom crafting recipe! Please review the documentation for the correct syntax and layout...");
+            return null;
+        }
+
+        List<String> keys = recipeSection.getStringList("keys");
+
+        if (!keys.stream().allMatch(text -> text.matches("~?(([1-5][0-9])|([1-6][0-4])|([1-9])):.+"))) { //regex = ^~?(([1-5][0-9])|([1-6][0-4])|([1-9])):.+$
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The proper syntax is a number between 1-64 followed by a colon followed by a material or custom item! Please review the documentation for the correct syntax...");
+            return null;
+        }
+
+        Set<RecipeChoice> choices = new HashSet<>();
+
+        for (String text : keys) {
+            String[] parsed = text.split(":");
+
+            boolean assertMaterial = parsed[0].startsWith("~");
+            int amount = Integer.parseInt(assertMaterial ? parsed[0].substring(1) : parsed[0]); //no need for try catch as they all passed the regular expression
+
+            Material material = null;
+            try {
+                material = Material.valueOf(parsed[1].toUpperCase());
+            } catch (IllegalArgumentException e) {}
+
+            if (assertMaterial && material != null) {
+                choices.add(new RecipeChoice.ExactChoice(new ItemStack(material, amount)));
+            } else if (assertMaterial) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
+                return null;
+            }
+
+            CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(parsed[1]);
+
+            if (material == null && item == null) {
+                LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The object you provided for one of the keys was invalid!");
+                return null;
+            }
+
+            ItemStack stack = item != null ? item.getItemStack().clone() : new ItemStack(material);
+            stack.setAmount(amount);
+
+            //one must be valid as the boolean above ensures
+            choices.add(new RecipeChoice.ExactChoice(stack));
+        }
+
+        ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString()), underlying);
+
+        for (RecipeChoice choice : choices) {
+            recipe.addIngredient(choice);
+        }
+
+        return recipe;
+    }
+
+    /**
+     * A method used to parse a configuration section to create a {@link CookingRecipe}
+     */
+    @Nullable
+    private static CookingRecipe<?> parseCookingRecipe(@NotNull ConfigurationSection recipeSection, @NotNull String itemName, @NotNull String recipeName, @NotNull ItemStack underlying, @NotNull RecipeType type) {
+        if (type != RecipeType.FURNACE && type != RecipeType.BLAST_FURNACE && type != RecipeType.SMOKER && type != RecipeType.CAMPFIRE) {
+            return null;
+        }
+
+        if (!recipeSection.isString("key")) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": Every cooking recipe must contain a valid key field that contains a material or custom item!");
+            return null;
+        }
+
+        String rawKey = recipeSection.getString("key");
+        boolean assertMaterial = rawKey.startsWith("~");
+        RecipeChoice key = null;
+
+        if (assertMaterial) {
+            rawKey = rawKey.substring(1);
+        }
+
+        Material material = null;
+        try {
+            material = Material.valueOf(rawKey);
+        } catch (IllegalArgumentException e) {}
+
+        if (assertMaterial && material != null) {
+            key = new RecipeChoice.MaterialChoice(material);
+        } else if (assertMaterial) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": You have asserted that the provided key was to represent a material, however no such material exists!");
+            return null;
+        }
+
+        CustomItem item = InnovativeItems.getInstance().getItemCache().getItem(rawKey);
+
+        if (material == null && item == null) {
+            LogUtil.log(LogUtil.Level.WARNING, "Warning on recipe " + recipeName + " on item " + itemName + ": The object you provided for one of the keys was invalid!");
+            return null;
+        }
+
+        if (key == null) {
+            key = item != null ? new RecipeChoice.ExactChoice(item.getItemStack()) : new RecipeChoice.MaterialChoice(material);
+        }
+
+        float experience = (float) recipeSection.getDouble("experience", 0);
+        int time = recipeSection.getInt("cooking-time", 60);
+        NamespacedKey namespace = new NamespacedKey(InnovativeItems.getInstance(), "innovativeplugin-customitem-recipe." + UUID.randomUUID().toString());
+
+        CookingRecipe<?> recipe;
+        if (type == RecipeType.FURNACE) {
+            recipe = new FurnaceRecipe(namespace, underlying, key, experience, time);
+        } else if (type == RecipeType.BLAST_FURNACE) {
+            recipe = new BlastingRecipe(namespace, underlying, key, experience, time);
+        } else if (type == RecipeType.SMOKER) {
+            recipe = new SmokingRecipe(namespace, underlying, key, experience, time);
+        } else if (type == RecipeType.CAMPFIRE) {
+            recipe = new CampfireRecipe(namespace, underlying, key, experience, time);
+        } else {
+            LogUtil.log(LogUtil.Level.DEV, "Warning on recipe " + recipeName + " on item " + itemName + ": An internal error occured that allowed an internal RecipeType to bypass the precondition at the top of the parseCookingRecipe method in the ItemParser class... Please report this to the developer of the plugin immediately!");
+            return null;
         }
 
         return recipe;

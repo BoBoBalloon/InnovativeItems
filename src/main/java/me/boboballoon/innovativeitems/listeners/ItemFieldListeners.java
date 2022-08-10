@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.listeners;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.DurabilityUtil;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorEquipEvent;
 import org.bukkit.GameMode;

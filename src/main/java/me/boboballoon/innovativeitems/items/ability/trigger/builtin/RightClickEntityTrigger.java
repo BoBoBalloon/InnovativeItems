@@ -2,10 +2,10 @@ package me.boboballoon.innovativeitems.items.ability.trigger.builtin;
 
 import me.boboballoon.innovativeitems.functions.FunctionTargeter;
 import me.boboballoon.innovativeitems.functions.context.InteractEntityContext;
-import me.boboballoon.innovativeitems.items.CustomItem;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.AbilityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.InventoryIterator;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;

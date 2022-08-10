@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
-import me.boboballoon.innovativeitems.items.CustomItem;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;

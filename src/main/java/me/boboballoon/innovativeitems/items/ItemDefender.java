@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.items;
 
 import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
@@ -22,8 +23,8 @@ import java.util.Set;
  * A class used to make sure that custom items are not use in vanilla minecraft mechanics
  */
 public final class ItemDefender implements Listener {
-    private final Set<Class<? extends Inventory>> blacklistedInventories = Sets.newHashSet(AnvilInventory.class, BeaconInventory.class, BrewerInventory.class, CartographyInventory.class, EnchantingInventory.class, FurnaceInventory.class, GrindstoneInventory.class, LoomInventory.class, MerchantInventory.class, SmithingInventory.class, StonecutterInventory.class);
-    private boolean enabled;
+    private final Set<Class<? extends Inventory>> blacklistedInventories = Sets.newHashSet(AnvilInventory.class, BeaconInventory.class, BrewerInventory.class, CartographyInventory.class, EnchantingInventory.class, GrindstoneInventory.class, LoomInventory.class, MerchantInventory.class, SmithingInventory.class, StonecutterInventory.class);
+    private boolean enabled;//FurnaceInventory.class
     private boolean closeInventories;
 
     public ItemDefender(boolean enabled, boolean closeInventories) {

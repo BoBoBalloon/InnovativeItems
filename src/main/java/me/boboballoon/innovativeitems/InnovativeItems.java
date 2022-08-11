@@ -47,6 +47,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    1. Write new docs section on recipes and post update
      */
 
     /*

@@ -11,10 +11,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCookEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.inventory.*;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CampfireRecipe;
+import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A class that contains that listeners for crafting support
@@ -122,41 +127,8 @@ public final class CraftingListener implements Listener {
      * @return if a player shift-clicking a custom item into a furnace is valid
      */
     private boolean isIllegalShiftClick(@NotNull FurnaceInventory inventory, @NotNull CustomItem item) {
-        return this.canMoveToSlot(inventory.getFuel(), item) || (this.canMoveToSlot(inventory.getResult(), item) && !this.hasValidRecipe(inventory, item));
-    }
-
-    /**
-     * A method used to check if an item can be moved into an inventory slot
-     *
-     * @param slot the item that represents said inventory slot
-     * @param item the custom item to be moved to said slot
-     * @return if an item can be moved into an inventory slot
-     */
-    private boolean canMoveToSlot(@Nullable ItemStack slot, @NotNull CustomItem item) {
         ItemStack stack = item.getItemStack();
-        return (slot == null || slot.getType() == Material.AIR) || (stack.getType() == slot.getType() && slot.getAmount() + stack.getAmount() <= slot.getType().getMaxStackSize());
-    }
-
-    /**
-     * A method used to check if the provided custom item has a crafting recipe that is valid in said type of furnace
-     *
-     * @param inventory the furnace inventory
-     * @param item the custom item to be smelted
-     * @return if the provided custom item has a crafting recipe that is valid in said type of furnace
-     */
-    private boolean hasValidRecipe(@NotNull FurnaceInventory inventory, @NotNull CustomItem item) {
-        if (item.getRecipes() == null) {
-            return false;
-        }
-
-        for (Recipe recipe : item.getRecipes()) {
-            if ((recipe instanceof BlastingRecipe && inventory.getType() == InventoryType.BLAST_FURNACE) ||
-                    (recipe instanceof SmokingRecipe && inventory.getType() == InventoryType.SMOKER) ||
-                    (recipe instanceof FurnaceRecipe && inventory.getType() == InventoryType.FURNACE)) {
-                return true;
-            }
-        }
-
-        return false;
+        ItemStack slot = inventory.getFuel();
+        return stack.getType().isFuel() && ((slot == null || slot.getType() == Material.AIR) || (stack.getType() == slot.getType() && slot.getAmount() + stack.getAmount() <= slot.getType().getMaxStackSize()));
     }
 }

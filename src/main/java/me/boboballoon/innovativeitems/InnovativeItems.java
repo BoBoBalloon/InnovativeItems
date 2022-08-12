@@ -47,15 +47,13 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Write new docs section on recipes and post update
+    1. Make iscoordinate condition with arguments for if it is 'x' or 'y' or 'z', if it is greater than, less than or equal to, and the value you want to test
+    2. Make setpitch keyword to set pitch of any entity
+    3. Make setyaw keyword to set yaw of any entity
      */
 
     /*
     CHANGE LIST:
-    1. Custom crafting (premium)
-    2. +7 abilities and +2 items (free)
-    3. removed deprecated functionality of randomability keyword
-    4. Removed the close inventory option of the item defender system
      */
 
     /**

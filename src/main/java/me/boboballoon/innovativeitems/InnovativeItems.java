@@ -47,9 +47,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make iscoordinate condition with arguments for if it is 'x' or 'y' or 'z', if it is greater than, less than or equal to, and the value you want to test
-    2. Make setpitch keyword to set pitch of any entity
-    3. Make setyaw keyword to set yaw of any entity
      */
 
     /*
@@ -62,7 +59,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return true;
+        return false;
     }
 
     /**
@@ -86,14 +83,14 @@ public final class InnovativeItems extends JavaPlugin {
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
-                new JsonMessageKeyword(), new GillsKeyword());
+                new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
                 new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition(),
                 new IsUsingItemCondition(), new IsUsingCustomItemCondition(), new IsExperienceAtCondition(), new IsHeathPercentAtCondition(),
-                new HasPotionEffectCondition(), new IsBurningCondition());
+                new HasPotionEffectCondition(), new IsBurningCondition(), new IsCoordinateCondition());
 
         //dependent functions
 

@@ -23,4 +23,3 @@ garbage-collector:
 #The item defender will ensure that custom items are not used in unintended ways that could destroy the item#
 item-defender:
   enabled: true #if false the item defender system will not function at all
-  close-inventories: true #if true not only will the system disable interaction with the inventory but also close it

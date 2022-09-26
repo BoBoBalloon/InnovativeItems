@@ -59,7 +59,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return false;
+        return true;
     }
 
     /**
@@ -83,14 +83,15 @@ public final class InnovativeItems extends JavaPlugin {
                 new DropItemKeyword(), new DropCustomItemKeyword(), new ExplodeKeyword(), new ShootProjectileKeyword(),
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
-                new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword());
+                new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword(),
+                new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
                 new IsBlockingCondition(), new IsGlidingCondition(), new IsEntityTypeCondition(), new IsBlockCondition(),
                 new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition(),
                 new IsUsingItemCondition(), new IsUsingCustomItemCondition(), new IsExperienceAtCondition(), new IsHeathPercentAtCondition(),
-                new HasPotionEffectCondition(), new IsBurningCondition(), new IsCoordinateCondition());
+                new HasPotionEffectCondition(), new IsBurningCondition(), new IsCoordinateCondition(), new HasScoreboardTagCondition());
 
         //dependent functions
 

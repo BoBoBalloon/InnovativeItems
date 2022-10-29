@@ -84,7 +84,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
                 new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword(),
-                new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword());
+                new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword(), new SetInvulnerableKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),

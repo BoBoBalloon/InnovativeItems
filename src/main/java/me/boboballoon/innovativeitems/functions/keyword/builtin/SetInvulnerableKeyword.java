@@ -11,13 +11,13 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class that represents a keyword in an ability config file that sets the targets oxygen
+ * Class that represents a keyword in an ability config file that sets the amount of ticks the target is invulnerable
  */
-public class GillsKeyword extends Keyword {
-    public GillsKeyword() {
-        super("gills",
+public class SetInvulnerableKeyword extends Keyword {
+    public SetInvulnerableKeyword() {
+        super("setinvulnerable",
                 new ExpectedTargeters(FunctionTargeter.PLAYER, FunctionTargeter.ENTITY),
-                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "ticks of oxygen"));
+                new ExpectedPrimitive(ExpectedPrimitive.PrimitiveType.INTEGER, "invulnerability ticks"));
     }
 
     @Override
@@ -34,11 +34,11 @@ public class GillsKeyword extends Keyword {
 
         int ticks = (int) arguments.get(1);
 
-        target.setRemainingAir(ticks);
+        target.setNoDamageTicks(ticks);
     }
 
     @Override
     public boolean isAsync() {
-        return false;
+        return true;
     }
 }

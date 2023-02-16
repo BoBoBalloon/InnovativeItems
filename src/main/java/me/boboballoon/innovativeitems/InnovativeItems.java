@@ -47,7 +47,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. haslineofsight condition that uses method on LivingEntity of same name
      */
 
     /*
@@ -93,7 +92,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition(),
                 new IsUsingItemCondition(), new IsUsingCustomItemCondition(), new IsExperienceAtCondition(), new IsHeathPercentAtCondition(),
                 new HasPotionEffectCondition(), new IsBurningCondition(), new IsCoordinateCondition(), new HasScoreboardTagCondition(),
-                new ChanceCondition());
+                new ChanceCondition(), new HasLineOfSightCondition());
 
         //dependent functions
 

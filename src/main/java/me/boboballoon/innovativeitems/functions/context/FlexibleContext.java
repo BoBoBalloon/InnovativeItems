@@ -35,6 +35,13 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
         this.item = item;
     }
 
+    public FlexibleContext(@NotNull Player player, @NotNull Ability ability, @NotNull RuntimeContext delegate) {
+        this(player, ability,
+                delegate instanceof EntityContext ? ((EntityContext) delegate).getEntity() : null,
+                delegate instanceof BlockContext ? ((BlockContext) delegate).getBlock() : null,
+                delegate instanceof ItemContext ? ((ItemContext) delegate).getItem() : null);
+    }
+
     public FlexibleContext(@NotNull Player player, @NotNull Ability ability) {
         this(player, ability, null, null, null);
     }
@@ -131,14 +138,6 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
      */
     @NotNull
     public static FlexibleContext wrap(@NotNull RuntimeContext context) {
-        if (context instanceof FlexibleContext) {
-            return (FlexibleContext) context;
-        }
-
-        LivingEntity entity = context instanceof EntityContext ? ((EntityContext) context).getEntity() : null;
-        Block block = context instanceof BlockContext ? ((BlockContext) context).getBlock() : null;
-        CustomItem item = context instanceof ItemContext ? ((ItemContext) context).getItem() : null;
-
-        return new FlexibleContext(context.getPlayer(), context.getAbility(), entity, block, item);
+        return context instanceof FlexibleContext ? (FlexibleContext) context : new FlexibleContext(context.getPlayer(), context.getAbility(), context);
     }
 }

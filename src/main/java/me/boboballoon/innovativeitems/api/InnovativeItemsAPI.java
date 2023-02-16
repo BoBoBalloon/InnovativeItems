@@ -127,6 +127,7 @@ public final class InnovativeItemsAPI {
      *
      * @param identifier the provided identifier
      * @param player the player executing the ability
+     * @param silent if the method should throw a {@link IllegalArgumentException} if the ability with the provided identifier was not found
      * @return a boolean that is true when the ability was successfully executed
      */
     public static boolean executeAbility(@NotNull String identifier, @NotNull Player player, boolean silent) {

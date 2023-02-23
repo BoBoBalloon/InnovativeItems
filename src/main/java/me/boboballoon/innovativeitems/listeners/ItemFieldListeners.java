@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -143,5 +144,24 @@ public final class ItemFieldListeners implements Listener {
         }
 
         event.setCancelled(true);
+    }
+
+    /**
+     * Listener used to make sure that the mending enchantment works with custom durability
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerItemMend(PlayerItemMendEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        ItemStack stack = event.getItem();
+        CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
+
+        if (item == null || stack.getItemMeta().isUnbreakable()) {
+            return;
+        }
+
+        DurabilityUtil.setDurability(stack, DurabilityUtil.getDurability(stack) + event.getRepairAmount());
     }
 }

@@ -52,7 +52,7 @@ public final class DurabilityUtil {
 
         if (item != null) {
             NBTItem nbt = new NBTItem(stack, true);
-            nbt.setInteger("innovativeplugin-customitem-durability", amount);
+            nbt.setInteger("innovativeplugin-customitem-durability", Math.min(amount, item.getMaxDurability()));
         }
     }
 

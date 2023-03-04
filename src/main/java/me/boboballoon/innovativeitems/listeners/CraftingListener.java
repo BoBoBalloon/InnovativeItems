@@ -53,6 +53,35 @@ public final class CraftingListener implements Listener {
         }
 
         event.getInventory().setResult(null);
+
+        /*
+        //code written for crafting repair but it turns out it doesn't even work in the first place
+        Stream<ItemStack> stream = Arrays.stream(event.getInventory().getMatrix()).filter(Objects::nonNull);
+
+        if (!(result != null && event.isRepair() && stream.allMatch(item -> cache.fromItemStack(item) != null))) {
+            //logic for when result is custom item and not repair
+            event.getInventory().setResult(null);
+            return;
+        }
+
+        //logic for when custom item is repaired
+        ItemStack[] bases = stream.toArray(ItemStack[]::new);
+        CustomItem[] items = stream.map(cache::fromItemStack).toArray(CustomItem[]::new);
+
+        if (bases.length != 2) {
+            LogUtil.logUnblocked(LogUtil.Level.SEVERE, "An internal error occurred with custom crafting repair, please report this immediately!");
+            LogUtil.logUnblocked(LogUtil.Level.SEVERE, "-------------------------------------------------------------------");
+            Arrays.stream(items).forEach(item -> LogUtil.logUnblocked(LogUtil.Level.SEVERE, item.getIdentifier()));
+            LogUtil.logUnblocked(LogUtil.Level.SEVERE, "-------------------------------------------------------------------");
+            event.getInventory().setResult(null);
+            return;
+        }
+
+        //Following formula stolen from https://minecraft.fandom.com/wiki/Item_repair#:~:text=min(Item%20A%20uses%20%2B%20Item%20B%20uses%20%2B%20floor(Max%20uses%20/%2020)%2C%20Max%20uses)
+        double max = items[0].getMaxDurability();
+        int sum = DurabilityUtil.getDurability(bases[0]) + DurabilityUtil.getDurability(bases[1]);
+        DurabilityUtil.setDurability(event.getInventory().getResult(), (int) Math.min(sum + Math.floor(max / 20), max));
+         */
     }
 
     /**

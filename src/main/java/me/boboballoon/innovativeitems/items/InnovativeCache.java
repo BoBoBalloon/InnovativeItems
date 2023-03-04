@@ -101,13 +101,22 @@ public final class InnovativeCache {
             return null;
         }
 
-        NBTItem nbtItem = new NBTItem(item);
+        return this.fromNBTItem(new NBTItem(item));
+    }
 
-        if (!nbtItem.hasKey("innovativeplugin-customitem")) {
+    /**
+     * A method used to get a custom item from the cache via an nbt item
+     *
+     * @param item the item nbt data
+     * @return the custom item that the nbt data represents (null if no custom item that matches exists)
+     */
+    @Nullable
+    public CustomItem fromNBTItem(@NotNull NBTItem item) {
+        if (!item.hasKey("innovativeplugin-customitem")) {
             return null;
         }
 
-        return this.getItem(nbtItem.getString("innovativeplugin-customitem-id"));
+        return this.getItem(item.getString("innovativeplugin-customitem-id"));
     }
 
     /**

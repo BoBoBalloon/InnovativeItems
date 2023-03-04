@@ -3,6 +3,7 @@ package me.boboballoon.innovativeitems.items;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.util.DurabilityUtil;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -168,13 +169,15 @@ public final class GarbageCollector implements Listener {
         }
 
         ItemStack customItemData = customItem.getItemStack();
+        int durability = DurabilityUtil.getDurability(item);
+        Material typeBefore = item.getType();
 
         item.setType(customItemData.getType());
         item.setData(customItemData.getData());
         item.setItemMeta(customItemData.getItemMeta());
-
-        if (nbt.getInteger("innovativeplugin-customitem-durability") > customItem.getMaxDurability()) {
-            nbt.setInteger("innovativeplugin-customitem-durability", customItem.getMaxDurability());
+        //if it is both the same material type and durability is within bounds keep durability the same as before
+        if (typeBefore == customItemData.getType() && durability <= customItem.getMaxDurability()) {
+            DurabilityUtil.setDurability(item, durability);
         }
 
         LogUtil.log(LogUtil.Level.NOISE, "Updating item " + customItem.getIdentifier() + " in " + type.name() + " at " + location.toString());

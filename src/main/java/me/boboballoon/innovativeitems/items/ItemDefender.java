@@ -4,14 +4,13 @@ import com.google.common.collect.Sets;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,6 +98,42 @@ public final class ItemDefender implements Listener {
 
         if (inventories.size() > 1 || this.contains((Class<? extends Inventory>) inventories.toArray()[0].getClass())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPrepareAnvil(PrepareAnvilEvent event) {
+        if (!this.enabled) {
+            return;
+        }
+
+        InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+        CustomItem one = cache.fromItemStack(event.getInventory().getItem(0));
+        CustomItem two = cache.fromItemStack(event.getInventory().getItem(1));
+        CustomItem result = cache.fromItemStack(event.getResult());
+
+        if (result == null || (one == null && two == null)) {
+            return;
+        }
+
+        CustomItem selected = one == result ? one : two == result ? two : null;
+
+        if (selected == null) {
+            return;
+        }
+
+        ItemStack base = event.getInventory().getItem(one == result ? 0 : 1);
+
+        if (!(base.getItemMeta() instanceof Damageable)) {
+            return;
+        }
+
+        Damageable data = (Damageable) base.getItemMeta();
+        Damageable resultData = (Damageable) event.getResult().getItemMeta();
+
+        if (data.getDamage() != resultData.getDamage()) {
+            event.setResult(null);
+            event.getViewers().stream().map(human -> (Player) human).forEach(Player::updateInventory);
         }
     }
 

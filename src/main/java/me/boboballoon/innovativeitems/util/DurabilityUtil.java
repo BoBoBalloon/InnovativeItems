@@ -3,7 +3,6 @@ package me.boboballoon.innovativeitems.util;
 import de.tr7zw.nbtapi.NBTItem;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,12 +15,13 @@ public final class DurabilityUtil {
     /**
      * Constructor to prevent people from using this util class in an object oriented way
      */
-    private DurabilityUtil() {}
+    private DurabilityUtil() {
+    }
 
     /**
      * A method used to set the durability of an item
      *
-     * @param stack the itemstack whose durability you want to modify
+     * @param stack  the itemstack whose durability you want to modify
      * @param amount the durability to set the item to
      */
     public static void setDurability(@NotNull ItemStack stack, int amount) {
@@ -52,7 +52,6 @@ public final class DurabilityUtil {
         if (item != null) {
             NBTItem nbt = new NBTItem(stack, true);
             nbt.setInteger("innovativeplugin-customitem-durability", Math.min(amount, item.getMaxDurability()));
-            Bukkit.broadcastMessage("debug: set durability to " + Math.min(amount, item.getMaxDurability())); //remove
         }
     }
 
@@ -74,7 +73,6 @@ public final class DurabilityUtil {
 
         if (item != null &&
                 (stack.getType().getMaxDurability() - damageable.getDamage()) / stack.getType().getMaxDurability() != nativeDurability / item.getMaxDurability()) {
-            Bukkit.broadcastMessage("debug: durability of " + item.getIdentifier() + " out of sync!"); //remove
             double ratio = (double) (stack.getType().getMaxDurability() - damageable.getDamage()) / stack.getType().getMaxDurability();
             int real = (int) (item.getMaxDurability() * ratio); //truncate double
             DurabilityUtil.setDurability(stack, real);

@@ -50,7 +50,7 @@ public class IsUsingItemCondition extends Condition {
         RevisedEquipmentSlot slot = (RevisedEquipmentSlot) arguments.get(3);
 
         for (ItemStack item : slot.getFromPlayer(target)) {
-            if (item.getType() == material && item.getAmount() >= amount) {
+            if (item != null && item.getType() == material && item.getAmount() >= amount) {
                 return true;
             }
         }

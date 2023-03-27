@@ -38,7 +38,7 @@ public enum RevisedEquipmentSlot {
      * A method used to get the items that correspond with this equipment slot
      *
      * @param player the player whose items are being checked
-     * @return an array of all items
+     * @return an array of all items (elements in the array CAN be null)
      */
     @NotNull
     public ItemStack[] getFromPlayer(@NotNull Player player) {

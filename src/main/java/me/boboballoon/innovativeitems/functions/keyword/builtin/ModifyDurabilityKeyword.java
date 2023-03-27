@@ -50,7 +50,22 @@ public class ModifyDurabilityKeyword extends Keyword {
         boolean set = (boolean) arguments.get(3);
 
         for (ItemStack item : slot.getFromPlayer(target)) {
-            DurabilityUtil.setDurability(item, set ? amount : DurabilityUtil.getDurability(item) + amount);
+            if (item == null) {
+                continue;
+            }
+
+            if (set) {
+                DurabilityUtil.setDurability(item, amount);
+                continue;
+            }
+
+            Integer durability = DurabilityUtil.getDurability(item);
+
+            if (durability == null) {
+                continue;
+            }
+
+            DurabilityUtil.setDurability(item,durability + amount);
         }
     }
 

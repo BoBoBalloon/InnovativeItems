@@ -137,7 +137,13 @@ public final class ItemFieldListeners implements Listener {
             return;
         }
 
-        DurabilityUtil.setDurability(stack, DurabilityUtil.getDurability(stack) - 1);
+        Integer durability = DurabilityUtil.getDurability(stack);
+
+        if (durability == null) {
+            return;
+        }
+
+        DurabilityUtil.setDurability(stack, durability - 1);
 
         if (stack.getType() == Material.AIR) { //if item was deleted since it became broken
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
@@ -162,6 +168,12 @@ public final class ItemFieldListeners implements Listener {
             return;
         }
 
-        DurabilityUtil.setDurability(stack, DurabilityUtil.getDurability(stack) + event.getRepairAmount());
+        Integer durability = DurabilityUtil.getDurability(stack);
+
+        if (durability == null) {
+            return;
+        }
+
+        DurabilityUtil.setDurability(stack, durability + event.getRepairAmount());
     }
 }

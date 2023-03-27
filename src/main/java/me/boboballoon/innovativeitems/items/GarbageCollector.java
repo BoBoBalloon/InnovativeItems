@@ -19,7 +19,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,19 +163,19 @@ public final class GarbageCollector implements Listener {
             return;
         }
 
-        if (!this.shouldUpdate || customItem == null || !customItem.shouldUpdateItem() || bruteCompare(customItem, item)) {
+        if (!this.shouldUpdate || customItem == null || !customItem.shouldUpdateItem() || isSame(customItem, item)) {
             return;
         }
 
         ItemStack customItemData = customItem.getItemStack();
-        int durability = DurabilityUtil.getDurability(item);
+        Integer durability = DurabilityUtil.getDurability(item);
         Material typeBefore = item.getType();
 
         item.setType(customItemData.getType());
         item.setData(customItemData.getData());
         item.setItemMeta(customItemData.getItemMeta());
         //if it is both the same material type and durability is within bounds keep durability the same as before
-        if (typeBefore == customItemData.getType() && durability <= customItem.getMaxDurability()) {
+        if (typeBefore == customItemData.getType() && durability != null && durability <= customItem.getMaxDurability()) {
             DurabilityUtil.setDurability(item, durability);
         }
 
@@ -251,21 +250,24 @@ public final class GarbageCollector implements Listener {
     /**
      * An unoptimized way to compare if two items are the same (without considering amount or durability)
      */
-    private static boolean bruteCompare(@NotNull CustomItem item, @NotNull ItemStack two) {
+    private static boolean isSame(@NotNull CustomItem item, @NotNull ItemStack two) {
         ItemStack one = item.getItemStack();
 
-        if (one.getType() != two.getType() || !two.hasItemMeta() || (one.getItemMeta() instanceof Damageable != two.getItemMeta() instanceof Damageable && one.getItemMeta() instanceof Damageable)) {
+        if (one.getType() != two.getType() || !two.hasItemMeta()) {
             return false;
         }
 
-        NBTItem nbtOne = new NBTItem(one);
-        NBTItem nbtTwo = new NBTItem(two);
+        ItemStack copyOne = new ItemStack(one);
+        ItemStack copyTwo = new ItemStack(two);
+
+        NBTItem nbtOne = new NBTItem(copyOne, true);
+        NBTItem nbtTwo = new NBTItem(copyTwo, true);
 
         nbtOne.setInteger("Damage", 1); //vanilla durability
         nbtTwo.setInteger("Damage", 1);
         nbtOne.setInteger("innovativeplugin-customitem-durability", 1);
         nbtTwo.setInteger("innovativeplugin-customitem-durability", 1);
 
-        return nbtOne.equals(nbtTwo);
+        return copyOne.isSimilar(copyTwo);
     }
 }

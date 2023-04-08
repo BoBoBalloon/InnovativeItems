@@ -20,6 +20,7 @@ import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.Abilit
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerTrigger;
 import me.boboballoon.innovativeitems.listeners.CraftingListener;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
+import me.boboballoon.innovativeitems.listeners.UIViewListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorListener;
@@ -47,6 +48,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    1. Make item creation gui (premium)
+    2. Make ability creation gui (premium)
      */
 
     /*
@@ -154,7 +157,7 @@ public final class InnovativeItems extends JavaPlugin {
         //register listeners
         LogUtil.log(LogUtil.Level.INFO, "Registering native event listeners...");
 
-        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener(), new CraftingListener());
+        this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener(), new CraftingListener(), new UIViewListeners());
         this.functionManager.registerCachedTriggers();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");

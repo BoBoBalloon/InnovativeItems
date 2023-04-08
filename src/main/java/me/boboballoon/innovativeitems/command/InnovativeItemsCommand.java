@@ -6,14 +6,23 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.ui.BlankElement;
+import me.boboballoon.innovativeitems.ui.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.PageableView;
 import me.boboballoon.innovativeitems.util.InventoryUtil;
+import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -242,5 +251,40 @@ public class InnovativeItemsCommand extends BaseCommand {
 
         TextUtil.sendMessage(target, "&r&aCleaning up the inventory of a player by the name of " + target.getName() + "!");
         InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true);
+    }
+
+    @Subcommand("test")
+    @Conditions("is-player")
+    public void onGUI(Player player, String[] args) {
+        List<List<InnovativeElement>> pages = new ArrayList<>();
+        List<InnovativeElement> elements = new ArrayList<>();
+
+        for (int i = 1; i <= 16; i++) {
+            elements.add(InnovativeElement.EMPTY);
+        }
+
+        elements.add(new BlankElement(new ItemStack(Material.DIAMOND), () -> LogUtil.logUnblocked(LogUtil.Level.INFO, "Loaded once")));
+        ItemStack test = new ItemStack(Material.NETHERITE_SWORD, 2);
+        ItemMeta meta = test.getItemMeta();
+        meta.setDisplayName("click me fucker");
+        meta.setLore(Collections.singletonList("Do it pussy"));
+        test.setItemMeta(meta);
+
+        elements.add(new InnovativeElement(test, player1 -> TextUtil.sendMessage(player1, "this is for you!")));
+
+        pages.add(elements);
+
+        List<InnovativeElement> page2 = new ArrayList<>();
+
+        for (int i = 1; i <= 17; i++) {
+            page2.add(InnovativeElement.EMPTY);
+        }
+
+        page2.add(new InnovativeElement(test, player1 -> TextUtil.sendMessage(player1, "this is also for you!")));
+
+        pages.add(page2);
+
+        PageableView view = new PageableView(TextUtil.format("&r&c&lTest Pageable View"), pages);
+        view.open(player);
     }
 }

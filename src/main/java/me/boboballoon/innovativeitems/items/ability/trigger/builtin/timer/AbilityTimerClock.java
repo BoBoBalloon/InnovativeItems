@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class AbilityTimerClock extends BukkitRunnable {
      * @param timer the delay in between each trigger
      * @param abilities the abilities that must be fired
      */
-    public AbilityTimerClock(long timer, Set<Ability> abilities) {
+    public AbilityTimerClock(long timer, @NotNull Set<Ability> abilities) {
         this.abilities = abilities;
         this.runTaskTimerAsynchronously(InnovativeItems.getInstance(), 0L, timer);
     }
@@ -36,7 +37,7 @@ public class AbilityTimerClock extends BukkitRunnable {
      * @param timer the delay in between each trigger
      * @param abilities the abilities that must be fired
      */
-    public AbilityTimerClock(long timer, Ability... abilities) {
+    public AbilityTimerClock(long timer, @NotNull Ability... abilities) {
         this(timer, Sets.newHashSet(abilities));
     }
 
@@ -77,6 +78,7 @@ public class AbilityTimerClock extends BukkitRunnable {
      *
      * @return the ability that must be fired on a timer
      */
+    @NotNull
     public ImmutableSet<Ability> getAbilities() {
         return ImmutableSet.copyOf(this.abilities);
     }
@@ -86,7 +88,7 @@ public class AbilityTimerClock extends BukkitRunnable {
      *
      * @param ability the ability you wish to add
      */
-    public void addAbility(Ability ability) {
+    public void addAbility(@NotNull Ability ability) {
         if (this.abilities.contains(ability)) {
             return;
         }

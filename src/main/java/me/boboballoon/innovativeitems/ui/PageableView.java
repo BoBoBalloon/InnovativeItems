@@ -1,8 +1,6 @@
 package me.boboballoon.innovativeitems.ui;
 
 import com.google.common.collect.ImmutableList;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -12,7 +10,7 @@ import java.util.List;
  * A class that represents a pageable inventory view ui
  */
 public class PageableView extends InnovativeView {
-    private ImmutableList<ImmutableList<InnovativeElement>> pages;
+    private final List<ImmutableList<InnovativeElement>> pages;
     private int currentPageIndex;
 
     /**
@@ -22,7 +20,7 @@ public class PageableView extends InnovativeView {
      * @param pages all pages
      * @throws IndexOutOfBoundsException if the pages list has a size of 0 or not all of its elements have the same size
      */
-    public PageableView(@NotNull String title, @NotNull ImmutableList<List<InnovativeElement>> pages) throws IndexOutOfBoundsException {
+    public PageableView(@NotNull String title, @NotNull List<List<InnovativeElement>> pages) throws IndexOutOfBoundsException {
         super(title, pages.get(0));
 
         int size = pages.get(0).size();
@@ -30,13 +28,8 @@ public class PageableView extends InnovativeView {
             throw new IndexOutOfBoundsException("All elements of pages are not the same size!");
         }
 
-        this.pages = this.page(pages);
+        this.pages = this.reformat(pages);
         this.currentPageIndex = 0;
-        this.setElements(this.pages.get(this.currentPageIndex)); //reloads
-    }
-
-    public PageableView(@NotNull String title, @NotNull List<List<InnovativeElement>> pages) throws IndexOutOfBoundsException {
-        this(title, ImmutableList.copyOf(pages));
     }
 
     public PageableView(@NotNull String title, @NotNull List<InnovativeElement>[] pages) throws IndexOutOfBoundsException {
@@ -50,7 +43,7 @@ public class PageableView extends InnovativeView {
      */
     @NotNull
     public final ImmutableList<ImmutableList<InnovativeElement>> getPages() {
-        return this.pages;
+        return ImmutableList.copyOf(this.pages);
     }
 
     /**
@@ -58,12 +51,15 @@ public class PageableView extends InnovativeView {
      *
      * @param pages all of the NEW different pages in this pageable view
      */
-    public final void setPages(@NotNull ImmutableList<List<InnovativeElement>> pages) {
-        if (pages.size() < 1) {
+    public final void setPages(@NotNull List<ImmutableList<InnovativeElement>> pages) {
+        int size = pages.get(0).size();
+        if (pages.size() < 1 || !pages.stream().allMatch(collection -> collection.size() == size)) {
             return;
         }
 
-        this.pages = this.page(pages);
+        this.pages.clear();
+        this.pages.addAll(pages);
+
         this.currentPageIndex = 0;
         this.setElements(this.pages.get(this.currentPageIndex)); //calls reload
     }
@@ -100,17 +96,13 @@ public class PageableView extends InnovativeView {
      * @return the completed page collection
      */
     @NotNull
-    private ImmutableList<ImmutableList<InnovativeElement>> page(@NotNull List<List<InnovativeElement>> pages) {
+    private List<ImmutableList<InnovativeElement>> reformat(@NotNull List<List<InnovativeElement>> pages) {
         List<ImmutableList<InnovativeElement>> elements = new ArrayList<>(pages.size());
-        BlankElement previous = new BlankElement(new ItemStack(Material.ARROW), player -> this.setCurrentPageIndex(this.getCurrentPageIndex() - 1));
-        BlankElement next = new BlankElement(new ItemStack(Material.ARROW), player -> this.setCurrentPageIndex(this.getCurrentPageIndex() + 1));
 
         for (List<InnovativeElement> page : pages) {
-            page.set(0, previous);
-            page.set(8, next);
             elements.add(ImmutableList.copyOf(page));
         }
 
-        return ImmutableList.copyOf(elements);
+        return elements;
     }
 }

@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer;
 
 import me.boboballoon.innovativeitems.items.ability.Ability;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ public final class AbilityTimerManager {
      * @param ability the ability that needs a timer
      * @param timer the delay in between executions
      */
-    public void registerTimer(Ability ability, long timer) {
+    public void registerTimer(@NotNull Ability ability, long timer) {
         if (!(ability.getTrigger() instanceof TimerTrigger)) {
             return;
         }

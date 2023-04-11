@@ -162,7 +162,7 @@ public abstract class AbilityTrigger<T extends Event, S extends RuntimeContext> 
 
     /**
      * A method used to check if the current ability trigger is compatible with the specified ability trigger
-     * This will only return true if this trigger can use at least every targeter of the provided trigger ()
+     * This will only return true if this trigger can use at least every targeter of the provided trigger
      *
      * @param origin the ability trigger you are starting from
      * @param target the ability trigger you wish to execute next

@@ -43,6 +43,7 @@ public enum RecipeType {
      *
      * @return the recipe class that this type represents
      */
+    @NotNull
     public Class<? extends Recipe> getClazz() {
         return this.clazz;
     }

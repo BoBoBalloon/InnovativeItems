@@ -48,9 +48,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make UI lib
-        *   Create two subclasses of InnovativeElement ConfirmElement and DenyElement which play sounds when clicked and have preset items (clay with green confirm and red deny display respectively)
-        *   Test lib
+    1. Test UI lib
     2. Make ResponseUtil class (private constructor and final class) that listens for user chat input and gets input from chat
         *   Players type 'cancel' or leave game to exit from response queue
         *   Dev must provide a functional interfaces to class which has a return type of null and a parameter of a nullable string which is null of the player cancelled the responce or leaves

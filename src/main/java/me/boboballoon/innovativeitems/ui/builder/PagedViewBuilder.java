@@ -1,7 +1,6 @@
 package me.boboballoon.innovativeitems.ui.builder;
 
 import me.boboballoon.innovativeitems.ui.InnovativeElement;
-import me.boboballoon.innovativeitems.ui.views.PageableView;
 import me.boboballoon.innovativeitems.ui.views.PagedView;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,15 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A view builder designed to build {@link PageableView}
+ * A view builder designed to build {@link PagedView}
  */
-public final class PageableViewBuilder extends ViewBuilder<PageableView> {
-    private boolean paged;
+public final class PagedViewBuilder extends ViewBuilder<PagedView> {
     private int pages;
 
-    public PageableViewBuilder() {
+    public PagedViewBuilder() {
         super();
-        this.paged = false;
         this.pages = 1;
     }
 
@@ -29,23 +26,11 @@ public final class PageableViewBuilder extends ViewBuilder<PageableView> {
     /**
      * A method used to set the amount of pages this view should have
      *
-     * @param paged if this builder should create a basic paged view or a pageable view
-     * @return this builder
-     */
-    @NotNull
-    public PageableViewBuilder setPaged(boolean paged) {
-        this.paged = paged;
-        return this;
-    }
-
-    /**
-     * A method used to set the amount of pages this view should have
-     *
      * @param pages the amount of pages this view should have
      * @return this builder
      */
     @NotNull
-    public PageableViewBuilder setPages(int pages) {
+    public PagedViewBuilder setPages(int pages) {
         this.pages = Math.max(pages, 1); //can't be less than one
 
         this.getElements().entrySet().removeIf(element -> element.getKey() > this.getMaximumIndex());
@@ -55,7 +40,7 @@ public final class PageableViewBuilder extends ViewBuilder<PageableView> {
 
     @NotNull
     @Override
-    public PageableView build() {
+    public PagedView build() {
         List<List<InnovativeElement>> pagesData = new ArrayList<>(this.pages);
 
         for (int page = 0; page < this.pages; page++) {
@@ -67,6 +52,6 @@ public final class PageableViewBuilder extends ViewBuilder<PageableView> {
             pagesData.add(elements);
         }
 
-        return this.paged ? new PagedView(this.getTitle(), pagesData) : new PageableView(this.getTitle(), pagesData);
+        return new PagedView(this.getTitle(), pagesData);
     }
 }

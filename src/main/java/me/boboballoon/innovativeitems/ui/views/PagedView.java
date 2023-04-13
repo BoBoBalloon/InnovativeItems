@@ -1,7 +1,9 @@
-package me.boboballoon.innovativeitems.ui;
+package me.boboballoon.innovativeitems.ui.views;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import me.boboballoon.innovativeitems.ui.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.elements.BlankElement;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

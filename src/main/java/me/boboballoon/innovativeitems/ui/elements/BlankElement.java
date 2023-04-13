@@ -1,5 +1,6 @@
-package me.boboballoon.innovativeitems.ui;
+package me.boboballoon.innovativeitems.ui.elements;
 
+import me.boboballoon.innovativeitems.ui.InnovativeElement;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;

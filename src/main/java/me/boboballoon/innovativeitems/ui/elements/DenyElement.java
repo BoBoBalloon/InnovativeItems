@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.ui;
+package me.boboballoon.innovativeitems.ui.elements;
 
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Material;

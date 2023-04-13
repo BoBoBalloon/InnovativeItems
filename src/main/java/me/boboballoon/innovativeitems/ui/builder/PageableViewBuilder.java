@@ -1,8 +1,8 @@
 package me.boboballoon.innovativeitems.ui.builder;
 
 import me.boboballoon.innovativeitems.ui.InnovativeElement;
-import me.boboballoon.innovativeitems.ui.PageableView;
-import me.boboballoon.innovativeitems.ui.PagedView;
+import me.boboballoon.innovativeitems.ui.views.PageableView;
+import me.boboballoon.innovativeitems.ui.views.PagedView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

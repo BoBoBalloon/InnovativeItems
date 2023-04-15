@@ -22,6 +22,7 @@ import me.boboballoon.innovativeitems.listeners.CraftingListener;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.listeners.UIViewListeners;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.UpdateChecker;
 import me.boboballoon.innovativeitems.util.armorevent.ArmorListener;
 import me.boboballoon.innovativeitems.util.armorevent.DispenserArmorListener;
@@ -48,9 +49,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make ResponseUtil class (private constructor and final class) that listens for user chat input and gets input from chat
-        *   Players type 'cancel' or leave game to exit from response queue
-        *   Dev must provide a functional interfaces to class which has a return type of null and a parameter of a nullable string which is null of the player cancelled the responce or leaves
+    1. Test ResponseUtil class
     2. Make item creation gui
     3. Make ability creation gui
     4. Increase maximum amount of items and abilities that can be made on the free version
@@ -164,6 +163,7 @@ public final class InnovativeItems extends JavaPlugin {
 
         this.registerListeners(this.garbageCollector, new ItemFieldListeners(), this.itemDefender, new ArmorListener(), new DispenserArmorListener(), new ArrowFireListener(), new CraftingListener(), new UIViewListeners());
         this.functionManager.registerCachedTriggers();
+        ResponseUtil.enable();
 
         LogUtil.log(LogUtil.Level.INFO, "Event listener registration complete!");
     }

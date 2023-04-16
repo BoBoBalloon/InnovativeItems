@@ -50,9 +50,14 @@ public final class InnovativeItems extends JavaPlugin {
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     1. Make item creation gui
+        * Fix bug that prevents items from being updated in view
+        * make view look pretty by formatting strings
+        * add more item specific support
+        * write to disk
     2. Make ability creation gui
     3. Increase maximum amount of items and abilities that can be made on the free version
     4. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
+    5. Add support so you can modify items as well as create them
      */
 
     /*

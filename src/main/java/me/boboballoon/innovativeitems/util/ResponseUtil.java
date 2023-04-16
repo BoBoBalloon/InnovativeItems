@@ -97,7 +97,7 @@ public final class ResponseUtil {
             UserResponse response = ResponseUtil.RESPONDING.remove(event.getPlayer().getUniqueId());
             String message = event.getMessage();
 
-            response.response(message.equalsIgnoreCase("cancel") ? null : message);
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> response.response(message.equalsIgnoreCase("cancel") ? null : message));
             event.setCancelled(true);
         }
 

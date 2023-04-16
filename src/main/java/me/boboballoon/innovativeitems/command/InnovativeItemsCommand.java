@@ -6,8 +6,8 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
+import me.boboballoon.innovativeitems.ui.ItemBuilderView;
 import me.boboballoon.innovativeitems.util.InventoryUtil;
-import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -29,7 +29,8 @@ public class InnovativeItemsCommand extends BaseCommand {
             TextUtil.format("&r&e&l- /innovativeitems debug <level>"),
             TextUtil.format("&r&e&l- /innovativeitems reload"),
             TextUtil.format("&r&e&l- /innovativeitems execute <ability> <player>"),
-            TextUtil.format("&r&e&l- /innovativeitems clean <player>"));
+            TextUtil.format("&r&e&l- /innovativeitems clean <player>"),
+            TextUtil.format("&r&e&l- /innovativeitems create <item-identifier>"));
 
     /**
      * A "command" that gives a player all the possible commands they can execute
@@ -245,18 +246,17 @@ public class InnovativeItemsCommand extends BaseCommand {
         InnovativeItems.getInstance().getGarbageCollector().cleanInventory(target.getInventory(), true);
     }
 
-    @Subcommand("test")
+    @Subcommand("create")
     @Conditions("is-player")
-    public void onGUI(Player player) {
-        /*
-        PagedView view = new PagedViewBuilder()
-                .setPages(4)
-                .setTitle("&r&cTest View")
-                .setRows(5)
-                .addElement(50, Material.NOTE_BLOCK, "&r&lI'm dead inside", (who, stack) -> TextUtil.sendMessage(who, "test"))
-                .build();
-        view.open(player);
-         */
-        ResponseUtil.input(player, response -> TextUtil.sendMessage(player, response != null ? response : "response was null"));
+    @CommandCompletion("@nothing")
+    public void onItemCreate(Player player, String[] args) {
+        if (args.length != 1) {
+            TextUtil.sendMessage(player, "&r&cYou have entered improper arguments to execute this command!");
+            this.onHelp(player);
+            return;
+        }
+
+        ItemBuilderView builder = new ItemBuilderView(args[0]);
+        builder.open(player);
     }
 }

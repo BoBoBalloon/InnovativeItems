@@ -104,11 +104,11 @@ public class BorderedView extends InnovativeView {
             }
 
             if (row == (data.size()) / 9 - 1 && col == 8 && bottomRight != null) {
-                data.set(i, bottomLeft);
+                data.set(i, bottomRight);
                 continue;
             }
 
-            if (row == 0 || row == (data.size()) / 9 - 1 || col == 0 || col == 8) {
+            if (row == 0 || row == data.size() / 9 - 1 || col == 0 || col == 8) {
                 data.set(i, element);
             }
         }

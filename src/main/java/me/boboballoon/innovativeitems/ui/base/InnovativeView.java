@@ -127,7 +127,7 @@ public class InnovativeView implements InventoryHolder {
      *
      * @param player the player to show the view to
      */
-    public final void open(@NotNull Player player) {
+    public void open(@NotNull Player player) {
         player.openInventory(this.inventory);
         this.reload();
     }

@@ -1,7 +1,7 @@
 package me.boboballoon.innovativeitems.listeners;
 
-import me.boboballoon.innovativeitems.ui.InnovativeElement;
-import me.boboballoon.innovativeitems.ui.InnovativeView;
+import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.base.InnovativeView;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,6 +38,6 @@ public final class UIViewListeners implements Listener {
 
         InnovativeElement element = view.getElement(event.getSlot());
 
-        element.getClickAction().accept((Player) event.getWhoClicked()); //can assume HumanEntity is Player
+        element.getClickAction().accept((Player) event.getWhoClicked(), event.getClick()); //can assume HumanEntity is Player
     }
 }

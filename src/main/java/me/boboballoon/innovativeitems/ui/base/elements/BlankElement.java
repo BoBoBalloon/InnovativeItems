@@ -1,7 +1,8 @@
-package me.boboballoon.innovativeitems.ui.elements;
+package me.boboballoon.innovativeitems.ui.base.elements;
 
-import me.boboballoon.innovativeitems.ui.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
 import me.boboballoon.innovativeitems.util.TextUtil;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,10 @@ public class BlankElement extends InnovativeElement {
 
     public BlankElement(@NotNull ItemStack stack) {
         this(stack, null, null);
+    }
+
+    public BlankElement(@NotNull Material material) {
+        this(new ItemStack(material));
     }
 
     /**

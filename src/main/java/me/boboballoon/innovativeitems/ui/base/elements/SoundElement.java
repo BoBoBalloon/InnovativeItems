@@ -1,6 +1,6 @@
-package me.boboballoon.innovativeitems.ui.elements;
+package me.boboballoon.innovativeitems.ui.base.elements;
 
-import me.boboballoon.innovativeitems.ui.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

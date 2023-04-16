@@ -6,13 +6,11 @@ import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.item.CustomItem;
-import me.boboballoon.innovativeitems.ui.builder.PagedViewBuilder;
-import me.boboballoon.innovativeitems.ui.views.PagedView;
 import me.boboballoon.innovativeitems.util.InventoryUtil;
+import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -250,6 +248,7 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Subcommand("test")
     @Conditions("is-player")
     public void onGUI(Player player) {
+        /*
         PagedView view = new PagedViewBuilder()
                 .setPages(4)
                 .setTitle("&r&cTest View")
@@ -257,5 +256,7 @@ public class InnovativeItemsCommand extends BaseCommand {
                 .addElement(50, Material.NOTE_BLOCK, "&r&lI'm dead inside", (who, stack) -> TextUtil.sendMessage(who, "test"))
                 .build();
         view.open(player);
+         */
+        ResponseUtil.input(player, response -> TextUtil.sendMessage(player, response != null ? response : "response was null"));
     }
 }

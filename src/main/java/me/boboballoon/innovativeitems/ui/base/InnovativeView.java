@@ -1,7 +1,7 @@
-package me.boboballoon.innovativeitems.ui;
+package me.boboballoon.innovativeitems.ui.base;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -24,17 +24,13 @@ public class InnovativeView implements InventoryHolder {
      * @param elements the items and effects
      */
     public InnovativeView(@NotNull String title, @NotNull ImmutableList<InnovativeElement> elements) {
-        this.inventory = Bukkit.createInventory(this, elements.size(), title);
+        this.inventory = Bukkit.createInventory(this, elements.size(), TextUtil.format(title));
         this.elements = elements;
         this.reload();
     }
 
     public InnovativeView(@NotNull String title, @NotNull List<InnovativeElement> elements) {
         this(title, populate(elements));
-    }
-
-    public InnovativeView(@NotNull String title, @NotNull InnovativeElement[] elements) {
-        this(title, populate(Lists.newArrayList(elements)));
     }
 
     /**
@@ -64,7 +60,7 @@ public class InnovativeView implements InventoryHolder {
      * @param elements the elements of this view
      * @throws IllegalArgumentException if the provided elements do not reflect the size of the inventory
      */
-    public final void setElements(@NotNull ImmutableList<InnovativeElement> elements) throws IllegalArgumentException {
+    public void setElements(@NotNull ImmutableList<InnovativeElement> elements) throws IllegalArgumentException {
         if (this.getSize() != elements.size()) {
             throw new IllegalArgumentException("Invalid elements provided!");
         }
@@ -133,6 +129,7 @@ public class InnovativeView implements InventoryHolder {
      */
     public final void open(@NotNull Player player) {
         player.openInventory(this.inventory);
+        this.reload();
     }
 
     /**

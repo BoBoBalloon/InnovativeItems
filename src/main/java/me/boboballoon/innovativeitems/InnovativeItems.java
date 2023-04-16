@@ -49,11 +49,10 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Test ResponseUtil class
-    2. Make item creation gui
-    3. Make ability creation gui
-    4. Increase maximum amount of items and abilities that can be made on the free version
-    5. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
+    1. Make item creation gui
+    2. Make ability creation gui
+    3. Increase maximum amount of items and abilities that can be made on the free version
+    4. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
      */
 
     /*

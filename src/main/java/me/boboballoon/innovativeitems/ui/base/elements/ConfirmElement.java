@@ -1,4 +1,4 @@
-package me.boboballoon.innovativeitems.ui.elements;
+package me.boboballoon.innovativeitems.ui.base.elements;
 
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Material;
@@ -12,23 +12,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * A class that represents an item in an inventory view ui that plays a low note and has a click action
+ * A class that represents an item in an inventory view ui that chimes and executes an action when complete
  */
-public class DenyElement extends SoundElement {
+public class ConfirmElement extends SoundElement {
     private static final ItemStack BOTH = build(true, true);
     private static final ItemStack BOLD = build(true, false);
     private static final ItemStack ITALICS = build(false, true);
     private static final ItemStack NONE = build(false, false);
 
-    public DenyElement(boolean bold, boolean italics, @Nullable Consumer<Player> clickAction) {
-        super(bold && italics ? BOTH : bold ? BOLD : italics ? ITALICS : NONE, Sound.BLOCK_NOTE_BLOCK_BASS, clickAction, null);
+    public ConfirmElement(boolean bold, boolean italics, @Nullable Consumer<Player> clickAction) {
+        super(bold && italics ? BOTH : bold ? BOLD : italics ? ITALICS : NONE, Sound.BLOCK_NOTE_BLOCK_CHIME, clickAction, null);
     }
 
-    public DenyElement(@Nullable Consumer<Player> clickAction) {
+    public ConfirmElement(@Nullable Consumer<Player> clickAction) {
         this(false, false, clickAction);
     }
 
-    public DenyElement() {
+    public ConfirmElement() {
         this(null);
     }
 
@@ -41,10 +41,10 @@ public class DenyElement extends SoundElement {
      */
     @NotNull
     private static ItemStack build(boolean bold, boolean italics) {
-        ItemStack stack = new ItemStack(Material.RED_TERRACOTTA);
+        ItemStack stack = new ItemStack(Material.GREEN_TERRACOTTA);
         ItemMeta meta = stack.getItemMeta();
 
-        meta.setDisplayName(TextUtil.format("&r&c" + (bold ? "&l" : "") + (italics ? "&o" : "") + "Deny"));
+        meta.setDisplayName(TextUtil.format("&r&a" + (bold ? "&l" : "") + (italics ? "&o" : "") + "Confirm"));
 
         stack.setItemMeta(meta);
         return stack;

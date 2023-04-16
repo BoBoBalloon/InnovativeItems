@@ -1,8 +1,8 @@
-package me.boboballoon.innovativeitems.ui.views;
+package me.boboballoon.innovativeitems.ui.base.views;
 
 import com.google.common.collect.ImmutableList;
-import me.boboballoon.innovativeitems.ui.InnovativeElement;
-import me.boboballoon.innovativeitems.ui.InnovativeView;
+import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
+import me.boboballoon.innovativeitems.ui.base.InnovativeView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

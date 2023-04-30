@@ -18,6 +18,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RegexUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public final class AbilityParser {
      * @param section the configuration section of the ability
      * @param cache the cache to register the ability in
      */
-    public static void buildAbility(ConfigurationSection section, InnovativeCache cache) {
+    public static void buildAbility(@NotNull ConfigurationSection section, @NotNull InnovativeCache cache) {
         String abilityName = section.getName();
 
         if (cache.contains(abilityName)) {
@@ -65,7 +66,7 @@ public final class AbilityParser {
      * @return the ability (null if an error occurred)
      */
     @Nullable
-    public static Ability parseAbility(ConfigurationSection section, String name) {
+    public static Ability parseAbility(@NotNull ConfigurationSection section, @NotNull String name) {
         AbilityTrigger<?, ?> trigger = AbilityParser.getAbilityTrigger(section);
 
         if (trigger == null) {
@@ -98,14 +99,14 @@ public final class AbilityParser {
      * @return the ability (null if an error occurred)
      */
     @Nullable
-    public static Ability parseAbility(ConfigurationSection section) {
+    public static Ability parseAbility(@NotNull ConfigurationSection section) {
         return AbilityParser.parseAbility(section, section.getName());
     }
 
     /**
      * A util method used to get the ability trigger from an ability config section
      */
-    private static AbilityTrigger<?, ?> getAbilityTrigger(ConfigurationSection section) {
+    private static AbilityTrigger<?, ?> getAbilityTrigger(@NotNull ConfigurationSection section) {
         String abilityName = section.getName();
 
         String triggerName;
@@ -129,7 +130,8 @@ public final class AbilityParser {
     /**
      * A util method used to get the active keywords from an ability config section
      */
-    private static ImmutableList<ActiveKeyword> getAbilityKeywords(ConfigurationSection section, AbilityTrigger<?, ?> trigger, String abilityName) {
+    @NotNull
+    private static ImmutableList<ActiveKeyword> getAbilityKeywords(@NotNull ConfigurationSection section, @NotNull AbilityTrigger<?, ?> trigger, @NotNull String abilityName) {
         List<String> raw = AbilityParser.getLines(section, abilityName, true);
 
         if (raw == null) {
@@ -171,7 +173,8 @@ public final class AbilityParser {
     /**
      * A util method used to get the active keywords from an ability config section
      */
-    private static ImmutableList<ActiveCondition> getAbilityConditions(ConfigurationSection section, AbilityTrigger<?, ?> trigger, String abilityName) {
+    @NotNull
+    private static ImmutableList<ActiveCondition> getAbilityConditions(@NotNull ConfigurationSection section, AbilityTrigger<?, ?> trigger, @NotNull String abilityName) {
         List<String> raw = AbilityParser.getLines(section, abilityName, false);
 
         if (raw == null) {
@@ -220,7 +223,8 @@ public final class AbilityParser {
     /**
      * A utility method used to get the raw string lines of an ability
      */
-    private static List<String> getLines(ConfigurationSection section, String abilityName, boolean keyword) {
+    @Nullable
+    private static List<String> getLines(@NotNull ConfigurationSection section, @NotNull String abilityName, boolean keyword) {
         String type = keyword ? "keyword" : "condition";
         String types = type + "s";
 
@@ -238,7 +242,8 @@ public final class AbilityParser {
     /**
      * A utility method used to get the cooldown message
      */
-    private static AbilityCooldown.CooldownMessage getCooldownMessage(ConfigurationSection section, String abilityName) {
+    @Nullable
+    private static AbilityCooldown.CooldownMessage getCooldownMessage(@NotNull ConfigurationSection section, @NotNull String abilityName) {
         if (section.isBoolean("show-cooldown")) {
             LogUtil.log(LogUtil.Level.INFO, "While loading " + abilityName + " the usage of the legacy syntax for a cooldown message was detected... It is not recommended to use this syntax and should be removed as soon as possible!");
             return section.getBoolean("show-cooldown") ? new AbilityCooldown.CooldownMessage("&r&cYou have {cooldown} time left until you can use " + abilityName + " again!", ChatMessageType.ACTION_BAR) : null;
@@ -265,7 +270,8 @@ public final class AbilityParser {
     /**
      * A utility method used to clean up and centralize the parsing process
      */
-    private static ImmutableList<Object> checkAndParse(InnovativeFunction<?> function, int i, String abilityName, String[] split, AbilityTrigger<?, ?> trigger, boolean keyword) {
+    @Nullable
+    private static ImmutableList<Object> checkAndParse(@Nullable InnovativeFunction<?> function, int i, @NotNull String abilityName, @NotNull String[] split, @NotNull AbilityTrigger<?, ?> trigger, boolean keyword) {
         String type = keyword ? "keyword" : "condition";
         String types = type + "s";
 
@@ -300,7 +306,8 @@ public final class AbilityParser {
     /**
      * A util method that parses and initializes the rest of the arguments
      */
-    private static ImmutableList<Object> parseArguments(String[] rawArguments, FunctionContext context) {
+    @NotNull
+    private static ImmutableList<Object> parseArguments(@NotNull String[] rawArguments, @NotNull FunctionContext context) {
         List<Object> parsedArguments = new ArrayList<>();
 
         for (int i = 0; i < rawArguments.length; i++) {

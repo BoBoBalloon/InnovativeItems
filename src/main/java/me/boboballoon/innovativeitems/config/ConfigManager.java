@@ -500,6 +500,10 @@ public final class ConfigManager {
 
                 ConfigurationSection section = configuration.getConfigurationSection(key);
 
+                if (section == null) {
+                    continue;
+                }
+
                 AbilityParser.buildAbility(section, cache);
             }
         }
@@ -539,6 +543,10 @@ public final class ConfigManager {
 
             for (String key : configuration.getKeys(false)) {
                 ConfigurationSection section = configuration.getConfigurationSection(key);
+
+                if (section == null) {
+                    continue;
+                }
 
                 String name = section.getName();
 

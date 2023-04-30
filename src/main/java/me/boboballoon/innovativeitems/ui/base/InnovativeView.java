@@ -115,8 +115,8 @@ public class InnovativeView implements InventoryHolder {
 
         for (int i = 0; i < this.getSize(); i++) {
             InnovativeElement element = this.getElement(i);
-            this.inventory.setItem(i, element.getStack());
             element.getLoadAction().run();
+            this.inventory.setItem(i, element.getStack());
         }
 
         this.inventory.getViewers().stream().map(human -> (Player) human).forEach(Player::updateInventory); //safe to assume human is player

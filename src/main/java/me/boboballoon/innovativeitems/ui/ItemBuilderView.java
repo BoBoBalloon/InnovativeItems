@@ -2,6 +2,7 @@ package me.boboballoon.innovativeitems.ui;
 
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.config.ItemParser;
 import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
 import me.boboballoon.innovativeitems.ui.base.elements.ConfirmElement;
 import me.boboballoon.innovativeitems.ui.base.views.BorderedView;
@@ -9,15 +10,19 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +30,7 @@ import java.io.File;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +39,7 @@ import java.util.stream.Collectors;
 public final class ItemBuilderView extends BorderedView {
     private static final int SIZE = 45;
 
+    //general items
     private final String identifier;
     private Material type;
     private String display;
@@ -47,6 +54,27 @@ public final class ItemBuilderView extends BorderedView {
     private boolean wearable;
     private Integer maxDurability;
     private boolean updateItem;
+    //add custom recipe support later
+
+    //skulls
+    private String playerName;
+    private String base64;
+
+    //leather armor & potions & shield
+    private DyeColor color;
+
+    //leather armor & potions
+    private Color rgb;
+
+    //potions
+    private final List<PotionEffect> potionEffects;
+
+    //banners & shields
+    private final List<Pattern> bannerPatterns;
+
+    //fireworks
+    private Integer flightTime;
+    private final List<FireworkEffect> fireworkEffects;
 
     /**
      * Constructor used to creating new item
@@ -56,8 +84,8 @@ public final class ItemBuilderView extends BorderedView {
     public ItemBuilderView(@NotNull String identifier) {
         super(Material.GRAY_STAINED_GLASS_PANE, "&r&aCustom Item: &r&l" + identifier, ItemBuilderView.empty());
 
+        //general item stuff
         this.identifier = identifier;
-
         this.type = Material.DIRT;
         this.display = null;
         this.lore = new ArrayList<>();
@@ -74,11 +102,32 @@ public final class ItemBuilderView extends BorderedView {
         this.wearable = true;
         this.maxDurability = null;
         this.updateItem = true;
-        //add more item specific shit later
+
+        //skulls
+        this.playerName = null;
+        this.base64 = null;
+
+        //leather armor & potions & shield
+        this.color = null;
+
+        //leather armor & potions
+        this.rgb = null;
+
+        //potions
+        this.potionEffects = new ArrayList<>();
+
+        //banners & shields
+        this.bannerPatterns = new ArrayList<>();
+
+        //fireworks
+        this.flightTime = null;
+        this.fireworkEffects = new ArrayList<>();
 
         this.setBottomRight(new ConfirmElement(player -> {
             player.closeInventory();
             this.write();
+            TextUtil.sendMessage(player, "&r&aStarting asynchronous reload in five seconds!");
+            InnovativeItems.getInstance().getConfigManager().reload();
         })); //calls setElements
     }
 
@@ -98,6 +147,9 @@ public final class ItemBuilderView extends BorderedView {
      */
     private void write() {
         File file = new File(InnovativeItems.getInstance().getDataFolder().getPath() + "/items", this.identifier + ".yml");
+
+        //if file already exists save data and add more (FIND OUT HOW)
+
         Bukkit.broadcastMessage("path = " + file.getPath()); //remove
         Bukkit.broadcastMessage("identifier = " + this.identifier); //remove
         Bukkit.broadcastMessage("material = " + this.type.name()); //remove
@@ -113,6 +165,15 @@ public final class ItemBuilderView extends BorderedView {
         Bukkit.broadcastMessage("wearable = " + this.wearable); //remove
         Bukkit.broadcastMessage("max durability = " + this.maxDurability); //remove
         Bukkit.broadcastMessage("update item = " + this.updateItem); //remove
+
+        Bukkit.broadcastMessage("skull player name = " + this.playerName); //remove
+        Bukkit.broadcastMessage("skull base64 = " + this.base64); //remove
+        Bukkit.broadcastMessage("color = " + this.color); //remove
+        Bukkit.broadcastMessage("rgb = " + this.rgb); //remove
+        Bukkit.broadcastMessage("potion effects = " + this.potionEffects); //remove
+        Bukkit.broadcastMessage("banner pattern = " + this.bannerPatterns); //remove
+        Bukkit.broadcastMessage("flightTime = " + this.flightTime); //remove
+        Bukkit.broadcastMessage("firework effects = " + this.fireworkEffects); //remove
     }
 
     /**
@@ -136,10 +197,11 @@ public final class ItemBuilderView extends BorderedView {
         }
 
         //material
-        elements.add(this.build(this.type, "Material: " + this.type.name(), null, stack -> {
+        elements.add(this.build(this.type, null, null, stack -> {
             stack.setType(this.type);
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("Material: " + this.type.name()));
+            meta.setDisplayName(TextUtil.format("&r&fMaterial: " + this.type.name()));
+            meta.addItemFlags(ItemFlag.values());
             stack.setItemMeta(meta);
         }, null, (response, player) -> {
             Material material;
@@ -156,40 +218,42 @@ public final class ItemBuilderView extends BorderedView {
                 this.maxDurability = null;
                 this.unbreakable = false;
             }
+
+            //reset item specific fields
+            this.playerName = null;
+            this.base64 = null;
+            this.rgb = null;
+            this.color = null;
+            this.potionEffects.clear();
+            this.bannerPatterns.clear();
+            this.flightTime = null;
+            this.fireworkEffects.clear();
         }, "Please enter the material name of " + this.identifier + "!"));
 
         //display name
-        elements.add(this.build(Material.NAME_TAG, "Display Name", Collections.singletonList("&rRight click to reset the display name"), stack -> {
+        elements.add(this.build(Material.NAME_TAG, null, Collections.singletonList("&r&fRight click to reset the display name"), stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format(this.display != null ? "Display Name: " + this.display : "Display Name"));
+            meta.setDisplayName(TextUtil.format(this.display != null ? "&r&fDisplay Name: " + this.display : "&r&fDisplay Name"));
             stack.setItemMeta(meta);
         }, () -> this.display = null, (response, player) -> this.display = response, "Please enter the display name of " + this.identifier + "!"));
 
         //lore
-        elements.add(this.build(Material.WRITABLE_BOOK, "Lore", Collections.singletonList("&rRight click to reset the lore"), stack -> {
+        elements.add(this.build(Material.WRITABLE_BOOK, "&r&fLore", Collections.singletonList("&r&fRight click to reset the lore"), stack -> {
             ItemMeta meta = stack.getItemMeta();
             List<String> lore = new ArrayList<>(this.lore.size() + 1);
-            lore.add("&rRight click to reset the lore");
-            lore.addAll(this.lore);
-
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, TextUtil.format(lore.get(i)));
-            }
+            lore.add(TextUtil.format("&r&fRight click to reset the lore"));
+            lore.addAll(this.lore.stream().map(TextUtil::format).collect(Collectors.toList()));
 
             meta.setLore(lore);
             stack.setItemMeta(meta);
         }, this.lore::clear, (response, player) -> this.lore.add(response), "Please enter a line of lore you would like " + this.identifier + " to have!"));
 
         //enchantments
-        elements.add(this.build(Material.ENCHANTING_TABLE, "Enchantments", Collections.singletonList("&rRight click to clear enchantments"), stack -> {
+        elements.add(this.build(Material.ENCHANTING_TABLE, "&r&fEnchantments", Collections.singletonList("&r&fRight click to clear enchantments"), stack -> {
             ItemMeta meta = stack.getItemMeta();
             List<String> lore = new ArrayList<>(this.enchantments.size() + 1);
-            lore.add("&rRight click to clear enchantments");
-            lore.addAll(this.enchantments.stream().map(data -> data.getEnchantment().getName() + " " + data.getLevel()).collect(Collectors.toList()));
-
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, TextUtil.format(lore.get(i)));
-            }
+            lore.add(TextUtil.format("&r&fRight click to clear enchantments"));
+            lore.addAll(this.enchantments.stream().map(data -> TextUtil.format("&r&f" + data.getEnchantment().getName() + " " + data.getLevel())).collect(Collectors.toList()));
 
             meta.setLore(lore);
             stack.setItemMeta(meta);
@@ -201,34 +265,30 @@ public final class ItemBuilderView extends BorderedView {
                 return;
             }
 
-            Enchantment enchantment = Enchantment.getByName(split[0].toUpperCase());
+            Enchantment enchantment = Enchantment.getByName(split[0].toUpperCase()) != null ? Enchantment.getByName(split[0].toUpperCase()) : Enchantment.getByKey(NamespacedKey.minecraft(split[0].toLowerCase()));
 
             if (enchantment == null) {
-                TextUtil.sendMessage(player, "&r&cYou have entered an invalid enchantment. Please refer to the documentation for assistance.");
+                TextUtil.sendMessage(player, "&r&cYou have entered an invalid enchantment");
                 return;
             }
 
             int level;
             try {
-                level = Integer.parseInt(split[1]);
+                level = Integer.parseInt(split[1].trim());
             } catch (NumberFormatException e) {
                 TextUtil.sendMessage(player, "&r&cPlease enter an integer for the enchantment level.");
                 return;
             }
 
             this.enchantments.add(new EnchantingData(enchantment, level));
-        }, "Please enter the enchantment data you would like to add in the format: &r&aEnchantment&r, &r&aLevel&r."));
+        }, "Please enter the enchantment data you would like to add in the format: &r&f&aEnchantment&r&f, &r&f&aLevel&r&f."));
 
         //item flags
-        elements.add(this.build(Material.WHITE_BANNER, "Item Flags", Collections.singletonList("&rRight click to reset the item flags"), stack -> {
+        elements.add(this.build(Material.WHITE_BANNER, "&r&fItem Flags", Collections.singletonList("&r&fRight click to reset the item flags"), stack -> {
             ItemMeta meta = stack.getItemMeta();
             List<String> lore = new ArrayList<>(this.flags.size() + 1);
-            lore.add("&rRight click to reset the lore");
-            lore.addAll(this.flags.stream().map(ItemFlag::name).collect(Collectors.toList()));
-
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, TextUtil.format("&r" + lore.get(i)));
-            }
+            lore.add(TextUtil.format("&r&fRight click to reset the lore"));
+            lore.addAll(this.flags.stream().map(flag -> TextUtil.format("&r&f" + flag.name())).collect(Collectors.toList()));
 
             meta.setLore(lore);
             stack.setItemMeta(meta);
@@ -245,18 +305,18 @@ public final class ItemBuilderView extends BorderedView {
         }, "Please enter an item flag you would like to be added to " + this.identifier + "!"));
 
         //attributes
-        elements.add(this.build(Material.ENDER_EYE, "Attributes", Collections.singletonList("&rRight click to clear attributes"), stack -> {
+        elements.add(this.build(Material.ENDER_EYE, "&r&fAttributes", Collections.singletonList("&r&fRight click to clear attributes"), stack -> {
             ItemMeta meta = stack.getItemMeta();
             List<String> lore = new ArrayList<>(this.enchantments.size() + 1);
-            lore.add("&rRight click to clear attributes");
+            lore.add(TextUtil.format("&r&fRight click to clear attributes"));
 
             for (RevisedEquipmentSlot slot : RevisedEquipmentSlot.values()) {
                 List<AttributeData> attributes = this.attributes.get(slot);
 
                 if (!attributes.isEmpty()) {
-                    lore.add(slot.name().charAt(0) + slot.name().substring(1).toLowerCase() + ":");
+                    lore.add(TextUtil.format("&r&f" + slot.name().charAt(0) + slot.name().substring(1).toLowerCase() + ":"));
                     for (AttributeData data : attributes) {
-                        lore.add(data.getAttribute().name().charAt(0) + data.getAttribute().name().substring(1).toLowerCase() + ": " + data.getLevel());
+                        lore.add(TextUtil.format("&r&f" + data.getAttribute().name().charAt(0) + data.getAttribute().name().substring(1).toLowerCase() + ": " + data.getLevel()));
                     }
                 }
             }
@@ -296,12 +356,12 @@ public final class ItemBuilderView extends BorderedView {
             }
 
             this.attributes.get(slot).add(new AttributeData(attribute, level));
-        }, "Please enter a new attribute for " + this.identifier + " in the format: &r&aEquipment Slot&r, &r&aAttribute&r, &r&aLevel"));
+        }, "Please enter a new attribute for " + this.identifier + " in the format: &r&f&aEquipment Slot&r&f, &r&f&aAttribute&r&f, &r&f&aLevel"));
 
         //custom model data
-        elements.add(this.build(Material.CLAY_BALL, "Custom Model Data", null, stack -> {
+        elements.add(this.build(Material.CLAY_BALL, null, Collections.singletonList("&r&fRight click to reset custom model data"), stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format(this.customModelData != null ? "Custom Model Data: " + this.customModelData : "Custom Model Data"));
+            meta.setDisplayName(TextUtil.format(this.customModelData != null ? "&r&fCustom Model Data: " + this.customModelData : "&r&fCustom Model Data"));
             stack.setItemMeta(meta);
         }, () -> this.customModelData = null, (response, player) -> {
             int value;
@@ -317,51 +377,56 @@ public final class ItemBuilderView extends BorderedView {
 
         //unbreakable (only show if damageable)
         if (this.type.getMaxDurability() > 0) {
-            elements.add(InnovativeElement.build(Material.NETHER_STAR, "Unbreakable: " + this.unbreakable, (player, click) -> {
+            elements.add(InnovativeElement.build(Material.ANVIL, null, (player, click) -> {
                 this.unbreakable = !this.unbreakable;
                 this.setElements(null);
             }, stack -> {
                 ItemMeta meta = stack.getItemMeta();
-                meta.setDisplayName(TextUtil.format("Unbreakable: " + this.unbreakable));
+                String value = String.valueOf(this.unbreakable);
+                meta.setDisplayName(TextUtil.format("&r&fUnbreakable: " + value.substring(0, 1).toUpperCase() + value.substring(1)));
                 stack.setItemMeta(meta);
             }));
         }
 
         //placeable
-        elements.add(InnovativeElement.build(Material.OAK_LOG, "Placeable: " + this.placeable, (player, click) -> {
+        elements.add(InnovativeElement.build(Material.OAK_LOG, null, (player, click) -> {
             this.placeable = !this.placeable;
             this.setElements(null);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("Placeable: " + this.placeable));
+            String value = String.valueOf(this.placeable);
+            meta.setDisplayName(TextUtil.format("&r&fPlaceable: " + value.substring(0, 1).toUpperCase() + value.substring(1)));
             stack.setItemMeta(meta);
         }));
 
         //soulbound
-        elements.add(InnovativeElement.build(Material.BLAZE_POWDER, "Soulbound: " + this.soulbound, (player, click) -> {
+        elements.add(InnovativeElement.build(Material.BLAZE_POWDER, null, (player, click) -> {
             this.soulbound = !this.soulbound;
             this.setElements(null);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("Soulbound: " + this.soulbound));
+            String value = String.valueOf(this.soulbound);
+            meta.setDisplayName(TextUtil.format("&r&fSoulbound: " + value.substring(0, 1).toUpperCase() + value.substring(1)));
             stack.setItemMeta(meta);
         }));
 
         //wearable
-        elements.add(InnovativeElement.build(Material.IRON_HELMET, "Wearable: " + this.wearable, (player, click) -> {
+        elements.add(InnovativeElement.build(Material.IRON_HELMET, null, (player, click) -> {
             this.wearable = !this.wearable;
             this.setElements(null);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("Wearable: " + this.wearable));
+            String value = String.valueOf(this.wearable);
+            meta.setDisplayName(TextUtil.format("&r&fWearable: " + value.substring(0, 1).toUpperCase() + value.substring(1)));
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             stack.setItemMeta(meta);
         }));
 
         //max durability (only show if damageable)
         if (this.type.getMaxDurability() > 0) {
-            elements.add(this.build(Material.STICK, "Max Durability", null, stack -> {
+            elements.add(this.build(Material.STICK, "&r&fMax Durability", Collections.singletonList("&r&fRight click to reset max durability"), stack -> {
                 ItemMeta meta = stack.getItemMeta();
-                meta.setDisplayName(TextUtil.format(this.maxDurability != null ? "Max Durability: " + this.maxDurability : "Max Durability"));
+                meta.setDisplayName(TextUtil.format(this.maxDurability != null ? "&r&fMax Durability: " + this.maxDurability : "&r&fMax Durability"));
                 stack.setItemMeta(meta);
             }, () -> this.maxDurability = null, (response, player) -> {
                 int value;
@@ -377,14 +442,265 @@ public final class ItemBuilderView extends BorderedView {
         }
 
         //update item
-        elements.add(InnovativeElement.build(Material.CRAFTING_TABLE, "Update Item: " + this.updateItem, (player, click) -> {
+        elements.add(InnovativeElement.build(Material.CRAFTING_TABLE, null, (player, click) -> {
             this.updateItem = !this.updateItem;
             this.setElements(null);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("Update Item: " + this.updateItem));
+            String value = String.valueOf(this.updateItem);
+            meta.setDisplayName(TextUtil.format("&r&fUpdate Item: " + value.substring(0, 1).toUpperCase() + value.substring(1)));
             stack.setItemMeta(meta);
         }));
+
+        //only show if skull
+        if (this.type == Material.PLAYER_HEAD) {
+            elements.add(this.build(Material.PLAYER_HEAD, null, Collections.singletonList("&r&fRight click to reset the player name for the skull"), stack -> {
+                SkullMeta meta = (SkullMeta) stack.getItemMeta();
+                meta.setDisplayName(TextUtil.format(this.playerName != null ? "&r&fPlayer Name: " + this.playerName : "&r&fPlayer Name"));
+
+                if (this.playerName != null) {
+                    meta.setOwner(this.playerName);
+                }
+
+                stack.setItemMeta(meta);
+            }, () -> this.playerName = null, (response, player) -> this.playerName = response, "Please enter the player name for the skull of " + this.identifier + "!"));
+
+            elements.add(this.build(Material.PLAYER_HEAD, "&r&fBase 64", Collections.singletonList("&r&fRight click to reset the base64 for the skull"), stack -> {
+                SkullMeta meta = (SkullMeta) stack.getItemMeta();
+                List<String> lore = new ArrayList<>(2);
+                lore.add(TextUtil.format("&r&fRight click to reset the base64 for the skull"));
+
+                if (this.base64 != null) {
+                    lore.add(TextUtil.format("&r&f&l" + this.base64));
+                    ItemParser.SkullItem.setSkinViaBase64(meta, base64);
+                }
+
+                meta.setLore(lore);
+                stack.setItemMeta(meta);
+            }, () -> this.base64 = null, (response, player) -> this.base64 = response, "Please enter the base64 for the skull of " + this.identifier + "!"));
+        }
+
+        //only show if leather armor, potions, or shields
+        if (this.type == Material.SHIELD || ItemParser.PotionItem.isPotion(this.type) || ItemParser.LeatherArmorItem.isLeatherArmor(this.type)) {
+            elements.add(this.build(Material.BARRIER, null, Collections.singletonList("&r&fRight click to reset the color"), stack -> {
+                stack.setType(this.color == null ? Material.BARRIER : ItemBuilderView.getDyeMaterial(this.color));
+                ItemMeta meta = stack.getItemMeta();
+
+                meta.setDisplayName(this.color != null ? TextUtil.format("&r&fColor: " + this.color.name().charAt(0) + this.color.name().substring(1).toLowerCase()) : TextUtil.format("&r&fColor"));
+
+                stack.setItemMeta(meta);
+            }, () -> this.color = null, (response, player) -> {
+                DyeColor color;
+                try {
+                    color = DyeColor.valueOf(response.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid color. Refer to the documentation for assistance.");
+                    return;
+                }
+
+                this.color = color;
+            }, "Please enter a valid color for " + this.identifier + "!"));
+        }
+
+        //only show if leather armor, potions
+        if (ItemParser.PotionItem.isPotion(this.type) || ItemParser.LeatherArmorItem.isLeatherArmor(this.type)) {
+            elements.add(this.build(Material.BARRIER, null, Collections.singletonList("&r&fRight click to reset the RGB"), stack -> {
+                stack.setType(this.rgb == null ? Material.BARRIER : ItemBuilderView.getDyeMaterial(DyeColor.getByColor(this.rgb)));
+                ItemMeta meta = stack.getItemMeta();
+
+                meta.setDisplayName(this.rgb != null ? TextUtil.format("&r&fRGB: " + this.rgb.getRed() + ", " + this.rgb.getGreen() + ", " + this.rgb.getBlue()) : TextUtil.format("&r&fRGB"));
+
+                stack.setItemMeta(meta);
+            }, () -> this.rgb = null, (response, player) -> {
+                String[] split = response.split(",");
+
+                if (split.length != 3) {
+                    TextUtil.sendMessage(player, "&r&cYou have entered invalid information. Please follow the syntax in the previous message.");
+                    return;
+                }
+
+                int red;
+                try {
+                    red = Integer.parseInt(split[0].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the Red field!");
+                    return;
+                }
+
+                int green;
+                try {
+                    green = Integer.parseInt(split[1].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the Green field!");
+                    return;
+                }
+
+                int blue;
+                try {
+                    blue = Integer.parseInt(split[2].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the Blue field!");
+                    return;
+                }
+
+                this.rgb = Color.fromRGB(Math.max(Math.min(red, 255), 0), Math.max(Math.min(green, 255), 0), Math.max(Math.min(blue, 255), 0));
+            }, "Please enter a valid RGB for " + this.identifier + " in the format: &r&f&aRed&r&f, &r&f&aGreen&r&f, &r&f&aBlue&r&f"));
+        }
+
+        //only show if potion
+        if (ItemParser.PotionItem.isPotion(this.type)) {
+            elements.add(this.build(Material.POTION, "&r&fPotion Effects", Collections.singletonList("&r&fRight click to clear potions effects"), stack -> {
+                ItemMeta meta = stack.getItemMeta();
+                List<String> lore = new ArrayList<>(this.potionEffects.size() + 1);
+                lore.add(TextUtil.format("&r&fRight click to clear potion effects"));
+                lore.addAll(this.potionEffects.stream().map(effect -> TextUtil.format("&r&f" + effect.getType().getName() + " " + effect.getAmplifier())).collect(Collectors.toList()));
+
+                meta.setLore(lore);
+                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                stack.setItemMeta(meta);
+            }, this.potionEffects::clear, (response, player) -> {
+                String[] split = response.split(",");
+
+                if (split.length != 3) {
+                    TextUtil.sendMessage(player, "&r&cYou have entered invalid information. Please follow the syntax in the previous message.");
+                    return;
+                }
+
+                PotionEffectType potionEffectType = PotionEffectType.getByName(split[0].trim());
+
+                if (potionEffectType == null) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid potion effect type. Refer to the documentation for assistance.");
+                    return;
+                }
+
+                int amplifier;
+                try {
+                    amplifier = Integer.parseInt(split[1].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the amplifier field!");
+                    return;
+                }
+
+                int duration;
+                try {
+                    duration = Integer.parseInt(split[2].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the duration field!");
+                    return;
+                }
+
+                this.potionEffects.add(new PotionEffect(potionEffectType, duration, amplifier));
+            }, "Please enter the enchantment data you would like to add in the format: &r&f&aPotion Effect Type&r&f, &r&f&aAmplifier&r&f, &r&f&aDuration&r&f."));
+        }
+
+        //only show if shield or banner
+        if (this.type == Material.SHIELD || ItemParser.BannerItem.isBanner(this.type)) {
+            elements.add(this.build(Material.CREEPER_BANNER_PATTERN, "&r&fBanner Patterns", Collections.singletonList("&r&fRight click to clear potions effects"), stack -> {
+                ItemMeta meta = stack.getItemMeta();
+                List<String> lore = new ArrayList<>(this.bannerPatterns.size() + 1);
+                lore.add(TextUtil.format("&r&fRight click to clear banner patterns"));
+                lore.addAll(this.bannerPatterns.stream().map(pattern -> TextUtil.format("&r&f" + pattern.getPattern().name().charAt(0) + pattern.getPattern().name().substring(1).toLowerCase())).collect(Collectors.toList()));
+
+                meta.setLore(lore);
+                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                stack.setItemMeta(meta);
+            }, this.bannerPatterns::clear, (response, player) -> {
+                String[] split = response.split(",");
+
+                PatternType pattern;
+                try {
+                    pattern = PatternType.valueOf(split[0].trim().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid pattern type. Refer to the documentation for assistance.");
+                    return;
+                }
+
+                DyeColor color;
+                try {
+                    color = DyeColor.valueOf(split[1].trim().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid dye color. Refer to the documentation for assistance.");
+                    return;
+                }
+
+                this.bannerPatterns.add(new Pattern(color, pattern));
+            }, "Please enter the banner pattern data you would like to add in the format: &r&f&aBanner Pattern&r&f, &r&f&aColor&r&f."));
+        }
+
+        //only show if firework
+        if (this.type == Material.FIREWORK_ROCKET) {
+            elements.add(this.build(Material.FEATHER, null, Collections.singletonList("&r&fRight click to reset flight time"), stack -> {
+                ItemMeta meta = stack.getItemMeta();
+                meta.setDisplayName(TextUtil.format(this.flightTime != null ? "&r&fFlight Time: " + this.flightTime : "&r&fFlight Time"));
+                stack.setItemMeta(meta);
+            }, () -> this.flightTime = null, (response, player) -> {
+                int value;
+                try {
+                    value = Integer.parseInt(response);
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer!");
+                    return;
+                }
+
+                this.flightTime = value;
+            }, "Please enter the flight time of " + this.identifier + "!"));
+
+            elements.add(this.build(Material.TNT, "&r&fFirework Effects", Collections.singletonList("&r&fRight click to clear firework effects"), stack -> {
+                ItemMeta meta = stack.getItemMeta();
+                List<String> lore = new ArrayList<>(this.fireworkEffects.size() + 1);
+                lore.add(TextUtil.format("&r&fRight click to clear firework effects"));
+                lore.addAll(this.fireworkEffects.stream().map(effect -> TextUtil.format("&r&f" + effect.getType().name())).collect(Collectors.toList()));
+
+                meta.setLore(lore);
+                stack.setItemMeta(meta);
+            }, this.fireworkEffects::clear, (response, player) -> {
+                String[] split;
+
+                try {
+                    split = response.split(",", 3);
+                } catch (PatternSyntaxException e) {
+                    TextUtil.sendMessage(player, "&r&cYou have entered invalid information. Please follow the syntax in the previous message.");
+                    return;
+                }
+
+                Boolean flicker = split[0].trim().equalsIgnoreCase("true") ? true : split[0].trim().equalsIgnoreCase("false") ? false : null;
+                Boolean trail = split[1].trim().equalsIgnoreCase("true") ? true : split[1].trim().equalsIgnoreCase("false") ? false : null;
+
+                if (flicker == null || trail == null) {
+                    TextUtil.sendMessage(player, "&r&cYou must enter a true or false value. Please follow the syntax in the previous message.");
+                    return;
+                }
+
+                FireworkEffect.Type effectType;
+                try {
+                    effectType = FireworkEffect.Type.valueOf(split[2].trim().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid firework effect. Refer to the documentation for assistance.");
+                    return;
+                }
+
+                List<Color> colors = new ArrayList<>();
+                for (String raw : split[3].split(",")) {
+                    DyeColor color;
+                    try {
+                        color = DyeColor.valueOf(raw.trim().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        TextUtil.sendMessage(player, "&r&c" + raw + " is an invalid color. Refer to the documentation for assistance.");
+                        continue;
+                    }
+
+                    colors.add(color.getColor());
+                }
+
+                FireworkEffect.Builder builder = FireworkEffect.builder()
+                        .flicker(flicker)
+                        .trail(trail)
+                        .with(effectType)
+                        .withColor(colors.toArray(new Color[0]));
+
+                this.fireworkEffects.add(builder.build());
+            }, "Please enter the firework effects you would like to add in the format: &r&f&aHas Flicker&r&f, &r&f&aHas Trail&r&f, &r&f&aEffect Type&r&f, &r&f&aEffect Colors&r&f."));
+        }
 
         for (int i = 0; i < ItemBuilderView.SIZE; i++) {
             if (elements.get(i) == null) {
@@ -418,7 +734,7 @@ public final class ItemBuilderView extends BorderedView {
 
             player.closeInventory();
 
-            boolean success = ResponseUtil.input( prompt + " Type &r&ccancel&r to end the prompt.", player, response -> {
+            boolean success = ResponseUtil.input( prompt + " Type &r&ccancel&r&f to end the prompt.", player, response -> {
                 if (response == null) {
                     this.open(player);
                     return;
@@ -472,6 +788,11 @@ public final class ItemBuilderView extends BorderedView {
         public int getLevel() {
             return this.level;
         }
+
+        @Override
+        public String toString() {
+            return this.attribute.name() + ", " + this.level;
+        }
     }
 
     /**
@@ -494,6 +815,11 @@ public final class ItemBuilderView extends BorderedView {
         public int getLevel() {
             return this.level;
         }
+
+        @Override
+        public String toString() {
+            return this.enchantment.getKey().getKey() + ", " + this.level;
+        }
     }
 
     /**
@@ -515,6 +841,53 @@ public final class ItemBuilderView extends BorderedView {
 
             this.set(index, e);
             return true;
+        }
+    }
+
+    /**
+     * Returns a dye Material based on the given DyeColor.
+     * (THANKS CHAT-GPT)
+     *
+     * @param dyeColor The DyeColor to get the Material for.
+     * @return The Material for the given DyeColor.
+     */
+    @NotNull
+    private static Material getDyeMaterial(@NotNull DyeColor dyeColor) {
+        switch (dyeColor) {
+            case WHITE:
+                return Material.WHITE_DYE;
+            case ORANGE:
+                return Material.ORANGE_DYE;
+            case MAGENTA:
+                return Material.MAGENTA_DYE;
+            case LIGHT_BLUE:
+                return Material.LIGHT_BLUE_DYE;
+            case YELLOW:
+                return Material.YELLOW_DYE;
+            case LIME:
+                return Material.LIME_DYE;
+            case PINK:
+                return Material.PINK_DYE;
+            case GRAY:
+                return Material.GRAY_DYE;
+            case LIGHT_GRAY:
+                return Material.LIGHT_GRAY_DYE;
+            case CYAN:
+                return Material.CYAN_DYE;
+            case PURPLE:
+                return Material.PURPLE_DYE;
+            case BLUE:
+                return Material.BLUE_DYE;
+            case BROWN:
+                return Material.BROWN_DYE;
+            case GREEN:
+                return Material.GREEN_DYE;
+            case RED:
+                return Material.RED_DYE;
+            case BLACK:
+                return Material.BLACK_DYE;
+            default:
+                throw new IllegalStateException("Unknown DyeColor: " + dyeColor);
         }
     }
 }

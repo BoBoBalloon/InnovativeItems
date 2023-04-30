@@ -117,39 +117,39 @@ public final class ItemParser {
         //skull item
         if (section.isConfigurationSection("skull") && material == Material.PLAYER_HEAD) {
             ConfigurationSection skullSection = section.getConfigurationSection("skull");
-            return SkullItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
+            return SkullItem.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getSkullName(skullSection), ItemParser.getSkullBase64(skullSection));
         }
 
         //leather armor item
-        if (section.isConfigurationSection("leather-armor") && LeatherArmorItemStack.isLeatherArmor(material)) {
+        if (section.isConfigurationSection("leather-armor") && LeatherArmorItem.isLeatherArmor(material)) {
             ConfigurationSection leatherArmorSection = section.getConfigurationSection("leather-armor");
             DyeColor color = ItemParser.getColor(leatherArmorSection, itemName);
-            return LeatherArmorItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, durability, ItemParser.getRGB(leatherArmorSection, itemName), color != null ? color.getColor() : null);
+            return LeatherArmorItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, durability, ItemParser.getRGB(leatherArmorSection, itemName), color != null ? color.getColor() : null);
         }
 
         //potion item
-        if (section.isConfigurationSection("potion") && PotionItemStack.isPotion(material)) {
+        if (section.isConfigurationSection("potion") && PotionItem.isPotion(material)) {
             ConfigurationSection potionSection = section.getConfigurationSection("potion");
             DyeColor color = ItemParser.getColor(potionSection, itemName);
-            return PotionItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getRGB(potionSection, itemName), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, itemName));
+            return PotionItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getRGB(potionSection, itemName), color != null ? color.getColor() : null, ItemParser.getPotionEffects(potionSection, itemName));
         }
 
         //banner item
-        if (section.isConfigurationSection("banner") && BannerItemStack.isBanner(material)) {
+        if (section.isConfigurationSection("banner") && BannerItem.isBanner(material)) {
             ConfigurationSection bannerSection = section.getConfigurationSection("banner");
-            return BannerItemStack.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(bannerSection, itemName));
+            return BannerItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(bannerSection, itemName));
         }
 
         //firework item
         if (section.isConfigurationSection("firework") && material == Material.FIREWORK_ROCKET) {
             ConfigurationSection fireworkSection = section.getConfigurationSection("firework");
-            return FireworkItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getFireworkEffects(fireworkSection, itemName), ItemParser.getFireworkPower(fireworkSection, itemName));
+            return FireworkItem.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, ItemParser.getFireworkEffects(fireworkSection, itemName), ItemParser.getFireworkPower(fireworkSection, itemName));
         }
 
         //shield item
         if (section.isConfigurationSection("shield") && material == Material.SHIELD) {
             ConfigurationSection shieldSection = section.getConfigurationSection("shield");
-            return ShieldItemStack.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(shieldSection, itemName), ItemParser.getColor(shieldSection, itemName));
+            return ShieldItem.generateItem(identifier, itemName, lore, enchantments, flags, attributes, customModelData, durability, ItemParser.getBannerPatterns(shieldSection, itemName), ItemParser.getColor(shieldSection, itemName));
         }
 
         //generic item
@@ -209,7 +209,7 @@ public final class ItemParser {
 
         for (String enchantmentName : enchantmentSection.getKeys(false)) {
             int level = enchantmentSection.getInt(enchantmentName);
-            Enchantment enchantment = Enchantment.getByName(enchantmentName);
+            Enchantment enchantment = Enchantment.getByName(enchantmentName.toUpperCase()) != null ? Enchantment.getByName(enchantmentName.toUpperCase()) : Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName.toLowerCase()));
 
             if (enchantment == null) {
                 LogUtil.log(LogUtil.Level.WARNING, "Could not find enchantment with the name " + enchantmentName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
@@ -589,7 +589,7 @@ public final class ItemParser {
             } else if (type == RecipeType.FURNACE || type == RecipeType.BLAST_FURNACE || type == RecipeType.SMOKER || type == RecipeType.CAMPFIRE) {
                 recipe = ItemParser.parseCookingRecipe(recipeSection, itemName, recipeName, underlying, type, counter);
             } else {
-                LogUtil.log(LogUtil.Level.DEV, "Warning on recipe " + recipeName + " on item " + itemName + ": A valid recipe type without a proper implementation has been detected... Please report this to the developer of the plugin immediately!");
+                LogUtil.logUnblocked(LogUtil.Level.DEV, "Warning on recipe " + recipeName + " on item " + itemName + ": A valid recipe type without a proper implementation has been detected... Please report this to the developer of the plugin immediately!");
                 continue;
             }
 
@@ -775,7 +775,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom banner item
      */
-    private static final class BannerItemStack {
+    public static final class BannerItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -793,7 +793,7 @@ public final class ItemParser {
          */
         public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, int durability, @Nullable List<Pattern> patterns) {
             //if not banner
-            if (!BannerItemStack.isBanner(material)) {
+            if (!BannerItem.isBanner(material)) {
                 LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a banner!");
                 throw new IllegalArgumentException("Illegal material provided in CustomItemBanner constructor");
             }
@@ -815,7 +815,7 @@ public final class ItemParser {
          * @param material the material you want to check
          * @return a boolean that is true if the material provided is a banner
          */
-        public static boolean isBanner(Material material) {
+        public static boolean isBanner(@NotNull Material material) {
             return (material == Material.BLACK_BANNER ||
                     material == Material.BLUE_BANNER ||
                     material == Material.BROWN_BANNER ||
@@ -838,7 +838,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom firework item
      */
-    private static final class FireworkItemStack {
+    public static final class FireworkItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -873,7 +873,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom leather armor item
      */
-    private static final class LeatherArmorItemStack {
+    public static final class LeatherArmorItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -893,7 +893,7 @@ public final class ItemParser {
          */
         public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, int durability, @Nullable Color rgb, @Nullable Color color) {
             //if not leather armor
-            if (!LeatherArmorItemStack.isLeatherArmor(material)) {
+            if (!LeatherArmorItem.isLeatherArmor(material)) {
                 LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of leather armor!");
                 throw new IllegalArgumentException("Illegal material provided in CustomItemLeatherArmor constructor");
             }
@@ -919,7 +919,7 @@ public final class ItemParser {
          * @param material the material you want to check
          * @return a boolean that is true if the material provided is leather armor
          */
-        public static boolean isLeatherArmor(Material material) {
+        public static boolean isLeatherArmor(@NotNull Material material) {
             return (material == Material.LEATHER_HELMET ||
                     material == Material.LEATHER_CHESTPLATE ||
                     material == Material.LEATHER_LEGGINGS ||
@@ -930,7 +930,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom potion item
      */
-    private static final class PotionItemStack {
+    public static final class PotionItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -949,7 +949,7 @@ public final class ItemParser {
          */
         public static ItemStack generateItem(@NotNull String identifier, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, @Nullable Color rgb, @Nullable Color color, @Nullable List<PotionEffect> effects) {
             //if not potion
-            if (!PotionItemStack.isPotion(material)) {
+            if (!PotionItem.isPotion(material)) {
                 LogUtil.log(LogUtil.Level.DEV, "Error while loading item " + identifier + " because material is not an instance of a potion!");
                 throw new IllegalArgumentException("Illegal material provided in CustomItemPotion constructor");
             }
@@ -981,7 +981,7 @@ public final class ItemParser {
          * @param material the material you want to check
          * @return a boolean that is true if the material provided is a potion
          */
-        public static boolean isPotion(Material material) {
+        public static boolean isPotion(@NotNull Material material) {
             return (material == Material.POTION ||
                     material == Material.LINGERING_POTION ||
                     material == Material.SPLASH_POTION);
@@ -991,7 +991,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom shield item
      */
-    private static final class ShieldItemStack {
+    public static final class ShieldItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -1031,7 +1031,7 @@ public final class ItemParser {
     /**
      * A class that is used to create the custom skull item
      */
-    private static final class SkullItemStack {
+    public static final class SkullItem {
         /**
          * A method used to generate an itemstack based on this items internal values
          *
@@ -1051,7 +1051,7 @@ public final class ItemParser {
             SkullMeta meta = (SkullMeta) item.getItemMeta();
 
             if (base64 != null) {
-                SkullItemStack.setSkinViaBase64(meta, base64);
+                SkullItem.setSkinViaBase64(meta, base64);
             }
 
             if (skullName != null && base64 == null) {
@@ -1068,7 +1068,7 @@ public final class ItemParser {
          * @param meta   the skull meta to modify
          * @param base64 the base64 encoded string
          */
-        private static void setSkinViaBase64(SkullMeta meta, String base64) {
+        public static void setSkinViaBase64(@NotNull SkullMeta meta, @NotNull String base64) {
             try {
                 Method setProfile = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
                 setProfile.setAccessible(true);
@@ -1079,7 +1079,9 @@ public final class ItemParser {
                 setProfile.invoke(meta, profile);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 LogUtil.log(LogUtil.Level.SEVERE, "There was a severe internal reflection error when attempting to set the skin of a player skull via base64!");
-                e.printStackTrace();
+                if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                    e.printStackTrace();
+                }
             }
         }
     }

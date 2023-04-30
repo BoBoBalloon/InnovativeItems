@@ -50,14 +50,16 @@ public final class InnovativeItems extends JavaPlugin {
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     1. Make item creation gui
-        * Fix bug that prevents items from being updated in view
-        * make view look pretty by formatting strings
-        * add more item specific support
+        * Replace "Refer to documentation for assistance" with a list of all possible values (excluding material)
+        * add a middle click option to material that will copy the material of the item the player is holding in their main hand
         * write to disk
     2. Make ability creation gui
     3. Increase maximum amount of items and abilities that can be made on the free version
     4. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
-    5. Add support so you can modify items as well as create them
+    5. Add support so you can modify custom items as well as create them
+    6. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
+    7. Add feature to command keyword that replaces "?block" with "x, y, z" make sure that the escape character (\) works
+    8. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
      */
 
     /*

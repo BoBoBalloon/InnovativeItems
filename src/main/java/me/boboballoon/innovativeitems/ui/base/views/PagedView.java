@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that represents a paged inventory view ui
@@ -29,6 +30,11 @@ public class PagedView extends PageableView {
 
     public PagedView(@NotNull String title, @NotNull List<InnovativeElement>[] pages) throws IndexOutOfBoundsException {
         this(title, Lists.newArrayList(pages));
+    }
+
+    @Override
+    public void setPages(@NotNull List<ImmutableList<InnovativeElement>> pages) {
+        super.setPages(this.reformat(pages.stream().map(ArrayList::new).collect(Collectors.toList())));
     }
 
     /**

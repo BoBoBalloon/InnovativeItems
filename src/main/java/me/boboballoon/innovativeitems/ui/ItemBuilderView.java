@@ -3,9 +3,12 @@ package me.boboballoon.innovativeitems.ui;
 import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ItemParser;
+import me.boboballoon.innovativeitems.items.InnovativeCache;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
 import me.boboballoon.innovativeitems.ui.base.elements.ConfirmElement;
 import me.boboballoon.innovativeitems.ui.base.views.BorderedView;
+import me.boboballoon.innovativeitems.ui.base.views.DisplayView;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
@@ -42,6 +45,7 @@ public final class ItemBuilderView extends BorderedView {
     //general items
     private final String identifier;
     private Material type;
+    private String ability;
     private String display;
     private final List<String> lore;
     private final List<EnchantingData> enchantments;
@@ -87,6 +91,7 @@ public final class ItemBuilderView extends BorderedView {
         //general item stuff
         this.identifier = identifier;
         this.type = Material.DIRT;
+        this.ability = null;
         this.display = null;
         this.lore = new ArrayList<>();
         this.enchantments = new ArrayList<>();
@@ -153,6 +158,7 @@ public final class ItemBuilderView extends BorderedView {
         Bukkit.broadcastMessage("path = " + file.getPath()); //remove
         Bukkit.broadcastMessage("identifier = " + this.identifier); //remove
         Bukkit.broadcastMessage("material = " + this.type.name()); //remove
+        Bukkit.broadcastMessage("ability = " + this.ability); //remove
         Bukkit.broadcastMessage("display = " + this.display); //remove
         Bukkit.broadcastMessage("lore = " + this.lore); //remove
         Bukkit.broadcastMessage("enchantments = " + this.enchantments); //remove
@@ -201,9 +207,16 @@ public final class ItemBuilderView extends BorderedView {
             stack.setType(this.type);
             ItemMeta meta = stack.getItemMeta();
             meta.setDisplayName(TextUtil.format("&r&fMaterial: " + this.type.name()));
+            meta.setLore(Collections.singletonList(TextUtil.format("&r&fMiddle click to set the type to the item in your hand")));
             meta.addItemFlags(ItemFlag.values());
             stack.setItemMeta(meta);
-        }, null, (response, player) -> {
+        }, null, player -> {
+            Material type = player.getInventory().getItemInMainHand().getType();
+
+            if (type != Material.AIR) {
+                this.setType(type);
+            }
+        }, (response, player) -> {
             Material material;
             try {
                 material = Material.valueOf(response.toUpperCase());
@@ -212,23 +225,57 @@ public final class ItemBuilderView extends BorderedView {
                 return;
             }
 
-            this.type = material;
+            this.setType(material);
+        }, "Please enter the material name of " + this.identifier + "!"));
 
-            if (this.type.getMaxDurability() <= 0) {
-                this.maxDurability = null;
-                this.unbreakable = false;
+        //ability
+        elements.add(InnovativeElement.build(Material.NETHER_STAR, null, null, (player, click) -> {
+            if (click == ClickType.RIGHT) {
+                this.ability = null;
+                return;
             }
 
-            //reset item specific fields
-            this.playerName = null;
-            this.base64 = null;
-            this.rgb = null;
-            this.color = null;
-            this.potionEffects.clear();
-            this.bannerPatterns.clear();
-            this.flightTime = null;
-            this.fireworkEffects.clear();
-        }, "Please enter the material name of " + this.identifier + "!"));
+            player.closeInventory();
+
+            if (click != ClickType.MIDDLE) {
+                InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+                Collection<Ability> abilities = cache.getAbilityIdentifiers().stream().map(cache::getAbility).collect(Collectors.toSet());
+                DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, abilities, a -> {
+                    ItemStack stack = new ItemStack(Material.NETHER_STAR);
+                    ItemMeta meta = stack.getItemMeta();
+                    meta.setDisplayName(TextUtil.format("&r&f" + a.getIdentifier()));
+                    stack.setItemMeta(meta);
+                    return stack;
+                }, (p, a) -> {
+                    p.closeInventory();
+                    this.ability = a.getIdentifier();
+                    this.open(p);
+                });
+                selector.open(player);
+                return;
+            }
+
+            boolean success = ResponseUtil.input("Please enter the ability name of the ability of " + this.identifier + "! Type &r&ccancel&r&f to end the prompt.", player, response -> {
+                if (response == null) {
+                    this.open(player);
+                    return;
+                }
+
+                this.ability = response;
+                this.open(player);
+            });
+
+            if (!success) {
+                LogUtil.logUnblocked(LogUtil.Level.SEVERE, "An error occurred asking for user input for " + player.getName() +  ". Please contact the developer");
+                TextUtil.sendMessage(player, "&r&cAn internal error occurred.");
+                this.open(player);
+            }
+        }, stack -> {
+            ItemMeta meta = stack.getItemMeta();
+            meta.setDisplayName(TextUtil.format(this.display != null ? "&r&fAbility: " + this.ability : "&r&fAbility"));
+            meta.setLore(Arrays.asList(TextUtil.format("&r&fRight click to reset ability"), TextUtil.format("&r&fMiddle click to manually enter ability name")));
+            stack.setItemMeta(meta);
+        }));
 
         //display name
         elements.add(this.build(Material.NAME_TAG, null, Collections.singletonList("&r&fRight click to reset the display name"), stack -> {
@@ -297,7 +344,7 @@ public final class ItemBuilderView extends BorderedView {
             try {
                 flag = ItemFlag.valueOf(response.toUpperCase());
             } catch (IllegalArgumentException e) {
-                TextUtil.sendMessage(player, "&r&cPlease enter a valid item flag. Refer to the documentation for assistance.");
+                TextUtil.sendMessage(player, "&r&cPlease enter a valid item flag. The possible options are: &r&c" + Arrays.stream(ItemFlag.values()).map(ItemFlag::name).collect(Collectors.joining(", ")));
                 return;
             }
 
@@ -494,7 +541,7 @@ public final class ItemBuilderView extends BorderedView {
                 try {
                     color = DyeColor.valueOf(response.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid color. Refer to the documentation for assistance.");
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid color. The possible options are: &r&c" + Arrays.stream(DyeColor.values()).map(DyeColor::name).collect(Collectors.joining(", ")));
                     return;
                 }
 
@@ -569,7 +616,7 @@ public final class ItemBuilderView extends BorderedView {
                 PotionEffectType potionEffectType = PotionEffectType.getByName(split[0].trim());
 
                 if (potionEffectType == null) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid potion effect type. Refer to the documentation for assistance.");
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid potion effect type. The possible options are: &r&c" + Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName).collect(Collectors.joining(", ")));
                     return;
                 }
 
@@ -611,7 +658,7 @@ public final class ItemBuilderView extends BorderedView {
                 try {
                     pattern = PatternType.valueOf(split[0].trim().toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid pattern type. Refer to the documentation for assistance.");
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid pattern type. The possible options are: &r&c" + Arrays.stream(PatternType.values()).map(PatternType::name).collect(Collectors.joining(", ")));
                     return;
                 }
 
@@ -619,7 +666,7 @@ public final class ItemBuilderView extends BorderedView {
                 try {
                     color = DyeColor.valueOf(split[1].trim().toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid dye color. Refer to the documentation for assistance.");
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid dye color. The possible options are: &r&c" + Arrays.stream(DyeColor.values()).map(DyeColor::name).collect(Collectors.joining(", ")));
                     return;
                 }
 
@@ -675,7 +722,7 @@ public final class ItemBuilderView extends BorderedView {
                 try {
                     effectType = FireworkEffect.Type.valueOf(split[2].trim().toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid firework effect. Refer to the documentation for assistance.");
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid firework effect. The possible options are: &r&c" + Arrays.stream(FireworkEffect.Type.values()).map(FireworkEffect.Type::name).collect(Collectors.joining(", ")));
                     return;
                 }
 
@@ -685,7 +732,7 @@ public final class ItemBuilderView extends BorderedView {
                     try {
                         color = DyeColor.valueOf(raw.trim().toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        TextUtil.sendMessage(player, "&r&c" + raw + " is an invalid color. Refer to the documentation for assistance.");
+                        TextUtil.sendMessage(player, "&r&c" + raw + " is an invalid color. The possible options are: &r&c" + Arrays.stream(DyeColor.values()).map(DyeColor::name).collect(Collectors.joining(", ")));
                         continue;
                     }
 
@@ -712,6 +759,30 @@ public final class ItemBuilderView extends BorderedView {
     }
 
     /**
+     * A method that sets the type of material that this builder should create
+     *
+     * @param material the new material
+     */
+    private void setType(@NotNull Material material) {
+        this.type = material;
+
+        if (this.type.getMaxDurability() <= 0) {
+            this.maxDurability = null;
+            this.unbreakable = false;
+        }
+
+        //reset item specific fields
+        this.playerName = null;
+        this.base64 = null;
+        this.rgb = null;
+        this.color = null;
+        this.potionEffects.clear();
+        this.bannerPatterns.clear();
+        this.flightTime = null;
+        this.fireworkEffects.clear();
+    }
+
+    /**
      * A method used to prevent repetitive code
      *
      * @param material the material of the element
@@ -719,15 +790,22 @@ public final class ItemBuilderView extends BorderedView {
      * @param lore the lore of the
      * @param onLoad what code to execute when the item is loaded
      * @param onRightClick what code to execute when the item is right clicked
+     * @param onMiddleClick what code to execute when the item is middle clicked
      * @param clickSuccess what code to execute when the variable should be changed
      * @param prompt What input to ask the user for
      * @return an instance of a view element
      */
     @NotNull
-    private InnovativeElement build(@NotNull Material material, @Nullable String display, @Nullable List<String> lore, @Nullable Consumer<ItemStack> onLoad, @Nullable Runnable onRightClick, @NotNull BiConsumer<String, Player> clickSuccess, @NotNull String prompt) {
+    private InnovativeElement build(@NotNull Material material, @Nullable String display, @Nullable List<String> lore, @Nullable Consumer<ItemStack> onLoad, @Nullable Runnable onRightClick, @Nullable Consumer<Player> onMiddleClick, @NotNull BiConsumer<String, Player> clickSuccess, @NotNull String prompt) {
         return InnovativeElement.build(material, display, lore, (player, click) -> {
             if (onRightClick != null && click == ClickType.RIGHT) {
                 onRightClick.run();
+                this.setElements(null);
+                return;
+            }
+
+            if (onMiddleClick != null && click == ClickType.MIDDLE) {
+                onMiddleClick.accept(player);
                 this.setElements(null);
                 return;
             }
@@ -750,6 +828,23 @@ public final class ItemBuilderView extends BorderedView {
                 this.open(player);
             }
         }, onLoad);
+    }
+
+    /**
+     * A method used to prevent repetitive code
+     *
+     * @param material the material of the element
+     * @param display the display name of the element
+     * @param lore the lore of the
+     * @param onLoad what code to execute when the item is loaded
+     * @param onRightClick what code to execute when the item is right clicked
+     * @param clickSuccess what code to execute when the variable should be changed
+     * @param prompt What input to ask the user for
+     * @return an instance of a view element
+     */
+    @NotNull
+    private InnovativeElement build(@NotNull Material material, @Nullable String display, @Nullable List<String> lore, @Nullable Consumer<ItemStack> onLoad, @Nullable Runnable onRightClick, @NotNull BiConsumer<String, Player> clickSuccess, @NotNull String prompt) {
+        return this.build(material, display, lore, onLoad, onRightClick, null, clickSuccess, prompt);
     }
 
     /**

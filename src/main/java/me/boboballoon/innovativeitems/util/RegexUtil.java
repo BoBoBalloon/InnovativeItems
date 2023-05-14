@@ -20,7 +20,7 @@ public final class RegexUtil {
      * @return a regular expression that targets the provided literal with support to escape it with the "\" character
      */
     @NotNull
-    public static String literalWithEscape(char literal) {
+    private static String literalWithEscape(@NotNull String literal) {
         return "(?<!\\\\)\\" + literal;
     }
 
@@ -32,7 +32,7 @@ public final class RegexUtil {
      * @return an array of strings that were split using the provided literal with escape and removes the escape characters
      */
     @NotNull
-    public static String[] splitLiteralWithEscape(@NotNull String text, char literal) {
+    public static String[] splitLiteralWithEscape(@NotNull String text, @NotNull String literal) {
         return RegexUtil.splitLiteralWithEscape(text, literal, 0);
     }
 
@@ -45,12 +45,26 @@ public final class RegexUtil {
      * @return an array of strings that were split using the provided literal with escape and removes the escape characters
      */
     @NotNull
-    public static String[] splitLiteralWithEscape(@NotNull String text, char literal, int limit) {
+    public static String[] splitLiteralWithEscape(@NotNull String text, @NotNull String literal, int limit) {
         String regex = RegexUtil.literalWithEscape(literal);
 
         String[] split = text.split(regex, limit);
-        String literalAsString = "" + literal;
 
-        return Arrays.stream(split).map(value -> value.replace("\\" + literal, literalAsString)).toArray(String[]::new);
+        return Arrays.stream(split).map(value -> value.replace("\\" + literal, literal)).toArray(String[]::new);
+    }
+
+    /**
+     * A method that returns a string replacement that escapes
+     *
+     * @param text the text you wish to split
+     * @param replace the string to replace it with
+     * @param literal the literal you wish to target
+     * @return A method that returns a string replacement that escapes
+     */
+    @NotNull
+    public static String replaceLiteralWithEscape(@NotNull String text, @NotNull String replace, @NotNull String literal) {
+        String regex = RegexUtil.literalWithEscape(literal);
+
+        return text.replaceAll(regex, replace);
     }
 }

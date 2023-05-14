@@ -148,7 +148,7 @@ public final class AbilityParser {
                 continue;
             }
 
-            String[] split = RegexUtil.splitLiteralWithEscape(line, '(');
+            String[] split = RegexUtil.splitLiteralWithEscape(line, "(");
 
             if (split.length != 2) {
                 LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on keywords on ability " + abilityName + "! Did you format it correctly?");
@@ -196,7 +196,7 @@ public final class AbilityParser {
                 continue;
             }
 
-            String[] split = RegexUtil.splitLiteralWithEscape(line, '(');
+            String[] split = RegexUtil.splitLiteralWithEscape(line, "(");
 
             if (split.length != 2) {
                 LogUtil.log(LogUtil.Level.WARNING, "There was an error parsing line " + (i + 1) + " on conditions on ability " + abilityName + "! Did you format it correctly?");
@@ -286,7 +286,7 @@ public final class AbilityParser {
 
         boolean hasVararg = function.getArguments().size() != 0 && function.getArguments().get(function.getArguments().size() - 1) instanceof ExpectedVarArg;
 
-        String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ',', hasVararg ? function.getArguments().size() : 0);
+        String[] rawArguments = RegexUtil.splitLiteralWithEscape(split[1].substring(0, split[1].length() - 1), ",", hasVararg ? function.getArguments().size() : 0);
 
         rawArguments = Arrays.stream(rawArguments).map(String::trim).toArray(String[]::new);
 

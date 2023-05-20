@@ -8,14 +8,19 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A class that represents an inventory view ui
  */
 public class InnovativeView implements InventoryHolder {
     private final Inventory inventory;
-    private ImmutableList<InnovativeElement> elements;
+    private List<InnovativeElement> elements;
+
+    private final List<Consumer<Player>> onOpen;
+    private final List<Consumer<List<InnovativeElement>>> onSetElements;
 
     /**
      * Creates a new instance of InnovativeView (size of elements must be a multiple of 9)
@@ -23,14 +28,12 @@ public class InnovativeView implements InventoryHolder {
      * @param title title of inventory
      * @param elements the items and effects
      */
-    public InnovativeView(@NotNull String title, @NotNull ImmutableList<InnovativeElement> elements) {
-        this.inventory = Bukkit.createInventory(this, elements.size(), TextUtil.format(title));
-        this.elements = elements;
-        this.reload();
-    }
-
     public InnovativeView(@NotNull String title, @NotNull List<InnovativeElement> elements) {
-        this(title, populate(elements));
+        this.inventory = Bukkit.createInventory(this, elements.size(), TextUtil.format(title));
+        this.elements = populate(elements);
+        this.onOpen = new ArrayList<>();
+        this.onSetElements = new ArrayList<>();
+        this.reload();
     }
 
     /**
@@ -51,22 +54,25 @@ public class InnovativeView implements InventoryHolder {
      */
     @NotNull
     public final ImmutableList<InnovativeElement> getElements() {
-        return this.elements;
+        return ImmutableList.copyOf(this.elements);
     }
 
     /**
-     * A method that sets the elements of this view
+     * A method used to add a listener to when the view is opened
      *
-     * @param elements the elements of this view
-     * @throws IllegalArgumentException if the provided elements do not reflect the size of the inventory
+     * @param listener a listener to when the view is opened
      */
-    public void setElements(@NotNull ImmutableList<InnovativeElement> elements) throws IllegalArgumentException {
-        if (this.getSize() != elements.size()) {
-            throw new IllegalArgumentException("Invalid elements provided!");
-        }
+    protected final void addOpenListener(@NotNull Consumer<Player> listener) {
+        this.onOpen.add(listener);
+    }
 
-        this.elements = elements;
-        this.reload();
+    /**
+     * A method used to add a listener to when the elements of the view are reset
+     *
+     * @param listener a listener to when the elements of the view are reset
+     */
+    protected final void addSetElementsListener(@NotNull Consumer<List<InnovativeElement>> listener) {
+        this.onSetElements.add(listener);
     }
 
     /**
@@ -80,7 +86,13 @@ public class InnovativeView implements InventoryHolder {
             throw new IllegalArgumentException("Invalid elements provided!");
         }
 
-        this.setElements(populate(elements));
+        for (int i = this.onSetElements.size() - 1; i >= 0; i--) {
+            this.onSetElements.get(i).accept(elements);
+        }
+
+        this.elements = new ArrayList<>(populate(elements));
+
+        this.reload();
     }
 
     /**
@@ -127,7 +139,8 @@ public class InnovativeView implements InventoryHolder {
      *
      * @param player the player to show the view to
      */
-    public void open(@NotNull Player player) {
+    public final void open(@NotNull Player player) {
+        this.onOpen.forEach(consumer -> consumer.accept(player));
         player.openInventory(this.inventory);
         this.reload();
     }
@@ -138,7 +151,7 @@ public class InnovativeView implements InventoryHolder {
      * @param elements the list of elements that must be populated so that no null elements are present in the collection
      */
     @NotNull
-    private static ImmutableList<InnovativeElement> populate(@NotNull List<InnovativeElement> elements) {
+    private static List<InnovativeElement> populate(@NotNull List<InnovativeElement> elements) {
         for (int i = 0; i < elements.size(); i++) {
             InnovativeElement element = elements.get(i);
 
@@ -147,6 +160,6 @@ public class InnovativeView implements InventoryHolder {
             }
         }
 
-        return ImmutableList.copyOf(elements);
+        return elements;
     }
 }

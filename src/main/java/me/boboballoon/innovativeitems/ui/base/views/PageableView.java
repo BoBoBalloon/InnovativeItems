@@ -1,19 +1,21 @@
 package me.boboballoon.innovativeitems.ui.base.views;
 
-import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
 import me.boboballoon.innovativeitems.ui.base.InnovativeView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that represents a pageable inventory view ui
  */
 public class PageableView extends InnovativeView {
-    private final List<ImmutableList<InnovativeElement>> pages;
+    private final List<List<InnovativeElement>> pages;
     private int currentPageIndex;
+
+    private final List<Transform> onSetPages;
 
     /**
      * Creates a new instance of PageableView (it is assumed that the size of all elements of pages are the same size)
@@ -30,22 +32,18 @@ public class PageableView extends InnovativeView {
             throw new IndexOutOfBoundsException("All elements of pages are not the same size!");
         }
 
-        this.pages = this.reformat(pages);
+        this.pages = pages.stream().map(ArrayList::new).collect(Collectors.toList());
         this.currentPageIndex = 0;
-    }
-
-    public PageableView(@NotNull String title, @NotNull List<InnovativeElement>[] pages) throws IndexOutOfBoundsException {
-        this(title, ImmutableList.copyOf(pages));
+        this.onSetPages = new ArrayList<>();
     }
 
     /**
-     * A method used to return all of the different pages in this pageable view
+     * A method to add a listener to reformat the pages
      *
-     * @return all of the different pages in this pageable view
+     * @param listener a listener to reformat the pages
      */
-    @NotNull
-    public final ImmutableList<ImmutableList<InnovativeElement>> getPages() {
-        return ImmutableList.copyOf(this.pages);
+    protected final void addOnSetPagesListener(@NotNull Transform listener) {
+        this.onSetPages.add(listener);
     }
 
     /**
@@ -53,14 +51,22 @@ public class PageableView extends InnovativeView {
      *
      * @param pages all of the NEW different pages in this pageable view
      */
-    public void setPages(@NotNull List<ImmutableList<InnovativeElement>> pages) {
+    public final void setPages(@NotNull List<List<InnovativeElement>> pages) {
         int size = pages.get(0).size();
         if (pages.size() < 1 || !pages.stream().allMatch(collection -> collection.size() == size)) {
             return;
         }
 
         this.pages.clear();
-        this.pages.addAll(pages);
+
+        List<List<InnovativeElement>> transformed = pages;
+
+        for (int i = this.onSetPages.size() - 1; i >= 0; i--) {
+            Transform transform = this.onSetPages.get(i);
+            transformed = transform.transform(transformed);
+        }
+
+        this.pages.addAll(transformed);
 
         this.currentPageIndex = 0;
         this.setElements(this.pages.get(this.currentPageIndex)); //calls reload
@@ -92,19 +98,16 @@ public class PageableView extends InnovativeView {
     }
 
     /**
-     * Converts types and adds in arrow elements in top row
-     *
-     * @param pages the pages of the view
-     * @return the completed page collection
+     * A functional interface used to modify pages when they are set
      */
-    @NotNull
-    private List<ImmutableList<InnovativeElement>> reformat(@NotNull List<List<InnovativeElement>> pages) {
-        List<ImmutableList<InnovativeElement>> elements = new ArrayList<>(pages.size());
-
-        for (List<InnovativeElement> page : pages) {
-            elements.add(ImmutableList.copyOf(page));
-        }
-
-        return elements;
+    @FunctionalInterface
+    protected interface Transform {
+        /**
+         * A function used to transform a pageable view
+         *
+         * @param pages the page data
+         */
+        @NotNull
+        List<List<InnovativeElement>> transform(@NotNull List<List<InnovativeElement>> pages);
     }
 }

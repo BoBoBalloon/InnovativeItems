@@ -1,6 +1,5 @@
 package me.boboballoon.innovativeitems.ui;
 
-import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ItemParser;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
@@ -41,6 +40,7 @@ import java.util.stream.Collectors;
  */
 public final class ItemBuilderView extends BorderedView {
     private static final int SIZE = 45;
+    private static final List<InnovativeElement> EMPTY = ItemBuilderView.empty();
 
     //general items
     private final String identifier;
@@ -86,7 +86,7 @@ public final class ItemBuilderView extends BorderedView {
      * @param identifier id of item
      */
     public ItemBuilderView(@NotNull String identifier) {
-        super(Material.GRAY_STAINED_GLASS_PANE, "&r&aCustom Item: &r&l" + identifier, ItemBuilderView.empty());
+        super(Material.GRAY_STAINED_GLASS_PANE, "&r&aCustom Item: &r&l" + identifier, ItemBuilderView.EMPTY);
 
         //general item stuff
         this.identifier = identifier;
@@ -127,6 +127,12 @@ public final class ItemBuilderView extends BorderedView {
         //fireworks
         this.flightTime = null;
         this.fireworkEffects = new ArrayList<>();
+        
+        this.addSetElementsListener(page -> {
+            page.clear();
+            page.addAll(this.buildView());
+        });
+        this.addOpenListener(player -> this.setElements(ItemBuilderView.EMPTY));
 
         this.setBottomRight(new ConfirmElement(player -> {
             player.closeInventory();
@@ -134,17 +140,6 @@ public final class ItemBuilderView extends BorderedView {
             TextUtil.sendMessage(player, "&r&aStarting asynchronous reload in five seconds!");
             InnovativeItems.getInstance().getConfigManager().reload();
         })); //calls setElements
-    }
-
-    @Override
-    public final void setElements(@Nullable ImmutableList<InnovativeElement> elements) throws IllegalArgumentException {
-        super.setElements(this.buildView());
-    }
-
-    @Override
-    public final void open(@NotNull Player player) {
-        player.openInventory(this.getInventory());
-        this.setElements(null);
     }
 
     /**
@@ -188,7 +183,7 @@ public final class ItemBuilderView extends BorderedView {
      * @return an instance of this view's page
      */
     @NotNull
-    private ImmutableList<InnovativeElement> buildView() {
+    private List<InnovativeElement> buildView() {
         List<InnovativeElement> elements = new NullableList<>(ItemBuilderView.SIZE);
 
         for (int i = 0; i < ItemBuilderView.SIZE; i++) {
@@ -232,6 +227,7 @@ public final class ItemBuilderView extends BorderedView {
         elements.add(InnovativeElement.build(Material.NETHER_STAR, null, null, (player, click) -> {
             if (click == ClickType.RIGHT) {
                 this.ability = null;
+                this.setElements(ItemBuilderView.EMPTY);
                 return;
             }
 
@@ -240,6 +236,7 @@ public final class ItemBuilderView extends BorderedView {
             if (click != ClickType.MIDDLE) {
                 InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
                 Collection<Ability> abilities = cache.getAbilityIdentifiers().stream().map(cache::getAbility).collect(Collectors.toSet());
+
                 DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, abilities, a -> {
                     ItemStack stack = new ItemStack(Material.NETHER_STAR);
                     ItemMeta meta = stack.getItemMeta();
@@ -272,7 +269,7 @@ public final class ItemBuilderView extends BorderedView {
             }
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format(this.display != null ? "&r&fAbility: " + this.ability : "&r&fAbility"));
+            meta.setDisplayName(TextUtil.format(this.ability != null ? "&r&fAbility: " + this.ability : "&r&fAbility"));
             meta.setLore(Arrays.asList(TextUtil.format("&r&fRight click to reset ability"), TextUtil.format("&r&fMiddle click to manually enter ability name")));
             stack.setItemMeta(meta);
         }));
@@ -426,7 +423,7 @@ public final class ItemBuilderView extends BorderedView {
         if (this.type.getMaxDurability() > 0) {
             elements.add(InnovativeElement.build(Material.ANVIL, null, (player, click) -> {
                 this.unbreakable = !this.unbreakable;
-                this.setElements(null);
+                this.setElements(ItemBuilderView.EMPTY);
             }, stack -> {
                 ItemMeta meta = stack.getItemMeta();
                 String value = String.valueOf(this.unbreakable);
@@ -438,7 +435,7 @@ public final class ItemBuilderView extends BorderedView {
         //placeable
         elements.add(InnovativeElement.build(Material.OAK_LOG, null, (player, click) -> {
             this.placeable = !this.placeable;
-            this.setElements(null);
+            this.setElements(ItemBuilderView.EMPTY);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
             String value = String.valueOf(this.placeable);
@@ -449,7 +446,7 @@ public final class ItemBuilderView extends BorderedView {
         //soulbound
         elements.add(InnovativeElement.build(Material.BLAZE_POWDER, null, (player, click) -> {
             this.soulbound = !this.soulbound;
-            this.setElements(null);
+            this.setElements(ItemBuilderView.EMPTY);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
             String value = String.valueOf(this.soulbound);
@@ -460,7 +457,7 @@ public final class ItemBuilderView extends BorderedView {
         //wearable
         elements.add(InnovativeElement.build(Material.IRON_HELMET, null, (player, click) -> {
             this.wearable = !this.wearable;
-            this.setElements(null);
+            this.setElements(ItemBuilderView.EMPTY);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
             String value = String.valueOf(this.wearable);
@@ -491,7 +488,7 @@ public final class ItemBuilderView extends BorderedView {
         //update item
         elements.add(InnovativeElement.build(Material.CRAFTING_TABLE, null, (player, click) -> {
             this.updateItem = !this.updateItem;
-            this.setElements(null);
+            this.setElements(ItemBuilderView.EMPTY);
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
             String value = String.valueOf(this.updateItem);
@@ -749,13 +746,7 @@ public final class ItemBuilderView extends BorderedView {
             }, "Please enter the firework effects you would like to add in the format: &r&f&aHas Flicker&r&f, &r&f&aHas Trail&r&f, &r&f&aEffect Type&r&f, &r&f&aEffect Colors&r&f."));
         }
 
-        for (int i = 0; i < ItemBuilderView.SIZE; i++) {
-            if (elements.get(i) == null) {
-                elements.set(i, InnovativeElement.EMPTY);
-            }
-        }
-
-        return ImmutableList.copyOf(elements);
+        return elements;
     }
 
     /**
@@ -800,13 +791,13 @@ public final class ItemBuilderView extends BorderedView {
         return InnovativeElement.build(material, display, lore, (player, click) -> {
             if (onRightClick != null && click == ClickType.RIGHT) {
                 onRightClick.run();
-                this.setElements(null);
+                this.setElements(ItemBuilderView.EMPTY);
                 return;
             }
 
             if (onMiddleClick != null && click == ClickType.MIDDLE) {
                 onMiddleClick.accept(player);
-                this.setElements(null);
+                this.setElements(ItemBuilderView.EMPTY);
                 return;
             }
 
@@ -853,14 +844,14 @@ public final class ItemBuilderView extends BorderedView {
      * @return an list of elements size 36 filled with null
      */
     @NotNull
-    private static ImmutableList<InnovativeElement> empty() {
+    private static List<InnovativeElement> empty() {
         List<InnovativeElement> list = new ArrayList<>(ItemBuilderView.SIZE);
 
         for (int i = 0; i < ItemBuilderView.SIZE; i++) {
             list.add(InnovativeElement.EMPTY);
         }
 
-        return ImmutableList.copyOf(list);
+        return list;
     }
 
     /**

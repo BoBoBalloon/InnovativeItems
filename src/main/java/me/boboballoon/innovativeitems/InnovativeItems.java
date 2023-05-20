@@ -49,16 +49,16 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Make item creation gui
+    1. Test feature of command keyword that replaces "?block" with "x, y, z" make sure that the escape character (\) works
+    2. Make item creation gui
         * test ability field in gui (left click is using displayview and middle click is just typing in chat)
         * test the display view and ability field
         * write to disk
-    2. Make ability creation gui
-    3. Increase maximum amount of items and abilities that can be made on the free version
-    4. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
-    5. Add support so you can modify custom items as well as create them
-    6. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
-    7. Test feature of command keyword that replaces "?block" with "x, y, z" make sure that the escape character (\) works
+    3. Make ability creation gui
+    4. Increase maximum amount of items and abilities that can be made on the free version
+    5. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
+    6. Add support so you can modify custom items as well as create them
+    7. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
     8. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
      */
 

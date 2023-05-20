@@ -51,8 +51,6 @@ public final class InnovativeItems extends JavaPlugin {
     REMEMBER TO CHANGE THE isPluginPremium METHOD
     1. Test feature of command keyword that replaces "?block" with "x, y, z" make sure that the escape character (\) works
     2. Make item creation gui
-        * test ability field in gui (left click is using displayview and middle click is just typing in chat)
-        * test the display view and ability field
         * write to disk
     3. Make ability creation gui
     4. Increase maximum amount of items and abilities that can be made on the free version

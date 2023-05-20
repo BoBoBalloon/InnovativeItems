@@ -233,8 +233,9 @@ public final class ItemBuilderView extends BorderedView {
 
             player.closeInventory();
 
-            if (click != ClickType.MIDDLE) {
-                InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+            InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
+
+            if (click != ClickType.MIDDLE && cache.getAbilitiesAmount() > 0) {
                 Collection<Ability> abilities = cache.getAbilityIdentifiers().stream().map(cache::getAbility).collect(Collectors.toSet());
 
                 DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, abilities, a -> {

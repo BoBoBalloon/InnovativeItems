@@ -1,7 +1,6 @@
 package me.boboballoon.innovativeitems.ui.base.views;
 
 import me.boboballoon.innovativeitems.ui.base.InnovativeElement;
-import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,9 +35,6 @@ public class DisplayView<T> extends PagedBorderedView {
      */
     @NotNull
     private static <T> List<List<InnovativeElement>> buildView(@NotNull Collection<T> collection, @NotNull Function<T, ItemStack> map, @NotNull BiConsumer<Player, T> clickAction) {
-        LogUtil.logUnblocked(LogUtil.Level.DEV, "building..."); //REMOVE
-        if (collection == null) throw new RuntimeException("fuck off"); //REMOVE
-
         int pageSize = DisplayView.ROWS * 9;
 
         int pageCount = (int) Math.ceil((double) collection.size() / pageSize); //round up to nearest integer
@@ -53,7 +49,7 @@ public class DisplayView<T> extends PagedBorderedView {
                 int row = j / 9;
                 int col = j % 9;
 
-                if (!iterator.hasNext() || (row == 0 && col == 0) || (row == 0 && col == 8) || (row == (collection.size()) / 9 - 1 && col == 0) || (row == (collection.size()) / 9 - 1 && col == 8)) {
+                if (!iterator.hasNext() || row == 0 || row == 8 || col == 0 || col == 8) {
                     page.add(InnovativeElement.EMPTY);
                     continue;
                 }

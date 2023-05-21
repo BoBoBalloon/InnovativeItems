@@ -39,23 +39,25 @@ public final class AbilityParser {
      *
      * @param section the configuration section of the ability
      * @param cache the cache to register the ability in
+     * @return a boolean that is true if the ability was registered
      */
-    public static void buildAbility(@NotNull ConfigurationSection section, @NotNull InnovativeCache cache) {
+    public static boolean buildAbility(@NotNull ConfigurationSection section, @NotNull InnovativeCache cache) {
         String abilityName = section.getName();
 
         if (cache.contains(abilityName)) {
             LogUtil.log(LogUtil.Level.WARNING, "Element with the name of " + abilityName + ", is already registered! Skipping ability...");
-            return;
+            return false;
         }
 
         Ability ability = AbilityParser.parseAbility(section);
 
         if (ability == null) {
             //error message was already sent from parseAbility method, no need to put in here
-            return;
+            return false;
         }
 
         cache.registerAbility(ability);
+        return true;
     }
 
     /**

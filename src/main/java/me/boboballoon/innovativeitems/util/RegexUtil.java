@@ -65,6 +65,6 @@ public final class RegexUtil {
     public static String replaceLiteralWithEscape(@NotNull String text, @NotNull String replace, @NotNull String literal) {
         String regex = RegexUtil.literalWithEscape(literal);
 
-        return text.replaceAll(regex, replace);
+        return text.replaceAll(regex, replace).replace("\\" + literal, literal);
     }
 }

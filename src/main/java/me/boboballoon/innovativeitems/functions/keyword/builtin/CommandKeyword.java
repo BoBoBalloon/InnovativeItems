@@ -38,7 +38,7 @@ public class CommandKeyword extends Keyword {
 
         if (context instanceof BlockContext) {
             Location location = ((BlockContext) context).getBlock().getLocation();
-            parsed = RegexUtil.replaceLiteralWithEscape(parsed, location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ(), "?block");
+            parsed = RegexUtil.replaceLiteralWithEscape(parsed, location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ(), "?block");
         }
 
         try {

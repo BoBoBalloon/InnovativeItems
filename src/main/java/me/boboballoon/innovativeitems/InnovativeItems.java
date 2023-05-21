@@ -49,19 +49,24 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Test feature of command keyword that replaces "?block" with "x, y, z" make sure that the escape character (\) works
-    2. Make item creation gui
-        * write to disk
-    3. Make ability creation gui
-    4. Increase maximum amount of items and abilities that can be made on the free version
-    5. Exclude any of the default abilities/items from the count and make the maximum values constant instead of whether or not generate default configs is true
-    6. Add support so you can modify custom items as well as create them
+    1. Test new ability cap on free version
+    3. Add custom recipe support to item builder ui
+    4. Add support so you can modify custom items as well as create them
+    5. Make ability creation gui
+    6. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
     7. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
-    8. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
      */
 
     /*
     CHANGE LIST:
+    1. Item Creation UI (excluding custom abilities)
+    2. ?block targeter placeholder in the command keyword
+    3. Removed limits on custom items for the free version
+    4. Limits on abilities now exclude default abilities
+    5. command keyword that replaces "?block" with "x y z" and the escape character (\) works for all placeholders
+    6. Removed custom item cap on free version
+    7. Changed the way the plugin handles ability registration on free version (default abilities not counted, instead of freebie)
+    8. Increased ability cap on free version from 10/13 depending on default config to hard cap at 15
      */
 
     /**

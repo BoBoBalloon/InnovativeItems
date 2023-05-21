@@ -1,6 +1,7 @@
 package me.boboballoon.innovativeitems.ui;
 
 import me.boboballoon.innovativeitems.InnovativeItems;
+import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.config.ItemParser;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ability.Ability;
@@ -16,6 +17,8 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -29,10 +32,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
@@ -136,20 +139,155 @@ public final class ItemBuilderView extends BorderedView {
 
         this.setBottomRight(new ConfirmElement(player -> {
             player.closeInventory();
-            this.write();
-            TextUtil.sendMessage(player, "&r&aStarting asynchronous reload in five seconds!");
-            InnovativeItems.getInstance().getConfigManager().reload();
+
+            boolean success = ResponseUtil.input("&r&fPlease enter the name of the file you wish to save " + this.identifier + " to. Type &r&ccancel&r&f to end the prompt.", player, response -> {
+                if (response == null) {
+                    this.open(player);
+                    return;
+                }
+
+                Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
+                    ConfigManager configManager = InnovativeItems.getInstance().getConfigManager();
+                    try {
+                        this.write(response);
+                        TextUtil.sendMessage(player, "&r&aFinished creating " + this.identifier + "! Starting asynchronous reload in five seconds!");
+                        configManager.reload();
+                    } catch (Exception e) {
+                        TextUtil.sendMessage(player, "&r&cSomething went wrong when we tried to save your item to your server's disk...");
+                        LogUtil.logUnblocked(LogUtil.Level.SEVERE, "A " + e.getClass().getSimpleName() + " was encountered when trying to save your data to disk!");
+                        if (configManager.getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            });
+
+            if (!success) {
+                LogUtil.logUnblocked(LogUtil.Level.SEVERE, "An error occurred asking for user input for " + player.getName() +  ". Please contact the developer");
+                TextUtil.sendMessage(player, "&r&cAn internal error occurred.");
+                this.open(player);
+            }
+
+
         })); //calls setElements
     }
 
     /**
      * A method called when the confirm button is hit and the class should write the item to disk
+     *
+     * @param name the name of the file
      */
-    private void write() {
-        File file = new File(InnovativeItems.getInstance().getDataFolder().getPath() + "/items", this.identifier + ".yml");
+    private void write(@NotNull String name) throws IOException {
+        File file = new File(InnovativeItems.getInstance().getDataFolder().getPath() + "/items", name + ".yml");
 
-        //if file already exists save data and add more (FIND OUT HOW)
+        if (!file.exists()) {
+            file.createNewFile();
+        }
 
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        if (config.isConfigurationSection(this.identifier)) {
+            LogUtil.log(LogUtil.Level.WARNING, "The " + this.identifier + " item already exists! Overriding...");
+        }
+
+        config.createSection(this.identifier);
+
+        config.set(this.identifier + ".material", this.type.name());
+
+        if (this.ability != null) {
+            config.set(this.identifier + ".ability", this.ability);
+        }
+
+        if (this.display != null) {
+            config.set(this.identifier + ".display-name", this.display);
+        }
+
+        if (!this.lore.isEmpty()) {
+            config.set(this.identifier + ".lore", this.lore);
+        }
+
+        if (!this.enchantments.isEmpty()) {
+            this.enchantments.forEach(data -> config.set(this.identifier + ".enchantments." + data.getEnchantment().getName(), data.getLevel()));
+        }
+
+        if (!this.flags.isEmpty()) {
+            config.set(this.identifier + ".flags", this.flags.stream().map(ItemFlag::name).collect(Collectors.toList()));
+        }
+
+        for (Map.Entry<RevisedEquipmentSlot, List<AttributeData>> entry : this.attributes.entrySet()) {
+            for (AttributeData data : entry.getValue()) {
+                config.set(this.identifier + ".attributes." + entry.getKey().name() + "." + data.getAttribute().name(), data.getLevel());
+            }
+        }
+
+        if (this.customModelData != null) {
+            config.set(this.identifier + ".custom-model-data", this.customModelData);
+        }
+
+        config.set(this.identifier + ".unbreakable", this.unbreakable);
+
+        config.set(this.identifier + ".placeable", this.placeable);
+
+        config.set(this.identifier + ".soulbound", this.soulbound);
+
+        config.set(this.identifier + ".wearable", this.wearable);
+
+        if (this.maxDurability != null) {
+            config.set(this.identifier + ".max-durability", this.maxDurability);
+        }
+
+        config.set(this.identifier + ".update-item", this.updateItem);
+
+        if (this.playerName != null) {
+            config.set(this.identifier + ".skull.player-name", this.playerName);
+        }
+
+        if (this.base64 != null) {
+            config.set(this.identifier + ".skull.base64", this.base64);
+        }
+
+        if (this.color != null) {
+            String itemCategory = this.type == Material.SHIELD ? "shield" : ItemParser.PotionItem.isPotion(this.type) ? "potion" : ItemParser.LeatherArmorItem.isLeatherArmor(this.type) ? "leather-armor" : null;
+            config.set(this.identifier + "." + itemCategory + ".color", this.color.name());
+        }
+
+        if (this.rgb != null) {
+            String itemCategory = ItemParser.PotionItem.isPotion(this.type) ? "potion" : ItemParser.LeatherArmorItem.isLeatherArmor(this.type) ? "leather-armor" : null;
+            config.set(this.identifier + "." + itemCategory + ".rgb", this.rgb.getRed() + "," + this.rgb.getGreen() + "," + this.rgb.getBlue());
+        }
+
+        if (!this.potionEffects.isEmpty()) {
+            config.set(this.identifier + ".potion.effects", this.potionEffects.stream().map(effect -> effect.getType().getName() + " " + effect.getDuration() + " " + effect.getAmplifier()).collect(Collectors.toList()));
+        }
+
+        if (!this.bannerPatterns.isEmpty()) {
+            String itemCategory = this.type == Material.SHIELD ? "shield" : ItemParser.BannerItem.isBanner(this.type) ? "banner" : null;
+            config.set(this.identifier + "." + itemCategory + ".patterns", this.bannerPatterns.stream().map(pattern -> pattern.getPattern().name() + " " + pattern.getColor().name()).collect(Collectors.toList()));
+        }
+
+        if (this.flightTime != null) {
+            config.set(this.identifier + ".firework.flight-time", this.flightTime);
+        }
+
+        if (!this.fireworkEffects.isEmpty()) {
+            config.createSection(this.identifier + ".firework.effects");
+            for (int i = 0; i < this.fireworkEffects.size(); i++) {
+                String section = this.identifier + ".firework.effects." + i;
+                FireworkEffect effect = this.fireworkEffects.get(i);
+
+                config.set(section + ".flicker", effect.hasFlicker());
+                config.set(section + ".trail", effect.hasTrail());
+                config.set(section + ".type", effect.getType().name());
+                config.set(section + ".colors", effect.getColors().stream().map(color -> {
+                    DyeColor dye = DyeColor.getByColor(color);
+                    return dye != null ? dye.name() : null;
+                }).collect(Collectors.toList()));
+            }
+        }
+
+        config.save(file);
+
+        /*
         Bukkit.broadcastMessage("path = " + file.getPath()); //remove
         Bukkit.broadcastMessage("identifier = " + this.identifier); //remove
         Bukkit.broadcastMessage("material = " + this.type.name()); //remove
@@ -175,6 +313,7 @@ public final class ItemBuilderView extends BorderedView {
         Bukkit.broadcastMessage("banner pattern = " + this.bannerPatterns); //remove
         Bukkit.broadcastMessage("flightTime = " + this.flightTime); //remove
         Bukkit.broadcastMessage("firework effects = " + this.fireworkEffects); //remove
+         */
     }
 
     /**
@@ -310,7 +449,7 @@ public final class ItemBuilderView extends BorderedView {
                 return;
             }
 
-            Enchantment enchantment = Enchantment.getByName(split[0].toUpperCase()) != null ? Enchantment.getByName(split[0].toUpperCase()) : Enchantment.getByKey(NamespacedKey.minecraft(split[0].toLowerCase()));
+            Enchantment enchantment = Enchantment.getByName(split[0].toUpperCase().trim()) != null ? Enchantment.getByName(split[0].toUpperCase().trim()) : Enchantment.getByKey(NamespacedKey.minecraft(split[0].toLowerCase().trim()));
 
             if (enchantment == null) {
                 TextUtil.sendMessage(player, "&r&cYou have entered an invalid enchantment");
@@ -340,7 +479,7 @@ public final class ItemBuilderView extends BorderedView {
         }, this.flags::clear, (response, player) -> {
             ItemFlag flag;
             try {
-                flag = ItemFlag.valueOf(response.toUpperCase());
+                flag = ItemFlag.valueOf(response.toUpperCase().trim());
             } catch (IllegalArgumentException e) {
                 TextUtil.sendMessage(player, "&r&cPlease enter a valid item flag. The possible options are: &r&c" + Arrays.stream(ItemFlag.values()).map(ItemFlag::name).collect(Collectors.joining(", ")));
                 return;
@@ -378,7 +517,7 @@ public final class ItemBuilderView extends BorderedView {
 
             RevisedEquipmentSlot slot;
             try {
-                slot = RevisedEquipmentSlot.valueOf(split[0].toUpperCase());
+                slot = RevisedEquipmentSlot.valueOf(split[0].toUpperCase().trim());
             } catch (IllegalArgumentException e) {
                 TextUtil.sendMessage(player, "&r&cYou have entered an invalid equipment slot. The possible options are: &r&c" + Arrays.stream(RevisedEquipmentSlot.values()).map(value -> value.name().charAt(0) + value.name().substring(1).toLowerCase()).collect(Collectors.joining(", ")));
                 return;
@@ -386,17 +525,17 @@ public final class ItemBuilderView extends BorderedView {
 
             Attribute attribute;
             try {
-                attribute = Attribute.valueOf(split[1].toUpperCase());
+                attribute = Attribute.valueOf(split[1].toUpperCase().trim());
             } catch (IllegalArgumentException e) {
-                TextUtil.sendMessage(player, "&r&cYou have entered an invalid attributes. The possible options are: &r&c" + Arrays.stream(Attribute.values()).map(Attribute::name).collect(Collectors.joining(", ")));
+                TextUtil.sendMessage(player, "&r&cYou have entered an invalid attribute. The possible options are: &r&c" + Arrays.stream(Attribute.values()).map(Attribute::name).collect(Collectors.joining(", ")));
                 return;
             }
 
-            int level;
+            double level;
             try {
-                level = Integer.parseInt(split[2]);
+                level = Double.parseDouble(split[2].trim());
             } catch (NumberFormatException e) {
-                TextUtil.sendMessage(player, "&r&cPlease enter an integer for the attribute level.");
+                TextUtil.sendMessage(player, "&r&cPlease enter a valid number for the attribute level.");
                 return;
             }
 
@@ -618,24 +757,24 @@ public final class ItemBuilderView extends BorderedView {
                     return;
                 }
 
-                int amplifier;
-                try {
-                    amplifier = Integer.parseInt(split[1].trim());
-                } catch (NumberFormatException e) {
-                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the amplifier field!");
-                    return;
-                }
-
                 int duration;
                 try {
-                    duration = Integer.parseInt(split[2].trim());
+                    duration = Integer.parseInt(split[1].trim());
                 } catch (NumberFormatException e) {
                     TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the duration field!");
                     return;
                 }
 
+                int amplifier;
+                try {
+                    amplifier = Integer.parseInt(split[2].trim());
+                } catch (NumberFormatException e) {
+                    TextUtil.sendMessage(player, "&r&cPlease enter a valid integer for the amplifier field!");
+                    return;
+                }
+
                 this.potionEffects.add(new PotionEffect(potionEffectType, duration, amplifier));
-            }, "Please enter the enchantment data you would like to add in the format: &r&f&aPotion Effect Type&r&f, &r&f&aAmplifier&r&f, &r&f&aDuration&r&f."));
+            }, "Please enter the enchantment data you would like to add in the format: &r&f&aPotion Effect Type&r&f, &r&f&aDuration&r&f, &r&f&aAmplifier&r&f."));
         }
 
         //only show if shield or banner
@@ -699,11 +838,9 @@ public final class ItemBuilderView extends BorderedView {
                 meta.setLore(lore);
                 stack.setItemMeta(meta);
             }, this.fireworkEffects::clear, (response, player) -> {
-                String[] split;
+                String[] split = response.split(",", 4);
 
-                try {
-                    split = response.split(",", 3);
-                } catch (PatternSyntaxException e) {
+                if (split.length < 4) {
                     TextUtil.sendMessage(player, "&r&cYou have entered invalid information. Please follow the syntax in the previous message.");
                     return;
                 }
@@ -718,7 +855,7 @@ public final class ItemBuilderView extends BorderedView {
 
                 FireworkEffect.Type effectType;
                 try {
-                    effectType = FireworkEffect.Type.valueOf(split[2].trim().toUpperCase());
+                    effectType = FireworkEffect.Type.valueOf(split[2].toUpperCase().trim());
                 } catch (IllegalArgumentException e) {
                     TextUtil.sendMessage(player, "&r&cPlease enter a valid firework effect. The possible options are: &r&c" + Arrays.stream(FireworkEffect.Type.values()).map(FireworkEffect.Type::name).collect(Collectors.joining(", ")));
                     return;
@@ -804,7 +941,7 @@ public final class ItemBuilderView extends BorderedView {
 
             player.closeInventory();
 
-            boolean success = ResponseUtil.input( prompt + " Type &r&ccancel&r&f to end the prompt.", player, response -> {
+            boolean success = ResponseUtil.input( prompt + " &r&fType &r&ccancel&r&f to end the prompt.", player, response -> {
                 if (response == null) {
                     this.open(player);
                     return;
@@ -860,9 +997,9 @@ public final class ItemBuilderView extends BorderedView {
      */
     private static class AttributeData {
         private final Attribute attribute;
-        private final int level;
+        private final double level;
 
-        public AttributeData(@NotNull Attribute attribute, int level) {
+        public AttributeData(@NotNull Attribute attribute, double level) {
             this.attribute = attribute;
             this.level = level;
         }
@@ -872,7 +1009,7 @@ public final class ItemBuilderView extends BorderedView {
             return this.attribute;
         }
 
-        public int getLevel() {
+        public double getLevel() {
             return this.level;
         }
 
@@ -939,7 +1076,11 @@ public final class ItemBuilderView extends BorderedView {
      * @return The Material for the given DyeColor.
      */
     @NotNull
-    private static Material getDyeMaterial(@NotNull DyeColor dyeColor) {
+    private static Material getDyeMaterial(@Nullable DyeColor dyeColor) {
+        if (dyeColor == null) {
+            return Material.BLACK_DYE;
+        }
+
         switch (dyeColor) {
             case WHITE:
                 return Material.WHITE_DYE;

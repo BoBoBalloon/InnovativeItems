@@ -30,6 +30,9 @@ import java.util.*;
  * A class used to cache and parse config files
  */
 public final class ConfigManager {
+    private static final ImmutableList<String> DEFAULT_ABILITIES = ImmutableList.of("fairy-fullset", "fairy-fullset-buff", "fairy-fullset-safety", "fairy-attack", "fairy-healing");
+    private static final int MAX_FREE_ABILITIES = 15;
+
     //update checker
     private boolean checkForUpdates;
 
@@ -490,10 +493,10 @@ public final class ConfigManager {
                 continue;
             }
 
+            int registered = 0;
 
-            int maxCount = (this.generateDefaultConfigs) ? 13 : 10;
             for (String key : configuration.getKeys(false)) {
-                if (!InnovativeItems.isPluginPremium() && cache.getAbilitiesAmount() >= maxCount) {
+                if (!InnovativeItems.isPluginPremium() && registered >= ConfigManager.MAX_FREE_ABILITIES) {
                     LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of abilities for the free version of the plugin! Skipping the ability identified as: " + key);
                     continue;
                 }
@@ -504,7 +507,11 @@ public final class ConfigManager {
                     continue;
                 }
 
-                AbilityParser.buildAbility(section, cache);
+                boolean register = AbilityParser.buildAbility(section, cache); //register ability, return false if something went wrong
+
+                if (register && (!this.generateDefaultConfigs || !ConfigManager.DEFAULT_ABILITIES.contains(key))) { //if it was registered and not a default ability, count it
+                    registered++;
+                }
             }
         }
 
@@ -521,14 +528,8 @@ public final class ConfigManager {
         LogUtil.log(LogUtil.Level.INFO, "Starting item initialization and parsing...");
 
         LinkedList<ItemNode> nodes = new LinkedList<>();
-        int maxCount = (this.generateDefaultConfigs) ? 18 : 12;
-        int currentCount = 0;
 
         for (File file : home.listFiles()) {
-            if (!InnovativeItems.isPluginPremium() && currentCount >= maxCount) {
-                break;
-            }
-
             YamlConfiguration configuration = new YamlConfiguration();
 
             try {
@@ -555,13 +556,7 @@ public final class ConfigManager {
                     continue;
                 }
 
-                if (!InnovativeItems.isPluginPremium() && currentCount >= maxCount) {
-                    LogUtil.logUnblocked(LogUtil.Level.WARNING, "You have reached the maximum amount of custom items for the free version of the plugin!");
-                    break;
-                }
-
                 nodes.add(new ItemNode(section));
-                currentCount++;
             }
         }
 

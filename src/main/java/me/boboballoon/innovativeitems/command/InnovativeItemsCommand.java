@@ -25,7 +25,7 @@ import java.util.List;
 public class InnovativeItemsCommand extends BaseCommand {
     private static final List<String> HELP_MESSAGE = Arrays.asList(StringUtils.center(TextUtil.format("&r&e&lAvailable Commands:"), 40),
             TextUtil.format("&r&e&l- /innovativeitems get <item> <amount>"),
-            TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <amount> <silent>"),
+            TextUtil.format("&r&e&l- /innovativeitems give <player> <item> <amount>"),
             TextUtil.format("&r&e&l- /innovativeitems debug <level>"),
             TextUtil.format("&r&e&l- /innovativeitems reload"),
             TextUtil.format("&r&e&l- /innovativeitems execute <ability> <player>"),
@@ -122,13 +122,7 @@ public class InnovativeItemsCommand extends BaseCommand {
             return;
         }
 
-        boolean silent = (args.length > 3 && args[3].equalsIgnoreCase("-s"));
-
         InventoryUtil.giveItem(target, customItem.getItemStack(), amount);
-
-        if (!silent) {
-            TextUtil.sendMessage(target, "&r&aAdded " + amount + " " + customItem.getIdentifier() + " to your inventory!");
-        }
 
         TextUtil.sendMessage(sender, "&r&aGave " + amount + " " + customItem.getIdentifier() + " to " + target.getName() + "!");
     }

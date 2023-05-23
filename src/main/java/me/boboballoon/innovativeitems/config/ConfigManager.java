@@ -480,6 +480,8 @@ public final class ConfigManager {
     private void loadAbilities(@NotNull File home, @NotNull InnovativeCache cache) {
         LogUtil.log(LogUtil.Level.INFO, "Starting ability initialization and parsing...");
 
+        int registered = 0;
+
         for (File file : home.listFiles()) {
             YamlConfiguration configuration = new YamlConfiguration();
 
@@ -492,8 +494,6 @@ public final class ConfigManager {
                 }
                 continue;
             }
-
-            int registered = 0;
 
             for (String key : configuration.getKeys(false)) {
                 if (!InnovativeItems.isPluginPremium() && registered >= ConfigManager.MAX_FREE_ABILITIES) {

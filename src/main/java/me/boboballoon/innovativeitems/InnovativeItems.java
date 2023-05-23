@@ -49,11 +49,12 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    1. Test new ability cap on free version
-    3. Add custom recipe support to item builder ui
+    1. Test UI on different server versions (1.17, 1.18, 1.19)
+    2. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
+    3. Add custom recipe support to item builder ui (with sub view)
     4. Add support so you can modify custom items as well as create them
-    5. Make ability creation gui
-    6. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
+    5. Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
+    6. Make ability creation gui
     7. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
      */
 
@@ -75,7 +76,7 @@ public final class InnovativeItems extends JavaPlugin {
      * @return a boolean that is true if the plugin is the premium version
      */
     public static boolean isPluginPremium() {
-        return true;
+        return false;
     }
 
     /**

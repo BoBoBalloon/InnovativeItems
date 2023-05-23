@@ -8,6 +8,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,10 +61,23 @@ public final class InnovativeCache {
             return;
         }
 
+        Runnable task = () -> {
+            for (Recipe recipe : item.getRecipes()) {
+                try {
+                    Bukkit.addRecipe(recipe);
+                } catch (IllegalStateException e) {
+                    LogUtil.log(LogUtil.Level.INFO, "It seems like there was a duplicate recipe registered for an item... Normally this is not a problem but if a bug occurs this might be the cause...");
+                    if (InnovativeItems.getInstance().getConfigManager().getDebugLevel() >= LogUtil.Level.DEV.getDebugLevel()) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
         if (Bukkit.isPrimaryThread()) {
-            item.getRecipes().forEach(Bukkit::addRecipe);
+            task.run();
         } else {
-            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> item.getRecipes().forEach(Bukkit::addRecipe));
+            Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), task);
         }
     }
 

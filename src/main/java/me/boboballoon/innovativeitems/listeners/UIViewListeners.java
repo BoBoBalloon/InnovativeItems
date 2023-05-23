@@ -28,11 +28,15 @@ public final class UIViewListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof InnovativeView)) {
+        if (event.getClickedInventory() == null || !(event.getInventory().getHolder() instanceof InnovativeView)) {
             return;
         }
 
         InnovativeView view = (InnovativeView) event.getInventory().getHolder();
+
+        if (!event.getClickedInventory().getHolder().equals(view)) {
+            return;
+        }
 
         event.setCancelled(true);
 

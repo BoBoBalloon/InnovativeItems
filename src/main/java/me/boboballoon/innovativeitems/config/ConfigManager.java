@@ -374,7 +374,7 @@ public final class ConfigManager {
 
             this.init();
 
-            LogUtil.log(LogUtil.Level.INFO, "Setting garbage collector settings to match config...");
+            LogUtil.log(LogUtil.Level.INFO, "Updating garbage collector settings to match config...");
 
             garbageCollector.setShouldUpdate(this.shouldUpdateLocal);
             garbageCollector.setShouldDelete(this.shouldDeleteLocal);

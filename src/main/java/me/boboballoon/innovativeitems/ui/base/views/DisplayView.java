@@ -35,7 +35,7 @@ public class DisplayView<T> extends PagedBorderedView {
      */
     @NotNull
     private static <T> List<List<InnovativeElement>> buildView(@NotNull Collection<T> collection, @NotNull Function<T, ItemStack> map, @NotNull BiConsumer<Player, T> clickAction) {
-        int pageSize = DisplayView.ROWS * 9;
+        int pageSize = 7 * (DisplayView.ROWS - 2); //simplified from: DisplayView.ROWS * 9 - (DisplayView.ROWS * 2) - (9 * 2) + 4
 
         int pageCount = (int) Math.ceil((double) collection.size() / pageSize); //round up to nearest integer
 
@@ -45,11 +45,11 @@ public class DisplayView<T> extends PagedBorderedView {
         for (int i = 0; i < pageCount; i++) {
             List<InnovativeElement> page = new ArrayList<>();
 
-            for (int j = 0; j < pageSize; j++) {
+            for (int j = 0; j < DisplayView.ROWS * 9; j++) {
                 int row = j / 9;
                 int col = j % 9;
 
-                if (!iterator.hasNext() || row == 0 || row == 8 || col == 0 || col == 8) {
+                if (!iterator.hasNext() || row == 0 || row == DisplayView.ROWS - 1 || col == 0 || col == 8) {
                     page.add(InnovativeElement.EMPTY);
                     continue;
                 }

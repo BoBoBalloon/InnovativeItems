@@ -341,7 +341,7 @@ public final class ItemBuilderView extends BorderedView {
             stack.setType(this.type);
             ItemMeta meta = stack.getItemMeta();
             meta.setDisplayName(TextUtil.format("&r&fMaterial: " + this.type.name()));
-            meta.setLore(Collections.singletonList(TextUtil.format("&r&fMiddle click to set the type to the item in your hand")));
+            meta.setLore(Collections.singletonList(TextUtil.format("&r&fShift-left click to set the type to the item in your hand")));
             meta.addItemFlags(ItemFlag.values());
             stack.setItemMeta(meta);
         }, null, player -> {
@@ -374,13 +374,13 @@ public final class ItemBuilderView extends BorderedView {
 
             InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
 
-            if (click != ClickType.MIDDLE && cache.getAbilitiesAmount() > 0) {
+            if (click != ClickType.SHIFT_LEFT && cache.getAbilitiesAmount() > 0) {
                 Collection<Ability> abilities = cache.getAbilityIdentifiers().stream().map(cache::getAbility).collect(Collectors.toSet());
 
                 DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, abilities, a -> {
                     ItemStack stack = new ItemStack(Material.NETHER_STAR);
                     ItemMeta meta = stack.getItemMeta();
-                    meta.setDisplayName(TextUtil.format("&r&f" + a.getIdentifier()));
+                    meta.setDisplayName(TextUtil.format("&r&fAbility: " + a.getIdentifier()));
                     stack.setItemMeta(meta);
                     return stack;
                 }, (p, a) -> {
@@ -410,7 +410,7 @@ public final class ItemBuilderView extends BorderedView {
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
             meta.setDisplayName(TextUtil.format(this.ability != null ? "&r&fAbility: " + this.ability : "&r&fAbility"));
-            meta.setLore(Arrays.asList(TextUtil.format("&r&fRight click to reset ability"), TextUtil.format("&r&fMiddle click to manually enter ability name")));
+            meta.setLore(Arrays.asList(TextUtil.format("&r&fRight click to reset ability"), TextUtil.format("&r&fShift-left click to manually enter ability name")));
             stack.setItemMeta(meta);
         }));
 
@@ -919,13 +919,13 @@ public final class ItemBuilderView extends BorderedView {
      * @param lore the lore of the
      * @param onLoad what code to execute when the item is loaded
      * @param onRightClick what code to execute when the item is right clicked
-     * @param onMiddleClick what code to execute when the item is middle clicked
+     * @param onShiftLeftClick what code to execute when the item is left clicked while shift is held
      * @param clickSuccess what code to execute when the variable should be changed
      * @param prompt What input to ask the user for
      * @return an instance of a view element
      */
     @NotNull
-    private InnovativeElement build(@NotNull Material material, @Nullable String display, @Nullable List<String> lore, @Nullable Consumer<ItemStack> onLoad, @Nullable Runnable onRightClick, @Nullable Consumer<Player> onMiddleClick, @NotNull BiConsumer<String, Player> clickSuccess, @NotNull String prompt) {
+    private InnovativeElement build(@NotNull Material material, @Nullable String display, @Nullable List<String> lore, @Nullable Consumer<ItemStack> onLoad, @Nullable Runnable onRightClick, @Nullable Consumer<Player> onShiftLeftClick, @NotNull BiConsumer<String, Player> clickSuccess, @NotNull String prompt) {
         return InnovativeElement.build(material, display, lore, (player, click) -> {
             if (onRightClick != null && click == ClickType.RIGHT) {
                 onRightClick.run();
@@ -933,8 +933,8 @@ public final class ItemBuilderView extends BorderedView {
                 return;
             }
 
-            if (onMiddleClick != null && click == ClickType.MIDDLE) {
-                onMiddleClick.accept(player);
+            if (onShiftLeftClick != null && click == ClickType.SHIFT_LEFT) {
+                onShiftLeftClick.accept(player);
                 this.setElements(ItemBuilderView.EMPTY);
                 return;
             }

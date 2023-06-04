@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions.context;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.context.interfaces.BlockContext;
 import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext;
@@ -90,9 +91,9 @@ public final class FlexibleContext extends RuntimeContext implements EntityConte
         }
 
         //get the first item in the cache
-        if (cache.getItemAmount() > 0) {
-            String identifier = cache.getItemIdentifiers().iterator().next();
-            return cache.getItem(identifier);
+        ImmutableList<CustomItem> items = cache.getItems();
+        if (items.size() > 0) {
+            return items.stream().findAny().get();
         }
 
         //no items exist to make a new dummy item that only exists in memory and register it

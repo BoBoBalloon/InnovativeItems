@@ -88,7 +88,7 @@ public class InnovativeItemsCommand extends BaseCommand {
      * A "command" that gives a player a custom item
      */
     @Subcommand("give")
-    @CommandCompletion("@players @valid-items @range:1-64 -s @nothing")
+    @CommandCompletion("@players @valid-items @range:1-64 @nothing")
     public void onGiveItem(CommandSender sender, String[] args) {
         if (args.length < 2 || args.length > 4) {
             TextUtil.sendMessage(sender, "&r&cYou have entered improper arguments to execute this command!");

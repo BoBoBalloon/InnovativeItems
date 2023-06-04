@@ -1,5 +1,6 @@
 package me.boboballoon.innovativeitems.functions;
 
+import com.google.common.collect.ImmutableList;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.functions.arguments.ExpectedVarArg;
 import me.boboballoon.innovativeitems.functions.condition.Condition;
@@ -17,21 +18,21 @@ import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that is responsible for holding all functions in memory during runtime
  */
 public final class FunctionManager {
-    private final Map<String, Keyword> keywords;
-    private final Map<String, Condition> conditions;
-    private final Map<String, AbilityTrigger<?, ?>> triggers;
+    private final List<Keyword> keywords;
+    private final List<Condition> conditions;
+    private final List<AbilityTrigger<?, ?>> triggers;
 
     public FunctionManager() {
-        this.keywords = new HashMap<>();
-        this.conditions = new HashMap<>();
-        this.triggers = new HashMap<>();
+        this.keywords = new ArrayList<>();
+        this.conditions = new ArrayList<>();
+        this.triggers = new ArrayList<>();
 
         //unblocked because debug level is null
         LogUtil.logUnblocked(LogUtil.Level.INFO, "Function manager initialized!");
@@ -57,7 +58,7 @@ public final class FunctionManager {
             return;
         }
 
-        this.keywords.put(identifier, keyword);
+        this.keywords.add(keyword);
     }
 
     /**
@@ -95,7 +96,7 @@ public final class FunctionManager {
             return;
         }
 
-        this.conditions.put(identifier, condition);
+        this.conditions.add(condition);
     }
 
     /**
@@ -175,7 +176,7 @@ public final class FunctionManager {
             return;
         }
 
-        this.triggers.put(trigger.getIdentifier(), trigger);
+        this.triggers.add(trigger);
 
         if (InnovativeItems.getInstance().isEnabled()) {
             FunctionManager.registerTriggerEvent(trigger);
@@ -231,7 +232,17 @@ public final class FunctionManager {
      */
     @Nullable
     public Keyword getKeyword(@NotNull String identifier) {
-        return this.keywords.get(identifier);
+        return this.keywords.stream().filter(keyword -> keyword.getIdentifier().equals(identifier)).findAny().orElse(null);
+    }
+
+    /**
+     * A method that returns all of the registered keywords
+     *
+     * @return all of the registered keywords
+     */
+    @NotNull
+    public ImmutableList<Keyword> getKeywords() {
+        return ImmutableList.copyOf(this.keywords);
     }
 
     /**
@@ -242,7 +253,17 @@ public final class FunctionManager {
      */
     @Nullable
     public Condition getCondition(@NotNull String identifier) {
-        return this.conditions.get(identifier);
+        return this.conditions.stream().filter(condition -> condition.getIdentifier().equals(identifier)).findAny().orElse(null);
+    }
+
+    /**
+     * A method that returns all of the registered conditions
+     *
+     * @return all of the registered conditions
+     */
+    @NotNull
+    public ImmutableList<Condition> getConditions() {
+        return ImmutableList.copyOf(this.conditions);
     }
 
     /**
@@ -253,8 +274,14 @@ public final class FunctionManager {
      */
     @Nullable
     public AbilityTrigger<?, ?> getAbilityTrigger(@NotNull String identifier) {
+        AbilityTrigger<?, ?> byIdentifier = null;
+
         //via regex
-        for (AbilityTrigger<?, ?> trigger : this.triggers.values()) {
+        for (AbilityTrigger<?, ?> trigger : this.triggers) {
+            if (trigger.getIdentifier().equals(identifier)) { //if regex is null it is set to the identifier so it acts as a literal regex
+                byIdentifier = trigger;
+            }
+
             if (trigger.getIdentifier().equals(trigger.getRegex())) { //if regex is null it is set to the identifier so it acts as a literal regex
                 continue;
             }
@@ -264,7 +291,17 @@ public final class FunctionManager {
             }
         }
 
-        return this.triggers.get(identifier);
+        return byIdentifier;
+    }
+
+    /**
+     * A method that returns all of the registered ability triggers
+     *
+     * @return all of the registered ability triggers
+     */
+    @NotNull
+    public ImmutableList<AbilityTrigger<?, ?>> getAbilityTriggers() {
+        return ImmutableList.copyOf(this.triggers);
     }
 
     /**
@@ -274,7 +311,7 @@ public final class FunctionManager {
      * @return a boolean that is true when said identifier is present
      */
     public boolean contains(@NotNull String identifier) {
-        return this.keywords.containsKey(identifier) || this.conditions.containsKey(identifier) || this.triggers.containsKey(identifier);
+        return this.keywords.stream().anyMatch(keyword -> keyword.getIdentifier().equals(identifier)) || this.conditions.stream().anyMatch(condition -> condition.getIdentifier().equals(identifier)) || this.triggers.stream().anyMatch(trigger -> trigger.getIdentifier().equals(identifier));
     }
 
     /**
@@ -291,7 +328,7 @@ public final class FunctionManager {
      * A method for internal use only that will reregister all event listeners for ability triggers
      */
     public void registerCachedTriggers() {
-        for (AbilityTrigger<?, ?> trigger : this.triggers.values()) {
+        for (AbilityTrigger<?, ?> trigger : this.triggers) {
             FunctionManager.registerTriggerEvent(trigger);
         }
     }

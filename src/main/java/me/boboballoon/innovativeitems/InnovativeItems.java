@@ -12,12 +12,14 @@ import me.boboballoon.innovativeitems.functions.keyword.builtin.*;
 import me.boboballoon.innovativeitems.items.GarbageCollector;
 import me.boboballoon.innovativeitems.items.InnovativeCache;
 import me.boboballoon.innovativeitems.items.ItemDefender;
+import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.*;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowFireListener;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowHitBlockTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.projectile.ArrowHitEntityTrigger;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.AbilityTimerManager;
 import me.boboballoon.innovativeitems.items.ability.trigger.builtin.timer.TimerTrigger;
+import me.boboballoon.innovativeitems.items.item.CustomItem;
 import me.boboballoon.innovativeitems.listeners.CraftingListener;
 import me.boboballoon.innovativeitems.listeners.ItemFieldListeners;
 import me.boboballoon.innovativeitems.listeners.UIViewListeners;
@@ -32,6 +34,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.stream.Collectors;
 
 /**
  * The main class of the innovative items plugin
@@ -49,6 +53,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    0. Test new Lists instead of maps AND filter feature on DisplayView to make sure they work
     1. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
     2. Add custom recipe support to item builder ui (with sub view)
     3. Add support so you can modify custom items as well as create them
@@ -136,8 +141,8 @@ public final class InnovativeItems extends JavaPlugin {
             }
         });
 
-        this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-items", context -> this.cache.getItemIdentifiers());
-        this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-abilities", context -> this.cache.getAbilityIdentifiers());
+        this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-items", context -> this.cache.getItems().stream().map(CustomItem::getIdentifier).collect(Collectors.toList()));
+        this.commandManager.getCommandCompletions().registerAsyncCompletion("valid-abilities", context -> this.cache.getAbilities().stream().map(Ability::getIdentifier).collect(Collectors.toList()));
 
         this.commandManager.registerCommand(new InnovativeItemsCommand());
 
@@ -170,8 +175,8 @@ public final class InnovativeItems extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        for (String id : this.cache.getItemIdentifiers()) {
-            ImmutableList<Recipe> recipes = this.cache.getItem(id).getRecipes();
+        for (CustomItem item : this.cache.getItems()) {
+            ImmutableList<Recipe> recipes = item.getRecipes();
 
             if (recipes == null) {
                 continue;
@@ -179,14 +184,14 @@ public final class InnovativeItems extends JavaPlugin {
 
             for (Recipe recipe : recipes) {
                 if (!(recipe instanceof Keyed)) {
-                    LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + id + " item does not implement the keyed interface!");
+                    LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, one of the recipes registered on the " + item.getIdentifier() + " item does not implement the keyed interface!");
                     continue;
                 }
 
                 Keyed keyed = (Keyed) recipe;
 
                 if (!Bukkit.removeRecipe(keyed.getKey())) {
-                    LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                    LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + item.getIdentifier() + " custom item!");
                 }
             }
         }

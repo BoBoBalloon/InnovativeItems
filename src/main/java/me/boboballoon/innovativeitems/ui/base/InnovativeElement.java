@@ -217,6 +217,19 @@ public class InnovativeElement {
      A util method used to easily build elements for views
      *
      * @param type the material type
+     * @param clickAction the code that should be executed when the code is ran (nullable)
+     * @param loadAction the code that should be executed when the item is loaded on the view (nullable)
+     * @return an element that reflects the input
+     */
+    @NotNull
+    public static InnovativeElement build(@NotNull Material type, @Nullable BiConsumer<Player, ClickType> clickAction, @Nullable Consumer<ItemStack> loadAction) {
+        return InnovativeElement.build(type, null, null, false, clickAction, loadAction);
+    }
+
+    /**
+     A util method used to easily build elements for views
+     *
+     * @param type the material type
      * @param display the display name (nullable)
      * @param clickAction the code that should be executed when the code is ran (nullable)
      * @return an element that reflects the input

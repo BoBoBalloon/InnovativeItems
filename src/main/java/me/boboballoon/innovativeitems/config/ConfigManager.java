@@ -344,8 +344,8 @@ public final class ConfigManager {
 
             InnovativeCache cache = plugin.getItemCache();
 
-            for (String id : cache.getItemIdentifiers()) {
-                ImmutableList<Recipe> recipes = cache.getItem(id).getRecipes();
+            for (CustomItem item : cache.getItems()) {
+                ImmutableList<Recipe> recipes = item.getRecipes();
 
                 if (recipes == null) {
                     continue;
@@ -354,14 +354,14 @@ public final class ConfigManager {
                 Bukkit.getScheduler().runTask(InnovativeItems.getInstance(), () -> {
                     for (Recipe recipe : recipes) {
                         if (!(recipe instanceof Keyed)) {
-                            LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, the recipe registered on the " + id + " item does not implement the keyed interface!");
+                            LogUtil.log(LogUtil.Level.DEV, "An internal error has occurred, the recipe registered on the " + item.getIdentifier() + " item does not implement the keyed interface!");
                             return;
                         }
 
                         Keyed keyed = (Keyed) recipe;
 
                         if (!Bukkit.removeRecipe(keyed.getKey())) {
-                            LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + id + " custom item!");
+                            LogUtil.log(LogUtil.Level.WARNING, "An error occurred while trying to unregister the custom crafting recipe for the " + item.getIdentifier() + " custom item!");
                         }
                     }
                 });

@@ -178,7 +178,7 @@ public final class ItemBuilderView extends BorderedView {
      * @param name the name of the file
      */
     private void write(@NotNull String name) throws IOException {
-        File file = new File(InnovativeItems.getInstance().getDataFolder().getPath() + "/items", name + ".yml");
+        File file = new File(InnovativeItems.getInstance().getDataFolder().getPath() + File.separator + "items", name + ".yml");
 
         if (!file.exists()) {
             file.createNewFile();
@@ -286,34 +286,6 @@ public final class ItemBuilderView extends BorderedView {
         }
 
         config.save(file);
-
-        /*
-        Bukkit.broadcastMessage("path = " + file.getPath()); //remove
-        Bukkit.broadcastMessage("identifier = " + this.identifier); //remove
-        Bukkit.broadcastMessage("material = " + this.type.name()); //remove
-        Bukkit.broadcastMessage("ability = " + this.ability); //remove
-        Bukkit.broadcastMessage("display = " + this.display); //remove
-        Bukkit.broadcastMessage("lore = " + this.lore); //remove
-        Bukkit.broadcastMessage("enchantments = " + this.enchantments); //remove
-        Bukkit.broadcastMessage("flags = " + this.flags); //remove
-        Bukkit.broadcastMessage("attributes = " + this.attributes); //remove
-        Bukkit.broadcastMessage("custom model data = " + this.customModelData); //remove
-        Bukkit.broadcastMessage("unbreakable = " + this.unbreakable); //remove
-        Bukkit.broadcastMessage("placeable = " + this.placeable); //remove
-        Bukkit.broadcastMessage("soulbound = " + this.soulbound); //remove
-        Bukkit.broadcastMessage("wearable = " + this.wearable); //remove
-        Bukkit.broadcastMessage("max durability = " + this.maxDurability); //remove
-        Bukkit.broadcastMessage("update item = " + this.updateItem); //remove
-
-        Bukkit.broadcastMessage("skull player name = " + this.playerName); //remove
-        Bukkit.broadcastMessage("skull base64 = " + this.base64); //remove
-        Bukkit.broadcastMessage("color = " + this.color); //remove
-        Bukkit.broadcastMessage("rgb = " + this.rgb); //remove
-        Bukkit.broadcastMessage("potion effects = " + this.potionEffects); //remove
-        Bukkit.broadcastMessage("banner pattern = " + this.bannerPatterns); //remove
-        Bukkit.broadcastMessage("flightTime = " + this.flightTime); //remove
-        Bukkit.broadcastMessage("firework effects = " + this.fireworkEffects); //remove
-         */
     }
 
     /**
@@ -374,10 +346,8 @@ public final class ItemBuilderView extends BorderedView {
 
             InnovativeCache cache = InnovativeItems.getInstance().getItemCache();
 
-            if (click != ClickType.SHIFT_LEFT && cache.getAbilitiesAmount() > 0) {
-                Collection<Ability> abilities = cache.getAbilityIdentifiers().stream().map(cache::getAbility).collect(Collectors.toSet());
-
-                DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, abilities, a -> {
+            if (click != ClickType.SHIFT_LEFT && cache.getAbilities().size() > 0) {
+                DisplayView<Ability> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, cache.getAbilities(), a -> {
                     ItemStack stack = new ItemStack(Material.NETHER_STAR);
                     ItemMeta meta = stack.getItemMeta();
                     meta.setDisplayName(TextUtil.format("&r&fAbility: " + a.getIdentifier()));
@@ -387,7 +357,7 @@ public final class ItemBuilderView extends BorderedView {
                     p.closeInventory();
                     this.ability = a.getIdentifier();
                     this.open(p);
-                });
+                }, (a, response) -> a.getIdentifier().startsWith(response));
                 selector.open(player);
                 return;
             }

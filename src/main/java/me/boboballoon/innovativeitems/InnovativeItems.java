@@ -53,7 +53,6 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    0. Test new Lists instead of maps AND filter feature on DisplayView to make sure they work
     1. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
     2. Add custom recipe support to item builder ui (with sub view)
     3. Add support so you can modify custom items as well as create them

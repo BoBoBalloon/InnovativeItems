@@ -30,9 +30,10 @@ public class DisplayView<T> extends PagedBorderedView {
     private String filterInput;
 
     private static final int ROWS = 5; //two for the border
+    private static final List<List<InnovativeElement>> EMPTY = empty();
 
     public DisplayView(@NotNull String title, @NotNull Collection<T> collection, @NotNull Function<T, ItemStack> map, @NotNull BiConsumer<Player, T> clickAction, @Nullable BiFunction<T, String, Boolean> filter) {
-        super(Material.GRAY_STAINED_GLASS_PANE, title, empty());
+        super(Material.GRAY_STAINED_GLASS_PANE, title, DisplayView.EMPTY);
         this.collection = collection;
         this.map = map;
         this.clickAction = clickAction;
@@ -41,13 +42,14 @@ public class DisplayView<T> extends PagedBorderedView {
         this.addOnSetPagesListener(page -> buildView());
 
         if (this.filter == null) {
+            this.setPages(DisplayView.EMPTY);
             return;
         }
 
         this.setBottomLeft(InnovativeElement.build(Material.HOPPER, (player, clickType) -> {
             if (clickType == ClickType.RIGHT) {
                 this.filterInput = null;
-                this.reload();
+                this.setPages(DisplayView.EMPTY);
                 return;
             }
 
@@ -60,7 +62,7 @@ public class DisplayView<T> extends PagedBorderedView {
                 }
 
                 this.filterInput = response;
-                this.reload();
+                this.setPages(DisplayView.EMPTY);
                 this.open(player);
             });
 
@@ -84,7 +86,8 @@ public class DisplayView<T> extends PagedBorderedView {
 
             stack.setItemMeta(meta);
         }));
-        this.reload();
+
+        this.setPages(DisplayView.EMPTY);
     }
 
     public DisplayView(@NotNull String title, @NotNull Collection<T> collection, @NotNull Function<T, ItemStack> map, @NotNull BiConsumer<Player, T> clickAction) {

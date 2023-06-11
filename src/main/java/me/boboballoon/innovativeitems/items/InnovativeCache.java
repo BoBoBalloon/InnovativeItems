@@ -13,21 +13,18 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * A class that is responsible for holding all items and abilities in memory during runtime
  */
 public final class InnovativeCache {
-    private final List<Ability> abilities;
-    private final List<CustomItem> items;
+    private final Map<String, Ability> abilities;
+    private final Map<String, CustomItem> items;
 
     public InnovativeCache() {
-        this.abilities = new ArrayList<>();
-        this.items = new ArrayList<>();
+        this.abilities = new LinkedHashMap<>(); //preserve order
+        this.items = new LinkedHashMap<>();
     }
 
     /**
@@ -43,7 +40,7 @@ public final class InnovativeCache {
             return;
         }
 
-        this.abilities.add(ability);
+        this.abilities.put(name, ability);
     }
 
     /**
@@ -59,7 +56,7 @@ public final class InnovativeCache {
             return;
         }
 
-        this.items.add(item);
+        this.items.put(name, item);
 
         if (item.getRecipes() == null) {
             return;
@@ -93,7 +90,7 @@ public final class InnovativeCache {
      */
     @Nullable
     public Ability getAbility(@NotNull String name) {
-        return this.abilities.stream().filter(ability -> ability.getIdentifier().equals(name)).findAny().orElse(null);
+        return this.abilities.get(name);
     }
 
     /**
@@ -104,7 +101,7 @@ public final class InnovativeCache {
      */
     @Nullable
     public CustomItem getItem(@NotNull String name) {
-        return this.items.stream().filter(item -> item.getIdentifier().equals(name)).findAny().orElse(null);
+        return this.items.get(name);
     }
 
     /**
@@ -187,7 +184,7 @@ public final class InnovativeCache {
      * @return a boolean that is true when said name is present
      */
     public boolean contains(@NotNull String name) {
-        return (this.abilities.stream().anyMatch(ability -> ability.getIdentifier().equals(name)) || this.items.stream().anyMatch(item -> item.getIdentifier().equals(name)));
+        return this.abilities.containsKey(name) || this.items.containsKey(name);
     }
 
     /**
@@ -197,7 +194,7 @@ public final class InnovativeCache {
      */
     @NotNull
     public ImmutableList<Ability> getAbilities() {
-        return ImmutableList.copyOf(this.abilities);
+        return ImmutableList.copyOf(this.abilities.values());
     }
 
     /**
@@ -207,6 +204,6 @@ public final class InnovativeCache {
      */
     @NotNull
     public ImmutableList<CustomItem> getItems() {
-        return ImmutableList.copyOf(this.items);
+        return ImmutableList.copyOf(this.items.values());
     }
 }

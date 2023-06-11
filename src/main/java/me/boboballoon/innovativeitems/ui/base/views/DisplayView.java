@@ -20,7 +20,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * A class that represents an paged view ui with a material border
+ * A class that represents a view that displays a collection to a user in the form of {@link InnovativeElement}
  */
 public class DisplayView<T> extends PagedBorderedView {
     private final Collection<T> collection;
@@ -103,7 +103,7 @@ public class DisplayView<T> extends PagedBorderedView {
     private List<List<InnovativeElement>> buildView() {
         int pageSize = 7 * (DisplayView.ROWS - 2); //simplified from: DisplayView.ROWS * 9 - (DisplayView.ROWS * 2) - (9 * 2) + 4
 
-        int except = (this.filter != null && this.filterInput != null) ? (int) this.collection.stream().filter(element -> this.filter.apply(element, this.filterInput)).count() : 0;
+        int except = (this.filter != null && this.filterInput != null) ? (int) this.collection.stream().filter(element -> !this.filter.apply(element, this.filterInput)).count() : 0;
         int pageCount = (int) Math.ceil((double) (this.collection.size() - except) / pageSize); //round up to nearest integer
 
         List<List<InnovativeElement>> pages = new ArrayList<>();

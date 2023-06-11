@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 public final class ItemBuilderView extends BorderedView {
     private static final int SIZE = 45;
     private static final List<InnovativeElement> EMPTY = ItemBuilderView.empty();
+    private static final List<Material> MATERIALS = Arrays.stream(Material.values()).filter(material -> !material.isAir() && material.isItem()).collect(Collectors.toList());
 
     //general items
     private final String identifier;
@@ -309,30 +310,57 @@ public final class ItemBuilderView extends BorderedView {
         }
 
         //material
-        elements.add(this.build(this.type, null, null, stack -> {
-            stack.setType(this.type);
-            ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format("&r&fMaterial: " + this.type.name()));
-            meta.setLore(Collections.singletonList(TextUtil.format("&r&fShift-left click to set the type to the item in your hand")));
-            meta.addItemFlags(ItemFlag.values());
-            stack.setItemMeta(meta);
-        }, null, player -> {
-            Material type = player.getInventory().getItemInMainHand().getType();
+        elements.add(InnovativeElement.build(this.type, null, null, (player, click) -> {
+            player.closeInventory();
 
-            if (type != Material.AIR) {
-                this.setType(type);
-            }
-        }, (response, player) -> {
-            Material material;
-            try {
-                material = Material.valueOf(response.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                TextUtil.sendMessage(player, "&r&cYou have entered an invalid material name!");
+            if (click != ClickType.SHIFT_LEFT) {
+                DisplayView<Material> selector = new DisplayView<>("&r&aCustom Item: &r&l" + this.identifier, ItemBuilderView.MATERIALS, material -> {
+                    ItemStack stack = new ItemStack(material);
+                    ItemMeta meta = stack.getItemMeta();
+                    meta.addItemFlags(ItemFlag.values());
+                    stack.setItemMeta(meta);
+                    return stack;
+                }, (p, material) -> {
+                    p.closeInventory();
+                    this.type = material;
+                    this.open(p);
+                }, (material, response) -> material.getKey().getKey().startsWith(response.toLowerCase()) || material.getKey().getKey().contains(response.toLowerCase()));
+                selector.open(player);
                 return;
             }
 
-            this.setType(material);
-        }, "Please enter the material name of " + this.identifier + "!"));
+            boolean success = ResponseUtil.input("Please enter the material name of " + this.identifier + "!" + " Type &r&ccancel&r&f to end the prompt.", player, response -> {
+                if (response == null) {
+                    this.open(player);
+                    return;
+                }
+
+                Material material;
+                try {
+                    material = Material.valueOf(response.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    TextUtil.sendMessage(player, "&r&cYou have entered an invalid material name!");
+                    this.open(player);
+                    return;
+                }
+
+                this.setType(material);
+                this.open(player);
+            });
+
+            if (!success) {
+                LogUtil.logUnblocked(LogUtil.Level.SEVERE, "An error occurred asking for user input for " + player.getName() +  ". Please contact the developer");
+                TextUtil.sendMessage(player, "&r&cAn internal error occurred.");
+                this.open(player);
+            }
+        }, stack -> {
+            stack.setType(this.type);
+            ItemMeta meta = stack.getItemMeta();
+            meta.setDisplayName(TextUtil.format("&r&fMaterial: " + this.type.name()));
+            meta.setLore(Collections.singletonList(TextUtil.format("&r&fShift-left click to manually input the &oraw&r&f material name")));
+            meta.addItemFlags(ItemFlag.values());
+            stack.setItemMeta(meta);
+        }));
 
         //ability
         elements.add(InnovativeElement.build(Material.NETHER_STAR, null, null, (player, click) -> {

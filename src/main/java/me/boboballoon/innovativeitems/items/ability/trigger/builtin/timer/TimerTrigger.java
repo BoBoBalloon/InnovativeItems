@@ -38,12 +38,14 @@ public class TimerTrigger extends AbilityTrigger<Event, RuntimeContext> {
 
     @Override
     @NotNull
+    @Deprecated
     public Player fromEvent(@NotNull Event event) {
         throw new UnsupportedOperationException("Congrats, you managed to execute an event that wasn't even registered! Yikes...");
     }
 
     @NotNull
     @Override
+    @Deprecated
     public RuntimeContext trigger(@NotNull Event event, @NotNull CustomItem item, @NotNull Ability ability) {
         throw new UnsupportedOperationException("Congrats, you managed to execute an event that wasn't even registered! Yikes...");
     }

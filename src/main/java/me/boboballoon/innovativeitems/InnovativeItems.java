@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    0. Test nearby keyword and once it works add it to docs and push update
     1. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
     2. Add custom recipe support to item builder ui (with sub view)
     3. Add support so you can modify custom items as well as create them
@@ -92,7 +94,8 @@ public final class InnovativeItems extends JavaPlugin {
                 new SetEquipmentSlotKeyword(), new LungeKeyword(), new RemoveEffectKeyword(), new SetBlockKeyword(),
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
                 new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword(),
-                new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword(), new SetInvulnerableKeyword(), new LoopKeyword());
+                new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword(), new SetInvulnerableKeyword(), new LoopKeyword(),
+                new NearbyKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),
@@ -201,7 +204,12 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the plugin
      */
+    @NotNull
     public static InnovativeItems getInstance() {
+        if (InnovativeItems.instance == null) {
+            throw new IllegalStateException("You cannot get the singleton instance of the plugin before the plugin is loaded!");
+        }
+
         return InnovativeItems.instance;
     }
 
@@ -210,6 +218,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the command manager
      */
+    @NotNull
     public PaperCommandManager getCommandManager() {
         return this.commandManager;
     }
@@ -219,6 +228,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the cache
      */
+    @NotNull
     public InnovativeCache getItemCache() {
         return this.cache;
     }
@@ -228,6 +238,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the config manager
      */
+    @NotNull
     public ConfigManager getConfigManager() {
         return this.configManager;
     }
@@ -237,6 +248,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the garbage collector
      */
+    @NotNull
     public GarbageCollector getGarbageCollector() {
         return this.garbageCollector;
     }
@@ -246,6 +258,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the keyword manager
      */
+    @NotNull
     public FunctionManager getFunctionManager() {
         return this.functionManager;
     }
@@ -255,6 +268,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the ability timer manager
      */
+    @NotNull
     public AbilityTimerManager getAbilityTimerManager() {
         return this.timerManager;
     }
@@ -264,6 +278,7 @@ public final class InnovativeItems extends JavaPlugin {
      *
      * @return the active instance of the item defender
      */
+    @NotNull
     public ItemDefender getItemDefender() {
         return this.itemDefender;
     }
@@ -271,7 +286,7 @@ public final class InnovativeItems extends JavaPlugin {
     /**
      * Dumb util method to avoid repetitive code
      */
-    private void registerListeners(Listener... listeners) {
+    private void registerListeners(@NotNull Listener... listeners) {
         for (Listener listener : listeners) {
             Bukkit.getPluginManager().registerEvents(listener, this);
         }

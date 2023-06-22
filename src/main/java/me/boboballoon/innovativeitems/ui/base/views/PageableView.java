@@ -52,8 +52,7 @@ public class PageableView extends InnovativeView {
      * @param pages all of the NEW different pages in this pageable view
      */
     public final void setPages(@NotNull List<List<InnovativeElement>> pages) {
-        int size = pages.get(0).size();
-        if (pages.size() < 1 || !pages.stream().allMatch(collection -> collection.size() == size)) {
+        if (pages.size() < 1 || !pages.stream().allMatch(collection -> collection.size() == pages.get(0).size())) {
             return;
         }
 

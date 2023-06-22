@@ -12,9 +12,15 @@ import me.boboballoon.innovativeitems.functions.context.interfaces.EntityContext
 import me.boboballoon.innovativeitems.functions.keyword.Keyword;
 import me.boboballoon.innovativeitems.items.ability.Ability;
 import me.boboballoon.innovativeitems.util.LogUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Class that represents a keyword in an ability config file that executes another ability on all nearby entities
@@ -48,18 +54,22 @@ public class NearbyKeyword extends Keyword {
             return;
         }
 
-        if (InnovativeItems.getInstance().getConfigManager().isStrict() && ability.getTrigger().getTargeters().stream().noneMatch(target -> target != FunctionTargeter.PLAYER && target != FunctionTargeter.ENTITY)) {
+        if (InnovativeItems.getInstance().getConfigManager().isStrict() && !ability.getTrigger().getTargeters().stream().allMatch(target -> target == FunctionTargeter.PLAYER || target == FunctionTargeter.ENTITY)) {
             LogUtil.log(LogUtil.Level.WARNING, "You cannot use the " + this.getIdentifier() + " keyword to execute an ability without the same targeters as the " + context.getAbilityName() + " ability!");
             return;
         }
 
-        origin.getWorld().getNearbyEntities(origin, range / 2, 256, range / 2, entity -> entity instanceof LivingEntity)
-                .stream()
-                .map(entity -> (LivingEntity) entity)
-                .forEach(entity -> {
-                    GenericEntityContext entityContext = new GenericEntityContext(context.getPlayer(), ability, entity);
-                    ability.execute(entityContext);
-                });
+        Future<Collection<Entity>> entities = Bukkit.getScheduler().callSyncMethod(InnovativeItems.getInstance(), () -> origin.getWorld().getNearbyEntities(origin, range, range, range, entity -> entity instanceof LivingEntity));
+
+        try {
+            entities.get()
+                    .stream()
+                    .filter(entity -> !context.getPlayer().equals(entity))
+                    .map(entity -> new GenericEntityContext(context.getPlayer(), ability, (LivingEntity) entity))
+                    .forEach(ability::execute);
+        } catch (InterruptedException | ExecutionException e) {
+            LogUtil.log(LogUtil.Level.WARNING, "There was an error getting all nearby entities on the " + this.getIdentifier() + " keyword on the " + context.getAbilityName() + " ability!");
+        }
     }
 
     @Override

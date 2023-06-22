@@ -14,7 +14,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -104,7 +108,7 @@ public class DisplayView<T> extends PagedBorderedView {
         int pageSize = 7 * (DisplayView.ROWS - 2); //simplified from: DisplayView.ROWS * 9 - (DisplayView.ROWS * 2) - (9 * 2) + 4
 
         int except = (this.filter != null && this.filterInput != null) ? (int) this.collection.stream().filter(element -> !this.filter.apply(element, this.filterInput)).count() : 0;
-        int pageCount = (int) Math.ceil((double) (this.collection.size() - except) / pageSize); //round up to nearest integer
+        int pageCount = Math.max(1, (int) Math.ceil((double) (this.collection.size() - except) / pageSize)); //round up to nearest integer
 
         List<List<InnovativeElement>> pages = new ArrayList<>();
         Iterator<T> iterator = (this.filter != null && this.filterInput != null) ? this.collection.stream().filter(element -> this.filter.apply(element, this.filterInput)).iterator() : this.collection.iterator();

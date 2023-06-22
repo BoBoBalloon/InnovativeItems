@@ -40,6 +40,7 @@ public class Ability {
      *
      * @return the name of the ability
      */
+    @NotNull
     public String getIdentifier() {
         return this.identifier;
     }
@@ -49,6 +50,7 @@ public class Ability {
      *
      * @return list of all the keywords of this ability in execution order
      */
+    @NotNull
     public ImmutableList<ActiveKeyword> getKeywords() {
         return this.keywords;
     }
@@ -58,6 +60,7 @@ public class Ability {
      *
      * @return the trigger that fires this ability
      */
+    @NotNull
     public AbilityTrigger<?, ?> getTrigger() {
         return this.trigger;
     }
@@ -67,6 +70,7 @@ public class Ability {
      *
      * @return list of all conditions that must be met for this ability to be executed
      */
+    @NotNull
     public ImmutableList<ActiveCondition> getConditions() {
         return this.conditions;
     }
@@ -76,6 +80,7 @@ public class Ability {
      *
      * @return the provided identifier for a given ability trigger (only useful for regex usage, where you need to parse this string)
      */
+    @NotNull
     public String getProvidedTriggerIdentifier() {
         return this.providedTriggerIdentifier;
     }

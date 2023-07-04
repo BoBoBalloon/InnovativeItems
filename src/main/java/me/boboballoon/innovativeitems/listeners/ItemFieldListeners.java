@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.util.armorevent.ArmorEquipEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,11 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A class that contains all listeners for custom item field options
@@ -33,9 +38,9 @@ public final class ItemFieldListeners implements Listener {
     /**
      * Listener used to check when a custom block is placed
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (!event.canBuild() || event.isCancelled()) {
+        if (!event.canBuild()) {
             return;
         }
 
@@ -105,12 +110,8 @@ public final class ItemFieldListeners implements Listener {
     /**
      * Listener used to check when a player equips armor
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerEquipArmor(ArmorEquipEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
         CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(event.getNewArmorPiece());
 
         if (item == null || item.isWearable() || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
@@ -122,18 +123,18 @@ public final class ItemFieldListeners implements Listener {
 
     /**
      * Listener used to determine when to calculate durability level on item
-     * (unbreaking is already accounted for due to the event wont event fire if unbreaking is triggered)
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerItemDamage(PlayerItemDamageEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
         ItemStack stack = event.getItem();
         CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
 
         if (item == null || stack.getItemMeta().isUnbreakable()) {
+            return;
+        }
+
+        if (stack.getItemMeta().hasEnchant(Enchantment.DURABILITY) && Math.random() < 1 - (1.0 / (1 + stack.getItemMeta().getEnchantLevel(Enchantment.DURABILITY)))) {
+            event.setCancelled(true);
             return;
         }
 
@@ -155,12 +156,8 @@ public final class ItemFieldListeners implements Listener {
     /**
      * Listener used to make sure that the mending enchantment works with custom durability
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerItemMend(PlayerItemMendEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
         ItemStack stack = event.getItem();
         CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
 

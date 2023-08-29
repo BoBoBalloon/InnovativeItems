@@ -13,7 +13,12 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.ResponseUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -33,7 +38,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -151,8 +161,8 @@ public final class ItemBuilderView extends BorderedView {
                     ConfigManager configManager = InnovativeItems.getInstance().getConfigManager();
                     try {
                         this.write(response);
-                        TextUtil.sendMessage(player, "&r&aFinished creating " + this.identifier + "! Starting asynchronous reload in five seconds!");
-                        configManager.reload();
+                        TextUtil.sendMessage(player, "&r&aFinished creating " + this.identifier + "!");
+                        configManager.reload(player);
                     } catch (Exception e) {
                         TextUtil.sendMessage(player, "&r&cSomething went wrong when we tried to save your item to your server's disk...");
                         LogUtil.logUnblocked(LogUtil.Level.SEVERE, "A " + e.getClass().getSimpleName() + " was encountered when trying to save your data to disk!");

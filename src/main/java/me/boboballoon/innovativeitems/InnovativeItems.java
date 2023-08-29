@@ -76,6 +76,7 @@ import me.boboballoon.innovativeitems.functions.keyword.builtin.SetPitchKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.SetYawKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.ShootProjectileKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.SudoKeyword;
+import me.boboballoon.innovativeitems.functions.keyword.builtin.SummonKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.SwitcherooKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.TeleportKeyword;
 import me.boboballoon.innovativeitems.functions.keyword.builtin.TeleportToKeyword;
@@ -139,14 +140,12 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
-    -1. Summon keyword that summons mobs at targeters
     0. (Back-burner) Merge ability init and item init into one so we can find what abilities require items and what items require abilities and send error messages on reload instead of during runtime
     1. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
     2. Add custom recipe support to item builder ui (with sub view)
     3. Add support so you can modify custom items as well as create them
-    4. (LOOK INTO THIS FIRST, MAYBE AN UPDATE CAME OUT SINCE I AM NOT GETTING THIS ERROR ANYMORE) Get rid of ACF and rewrite commands so they are just with the bukkit command api (ACF throws deprecation warnings on newer versions and customers will spaz out)
-    5. Make ability creation gui
-    6. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
+    4. Make ability creation gui
+    5. Add item field that makes it impossible for user to drop with their hand (add field to gui as well)
      */
 
     /**
@@ -181,7 +180,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new SetBlockAtKeyword(), new SetExperienceKeyword(), new AddExperienceKeyword(), new ModifyDurabilityKeyword(),
                 new JsonMessageKeyword(), new GillsKeyword(), new SetYawKeyword(), new SetPitchKeyword(),
                 new AddScoreboardTagKeyword(), new RemoveScoreboardTagKeyword(), new SetInvulnerableKeyword(), new LoopKeyword(),
-                new NearbyKeyword());
+                new NearbyKeyword(), new SummonKeyword());
 
         this.functionManager.registerConditions(new IsClearWeatherCondition(), new IsInBiomeCondition(), new IsHeathAtCondition(), new IsTimeCondition(),
                 new IsPermissionPresentCondition(), new IsGamemodeCondition(), new IsPlayerCondition(), new IsSneakingCondition(),

@@ -1,7 +1,13 @@
 package me.boboballoon.innovativeitems.command;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CatchUnknown;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import me.boboballoon.innovativeitems.InnovativeItems;
 import me.boboballoon.innovativeitems.config.ConfigManager;
 import me.boboballoon.innovativeitems.items.ability.Ability;
@@ -160,10 +166,7 @@ public class InnovativeItemsCommand extends BaseCommand {
     @Subcommand("reload")
     @CommandCompletion("@nothing")
     public void onReload(CommandSender sender) {
-        if (sender instanceof Player) {
-            TextUtil.sendMessage(sender, "&r&aStarting asynchronous reload in five seconds!");
-        }
-        InnovativeItems.getInstance().getConfigManager().reload();
+        InnovativeItems.getInstance().getConfigManager().reload(sender);
     }
 
     /**

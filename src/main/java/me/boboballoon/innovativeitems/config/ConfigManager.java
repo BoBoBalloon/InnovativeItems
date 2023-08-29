@@ -11,6 +11,7 @@ import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,7 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * A class used to cache and parse config files
@@ -321,10 +327,12 @@ public final class ConfigManager {
 
     /**
      * A method used to clear the cache and reload all elements
+     *
+     * @param sender the user who initiated the reload
      */
-    public void reload() {
-        LogUtil.logUnblocked(LogUtil.Level.INFO, "Starting plugin reload in five seconds, some bugs may occur during this time...");
-        Bukkit.getScheduler().runTaskLaterAsynchronously(InnovativeItems.getInstance(), () -> {
+    public void reload(@NotNull CommandSender sender) {
+        TextUtil.sendMessage(sender, "&r&aStarting plugin reload, some bugs may occur during this time...");
+        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> {
             InnovativeItems plugin = InnovativeItems.getInstance();
 
             LogUtil.log(LogUtil.Level.INFO, "Temporarily disabling garbage collector...");
@@ -394,8 +402,8 @@ public final class ConfigManager {
 
             LogUtil.log(LogUtil.Level.INFO, "Item defender settings now match config!");
 
-            LogUtil.logUnblocked(LogUtil.Level.INFO, "Plugin reload complete!");
-        }, 100L);
+            TextUtil.sendMessage(sender, "&r&aPlugin reload complete!");
+        });
     }
 
     /**
@@ -565,7 +573,7 @@ public final class ConfigManager {
         }
 
         while (!nodes.isEmpty()) {
-            Optional<ItemNode> current = nodes.stream().filter(node -> node.getDependantItems().size() <= 0).findAny();
+            Optional<ItemNode> current = nodes.stream().filter(node -> node.getDependantItems().size() == 0).findAny();
 
             if (!current.isPresent()) {
                 LogUtil.logUnblocked(LogUtil.Level.SEVERE, "A cycle has been found in the heap of custom items! You are not allowed to have two items that depend on each other or an item that depends on itself as that would cause an infinite loop!");

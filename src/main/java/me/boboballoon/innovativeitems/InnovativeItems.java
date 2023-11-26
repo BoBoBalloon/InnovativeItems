@@ -26,6 +26,7 @@ import me.boboballoon.innovativeitems.functions.condition.builtin.IsHeathAtCondi
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsHeathPercentAtCondition;
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsInBiomeCondition;
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsInWorldCondition;
+import me.boboballoon.innovativeitems.functions.condition.builtin.IsLookingCondition;
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsPermissionPresentCondition;
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsPlayerCondition;
 import me.boboballoon.innovativeitems.functions.condition.builtin.IsSneakingCondition;
@@ -188,7 +189,7 @@ public final class InnovativeItems extends JavaPlugin {
                 new IsBlockAtCondition(), new IsFacingCondition(), new IsFallingCondition(), new IsInWorldCondition(),
                 new IsUsingItemCondition(), new IsUsingCustomItemCondition(), new IsExperienceAtCondition(), new IsHeathPercentAtCondition(),
                 new HasPotionEffectCondition(), new IsBurningCondition(), new IsCoordinateCondition(), new HasScoreboardTagCondition(),
-                new ChanceCondition(), new HasLineOfSightCondition());
+                new ChanceCondition(), new HasLineOfSightCondition(), new IsLookingCondition());
 
         //dependent functions
 

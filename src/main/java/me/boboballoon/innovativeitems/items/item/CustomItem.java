@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public final class CustomItem {
     private final String identifier;
-    private final Ability ability;
+    private final ImmutableList<Ability> abilities;
     private final ItemStack item;
     private final boolean placeable;
     private final boolean soulbound;
@@ -32,13 +32,13 @@ public final class CustomItem {
     private final boolean updateItem;
     private final ImmutableList<Recipe> recipes;
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
-        this(identifier, ability, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, material.getMaxDurability() != 0 && maxDurability > 0 ? maxDurability : material.getMaxDurability() != 0 ? material.getMaxDurability() : 0), placeable, soulbound, wearable, maxDurability, updateItem, recipes);
+    public CustomItem(@NotNull String identifier, @NotNull ImmutableList<Ability> abilities, @NotNull Material material, @Nullable String itemName, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchantments, @Nullable List<ItemFlag> flags, @Nullable Multimap<Attribute, AttributeModifier> attributes, @Nullable Integer customModelData, boolean unbreakable, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
+        this(identifier, abilities, CustomItem.generateItem(identifier, material, itemName, lore, enchantments, flags, attributes, customModelData, unbreakable, material.getMaxDurability() != 0 && maxDurability > 0 ? maxDurability : material.getMaxDurability() != 0 ? material.getMaxDurability() : 0), placeable, soulbound, wearable, maxDurability, updateItem, recipes);
     }
 
-    public CustomItem(@NotNull String identifier, @Nullable Ability ability, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
+    public CustomItem(@NotNull String identifier, @NotNull ImmutableList<Ability> abilities, @NotNull ItemStack item, boolean placeable, boolean soulbound, boolean wearable, int maxDurability, boolean updateItem, @Nullable ImmutableList<Recipe> recipes) {
         this.identifier = identifier;
-        this.ability = ability;
+        this.abilities = abilities;
         this.item = item;
         this.placeable = placeable;
         this.soulbound = soulbound;
@@ -58,13 +58,13 @@ public final class CustomItem {
     }
 
     /**
-     * A method used to get the ability associated with this custom item (can be null if nothing is present)
+     * A method used to get the abilities on this item
      *
-     * @return the ability associated with this custom item (can be null if nothing is present)
+     * @return the abilities linked to this item
      */
-    @Nullable
-    public Ability getAbility() {
-        return this.ability;
+    @NotNull
+    public ImmutableList<Ability> getAbilities() {
+        return this.abilities;
     }
 
     /**

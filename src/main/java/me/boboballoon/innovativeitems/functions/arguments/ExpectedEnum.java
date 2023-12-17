@@ -69,4 +69,15 @@ public class ExpectedEnum<T extends Enum<T>> implements ExpectedArguments {
     public Consumer<FunctionContext> getOnError() {
         return this.onError;
     }
+
+    @Override
+    public boolean validate(@NotNull String rawValue) {
+        for (T member : this.clazz.getEnumConstants()) {
+            if (rawValue.equalsIgnoreCase(member.name())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

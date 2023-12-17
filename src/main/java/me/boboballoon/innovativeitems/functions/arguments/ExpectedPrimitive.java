@@ -99,24 +99,49 @@ public class ExpectedPrimitive implements ExpectedArguments {
         return this.condition.test(value) ? value : null;
     }
 
+    @Override
+    public boolean validate(@NotNull String rawValue) {
+        return this.primitive.validate(rawValue);
+    }
+
     /**
      * A class used to list all possible primitive types to be parsed
      */
     public enum PrimitiveType {
-        BYTE(Byte.class), //all numerical types must be the wrappers due to reflection usage on the InitializationUtil.initNumber() method
-        SHORT(Short.class),
-        INTEGER(Integer.class),
-        LONG(Long.class),
-        FLOAT(Float.class),
-        DOUBLE(Double.class),
-        BOOLEAN(boolean.class),
-        CHAR(char.class),
-        STRING(String.class);
+        BYTE(Byte.class, rawValue -> {
+            Byte.parseByte(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }), //all numerical types must be the wrappers due to reflection usage on the InitializationUtil.initNumber() method
+        SHORT(Short.class, rawValue -> {
+            Short.parseShort(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }),
+        INTEGER(Integer.class, rawValue -> {
+            Integer.parseInt(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }),
+        LONG(Long.class, rawValue -> {
+            Long.parseLong(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }),
+        FLOAT(Float.class, rawValue -> {
+            Float.parseFloat(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }),
+        DOUBLE(Double.class, rawValue -> {
+            Double.parseDouble(rawValue); //if it fails it is caught by try-catch block
+            return true;
+        }),
+        BOOLEAN(boolean.class, rawValue -> rawValue.equalsIgnoreCase("true") || rawValue.equalsIgnoreCase("false")),
+        CHAR(char.class, rawValue -> rawValue.length() == 1),
+        STRING(String.class, null);
 
         private final Class<?> clazz;
+        private final Predicate<String> verify;
 
-        PrimitiveType(Class<?> clazz) {
+        PrimitiveType(@NotNull Class<?> clazz, @Nullable Predicate<String> verify) {
             this.clazz = clazz;
+            this.verify = verify;
         }
 
         /**
@@ -124,8 +149,27 @@ public class ExpectedPrimitive implements ExpectedArguments {
          *
          * @return what class each type represents
          */
+        @NotNull
         public Class<?> getRepresentingClass() {
             return this.clazz;
+        }
+
+        /**
+         * A method to check if the provided rawValue can be parsed as the type
+         *
+         * @param rawValue rawValue
+         * @return if the provided rawValue can be parsed as the type
+         */
+        public boolean validate(@NotNull String rawValue) {
+            if (this.verify == null) {
+                return true;
+            }
+
+            try {
+                return this.verify.test(rawValue);
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

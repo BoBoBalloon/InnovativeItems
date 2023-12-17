@@ -141,6 +141,8 @@ public final class InnovativeItems extends JavaPlugin {
     /*
     TODO LIST:
     REMEMBER TO CHANGE THE isPluginPremium METHOD
+    -2. Multiple abilities on items
+    -1. Add armor trims to advanced options (work on reflection util to make this work)
     0. (Back-burner) Merge ability init and item init into one so we can find what abilities require items and what items require abilities and send error messages on reload instead of during runtime
     1. Add custom sub views to item builder so players do not have to input data with chat as much, mostly do it via other guis
     2. Add custom recipe support to item builder ui (with sub view)

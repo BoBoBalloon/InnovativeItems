@@ -71,6 +71,11 @@ public class ExpectedTargeters implements ExpectedArguments {
     }
 
     @Override
+    public boolean validate(@NotNull String rawValue) {
+        return FunctionTargeter.getFromIdentifier(rawValue) != null;
+    }
+
+    @Override
     @NotNull
     public Consumer<FunctionContext> getOnError() {
         return context -> {};

@@ -60,14 +60,10 @@ public class AbilityTimerClock extends BukkitRunnable {
                     continue;
                 }
 
-                Ability ability = item.getAbility();
-
-                if (ability == null || !this.abilities.contains(ability)) {
-                    continue;
-                }
-
-                if (ability.getTrigger() instanceof TimerTrigger) {
-                    ability.execute(player);
+                for (Ability ability : item.getAbilities()) {
+                    if (this.abilities.contains(ability) && ability.getTrigger() instanceof TimerTrigger) {
+                        ability.execute(player);
+                    }
                 }
             }
         }

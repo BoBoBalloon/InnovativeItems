@@ -12,7 +12,11 @@ import me.boboballoon.innovativeitems.items.item.RecipeType;
 import me.boboballoon.innovativeitems.util.LogUtil;
 import me.boboballoon.innovativeitems.util.RevisedEquipmentSlot;
 import me.boboballoon.innovativeitems.util.TextUtil;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Banner;
@@ -20,8 +24,22 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.*;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.CampfireRecipe;
+import org.bukkit.inventory.CookingRecipe;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.SmokingRecipe;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +47,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * A class built for parsing configuration sections and convert into CustomItem objects
@@ -77,7 +102,7 @@ public final class ItemParser {
             return null;
         }
 
-        Ability ability = section.isString("ability") || section.isConfigurationSection("ability") ? ItemParser.getAbility(section, name) : null;
+        ImmutableList<Ability> abilities = section.isString("ability") || section.isConfigurationSection("ability") || section.isList("ability") ? ItemParser.getAbilities(section, name) : null;
 
         String displayName = section.isString("display-name") ? TextUtil.format(section.getString("display-name")) : null;
 
@@ -107,7 +132,7 @@ public final class ItemParser {
 
         ImmutableList<Recipe> recipes = parseRecipe && section.isConfigurationSection("recipes") ? ItemParser.getRecipe(section, name, underlying) : null;
 
-        return new CustomItem(name, ability, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipes);
+        return new CustomItem(name, abilities, underlying, placeable, soulbound, wearable, maxDurability, updateItem, recipes);
     }
 
     /**
@@ -159,7 +184,7 @@ public final class ItemParser {
     /**
      * Get the ability field from an item config section
      */
-    private static Ability getAbility(ConfigurationSection section, String itemName) {
+    private static ImmutableList<Ability> getAbilities(ConfigurationSection section, String itemName) {
         Ability ability = null;
         String abilityName = null;
 
@@ -179,11 +204,29 @@ public final class ItemParser {
             return null;
         }
 
-        if (ability == null) {
-            LogUtil.log(LogUtil.Level.WARNING, "Could not find or parse ability with the name " + abilityName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+        if (section.isList("ability")) {
+            List<Ability> abilities = new ArrayList<>();
+
+            for (String raw : section.getStringList("ability")) {
+                Ability element = InnovativeItems.getInstance().getItemCache().getAbility(raw);
+
+                if (element == null) {
+                    LogUtil.log(LogUtil.Level.WARNING, "Could not find or parse ability with the name " + raw + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+                    continue;
+                }
+
+                abilities.add(element);
+            }
+
+            return ImmutableList.copyOf(abilities);
         }
 
-        return ability;
+        if (ability == null) {
+            LogUtil.log(LogUtil.Level.WARNING, "Could not find or parse ability with the name " + abilityName + " while parsing the item by the name of " + itemName + " during item initialization and parsing stage!");
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.of(ability);
     }
 
     /**

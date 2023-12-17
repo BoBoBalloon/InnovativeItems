@@ -59,7 +59,7 @@ public final class ItemBuilderView extends BorderedView {
     //general items
     private final String identifier;
     private Material type;
-    private String ability;
+    private final List<String> abilities;
     private String display;
     private final List<String> lore;
     private final List<EnchantingData> enchantments;
@@ -105,7 +105,7 @@ public final class ItemBuilderView extends BorderedView {
         //general item stuff
         this.identifier = identifier;
         this.type = Material.DIRT;
-        this.ability = null;
+        this.abilities = new ArrayList<>();
         this.display = null;
         this.lore = new ArrayList<>();
         this.enchantments = new ArrayList<>();
@@ -205,8 +205,8 @@ public final class ItemBuilderView extends BorderedView {
 
         config.set(this.identifier + ".material", this.type.name());
 
-        if (this.ability != null) {
-            config.set(this.identifier + ".ability", this.ability);
+        if (!this.abilities.isEmpty()) {
+            config.set(this.identifier + ".ability", this.abilities.size() == 1 ? this.abilities.get(0) : this.abilities);
         }
 
         if (this.display != null) {
@@ -373,9 +373,9 @@ public final class ItemBuilderView extends BorderedView {
         }));
 
         //ability
-        elements.add(InnovativeElement.build(Material.NETHER_STAR, null, null, (player, click) -> {
+        elements.add(InnovativeElement.build(Material.NETHER_STAR, TextUtil.format("&r&fAbilities"), null, (player, click) -> {
             if (click == ClickType.RIGHT) {
-                this.ability = null;
+                this.abilities.clear();
                 this.setElements(ItemBuilderView.EMPTY);
                 return;
             }
@@ -391,9 +391,11 @@ public final class ItemBuilderView extends BorderedView {
                     meta.setDisplayName(TextUtil.format("&r&fAbility: " + a.getIdentifier()));
                     stack.setItemMeta(meta);
                     return stack;
-                }, (p, a) -> {
+                }, (p, ability) -> {
                     p.closeInventory();
-                    this.ability = a.getIdentifier();
+                    if (!this.abilities.contains(ability.getIdentifier())) {
+                        this.abilities.add(ability.getIdentifier());
+                    }
                     this.open(p);
                 }, (a, response) -> a.getIdentifier().startsWith(response));
                 selector.open(player);
@@ -406,7 +408,10 @@ public final class ItemBuilderView extends BorderedView {
                     return;
                 }
 
-                this.ability = response;
+                if (!this.abilities.contains(response)) {
+                    this.abilities.add(response);
+                }
+
                 this.open(player);
             });
 
@@ -417,8 +422,14 @@ public final class ItemBuilderView extends BorderedView {
             }
         }, stack -> {
             ItemMeta meta = stack.getItemMeta();
-            meta.setDisplayName(TextUtil.format(this.ability != null ? "&r&fAbility: " + this.ability : "&r&fAbility"));
-            meta.setLore(Arrays.asList(TextUtil.format("&r&fRight click to reset ability"), TextUtil.format("&r&fShift-left click to manually enter ability name")));
+            List<String> lore = new ArrayList<>(3 + this.abilities.size());
+            lore.addAll(Arrays.asList(TextUtil.format("&r&fRight click to reset abilities"), TextUtil.format("&r&fShift-left click to manually enter ability name"), ""));
+
+            for (String ability : this.abilities) {
+                lore.add(TextUtil.format("&r&f" + ability));
+            }
+
+            meta.setLore(lore);
             stack.setItemMeta(meta);
         }));
 

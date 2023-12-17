@@ -372,16 +372,16 @@ public final class FunctionManager {
                     continue;
                 }
 
-                Ability ability = item.getAbility();
+                for (Ability ability : item.getAbilities()) {
+                    if (ability == null || ability.getTrigger() != trigger) {
+                        continue;
+                    }
 
-                if (ability == null || ability.getTrigger() != trigger) {
-                    continue;
-                }
+                    RuntimeContext context = trigger.trigger(event, item, ability);
 
-                RuntimeContext context = trigger.trigger(event, item, ability);
-
-                if (context != null) {
-                    Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
+                    if (context != null) {
+                        Bukkit.getScheduler().runTaskAsynchronously(InnovativeItems.getInstance(), () -> ability.execute(context));
+                    }
                 }
             }
         }), InnovativeItems.getInstance());

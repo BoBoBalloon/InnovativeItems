@@ -67,10 +67,10 @@ public final class ArrowFireListener implements Listener {
      * @param uuid the uuid of the projectile
      * @param stack the backing itemstack
      */
-    private void register(@NotNull UUID uuid, @NotNull ItemStack stack) {
+    private void register(@NotNull UUID uuid, @Nullable ItemStack stack) {
         CustomItem item = InnovativeItems.getInstance().getItemCache().fromItemStack(stack);
 
-        if (item == null || item.getAbility() == null || !(item.getAbility().getTrigger() instanceof ArrowHitEntityTrigger || item.getAbility().getTrigger() instanceof ArrowHitBlockTrigger)) {
+        if (item == null || item.getAbilities().stream().noneMatch(ability -> ability.getTrigger() instanceof ArrowHitEntityTrigger || ability.getTrigger() instanceof ArrowHitBlockTrigger)) {
             return;
         }
 

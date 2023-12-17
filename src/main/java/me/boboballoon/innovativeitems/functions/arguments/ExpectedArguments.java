@@ -42,4 +42,14 @@ public interface ExpectedArguments {
     default Consumer<FunctionContext> getOnError() {
         return DEFAULT_ERROR;
     }
+
+    /**
+     * A method used to check if the provided raw value can be parsed further (NOT ALWAYS ACCURATE AS DEFAULT IS TRUE)
+     *
+     * @param rawValue the raw value
+     * @return if the provided raw value can be parsed further (NOT ALWAYS ACCURATE AS DEFAULT IS TRUE)
+     */
+    default boolean validate(@NotNull String rawValue) {
+        return true;
+    }
 }

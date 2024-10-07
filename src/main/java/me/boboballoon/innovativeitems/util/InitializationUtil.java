@@ -1,8 +1,8 @@
 package me.boboballoon.innovativeitems.util;
 
-import org.apache.commons.lang.IllegalClassException;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -21,16 +21,15 @@ public final class InitializationUtil {
      * @param text the provided text
      * @param clazz the class of the number
      * @return the parsed value of the string as the provided number type
-     * @throws IllegalClassException when the provided clazz argument is not a supported number
      * @throws NumberFormatException when the provided text argument cannot be parsed into the provided clazz type
      */
     @NotNull
-    public static <T extends Number> T initNumber(@NotNull String text, @NotNull Class<T> clazz) throws IllegalClassException, NumberFormatException {
+    public static <T extends Number> T initNumber(@NotNull String text, @NotNull Class<T> clazz) throws IllegalClassFormatException, NumberFormatException {
         try {
             Method method = clazz.getMethod("valueOf", String.class);
             return (T) method.invoke(null, text);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalClassException("Was expecting a class that extends number and was a primitive data type wrapper!");
+            throw new IllegalClassFormatException("Was expecting a class that extends number and was a primitive data type wrapper!");
         }
     }
 

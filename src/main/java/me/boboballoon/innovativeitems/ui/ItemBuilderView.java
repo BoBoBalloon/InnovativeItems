@@ -759,7 +759,7 @@ public final class ItemBuilderView extends BorderedView {
                 lore.addAll(this.potionEffects.stream().map(effect -> TextUtil.format("&r&f" + effect.getType().getName() + " " + effect.getAmplifier())).collect(Collectors.toList()));
 
                 meta.setLore(lore);
-                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES); //TODO proper potion effect hiding
                 stack.setItemMeta(meta);
             }, this.potionEffects::clear, (response, player) -> {
                 String[] split = response.split(",");
@@ -805,7 +805,7 @@ public final class ItemBuilderView extends BorderedView {
                 lore.addAll(this.bannerPatterns.stream().map(pattern -> TextUtil.format("&r&f" + pattern.getPattern().name().charAt(0) + pattern.getPattern().name().substring(1).toLowerCase())).collect(Collectors.toList()));
 
                 meta.setLore(lore);
-                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES); //TODO proper potion effect hiding
                 stack.setItemMeta(meta);
             }, this.bannerPatterns::clear, (response, player) -> {
                 String[] split = response.split(",");

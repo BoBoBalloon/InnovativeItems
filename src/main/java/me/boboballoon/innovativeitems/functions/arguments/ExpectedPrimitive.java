@@ -7,6 +7,7 @@ import me.boboballoon.innovativeitems.util.TextUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -83,7 +84,7 @@ public class ExpectedPrimitive implements ExpectedArguments {
      */
     @Nullable
     @Override
-    public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) {
+    public Object getValue(@NotNull String rawValue, @NotNull FunctionContext context) throws IllegalClassFormatException {
         Object value;
 
         if (this.primitive == PrimitiveType.STRING) {

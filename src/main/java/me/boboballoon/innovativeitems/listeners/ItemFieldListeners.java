@@ -133,7 +133,7 @@ public final class ItemFieldListeners implements Listener {
             return;
         }
 
-        if (stack.getItemMeta().hasEnchant(Enchantment.DURABILITY) && Math.random() < 1 - (1.0 / (1 + stack.getItemMeta().getEnchantLevel(Enchantment.DURABILITY)))) {
+        if (stack.getItemMeta().hasEnchant(Enchantment.UNBREAKING) && Math.random() < 1 - (1.0 / (1 + stack.getItemMeta().getEnchantLevel(Enchantment.UNBREAKING)))) {
             event.setCancelled(true);
             return;
         }

@@ -20,6 +20,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,6 +28,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,6 +38,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.naming.Name;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -759,7 +762,16 @@ public final class ItemBuilderView extends BorderedView {
                 lore.addAll(this.potionEffects.stream().map(effect -> TextUtil.format("&r&f" + effect.getType().getName() + " " + effect.getAmplifier())).collect(Collectors.toList()));
 
                 meta.setLore(lore);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES); //TODO proper potion effect hiding
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+                meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+                AttributeModifier attributeModifier = new AttributeModifier(
+                        new NamespacedKey(InnovativeItems.getInstance(), "hidePotionEffect"),
+                        0,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.ANY);
+                meta.addAttributeModifier(Attribute.GENERIC_LUCK, attributeModifier);
                 stack.setItemMeta(meta);
             }, this.potionEffects::clear, (response, player) -> {
                 String[] split = response.split(",");
@@ -805,7 +817,16 @@ public final class ItemBuilderView extends BorderedView {
                 lore.addAll(this.bannerPatterns.stream().map(pattern -> TextUtil.format("&r&f" + pattern.getPattern().name().charAt(0) + pattern.getPattern().name().substring(1).toLowerCase())).collect(Collectors.toList()));
 
                 meta.setLore(lore);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES); //TODO proper potion effect hiding
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+                meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+                AttributeModifier attributeModifier = new AttributeModifier(
+                        new NamespacedKey(InnovativeItems.getInstance(), "hidePotionEffect"),
+                        0,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.ANY);
+                meta.addAttributeModifier(Attribute.GENERIC_LUCK, attributeModifier);
                 stack.setItemMeta(meta);
             }, this.bannerPatterns::clear, (response, player) -> {
                 String[] split = response.split(",");
